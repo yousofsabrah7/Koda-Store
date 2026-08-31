@@ -1,4 +1,4 @@
-import apiClient from './apiClient';
+import apiClient from "../config/apiClient";
 // Auth
 export const sendRegisterOtp = async (payload) => {
   const response = await apiClient.post('/auth/register/send-otp', payload);
