@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { LockKeyhole, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import { useLoginUser } from '../server/hooksApi';
+import { useNavigate } from 'react-router-dom';
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-
+  const { loginUser } = useLoginUser();
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,10 +28,17 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) {
-      console.log("Form submitted successfully:", { email, password });
+    
+    if (!validate()) return;
+
+    try {
+      const response = await loginUser({ email, password });
+      localStorage.setItem('token', response.token);
+      navigate('/store'); 
+    } catch (error) {
+      console.error("Login failed:", error);
     }
   };
 

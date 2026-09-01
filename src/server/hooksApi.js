@@ -347,3 +347,15 @@ export const useDeleteReview = () => {
     },
   });
 };
+export const useLoginUser = () => {
+  return useMutation({
+    mutationFn: (credentials) => loginUser(credentials),
+    onSuccess: (data) => {
+      toast.success("Logged in successfully!");
+    },
+    onError: (error) => {
+      const message = error?.response?.data?.message || "Login failed";
+      toast.error(message);
+    },
+  });
+};
