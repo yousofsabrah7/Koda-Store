@@ -1,12 +1,25 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import DashBoard from "./pages/home page/DashBoard.jsx";
+import Navbar from './components/navbar/navbar.jsx';
+
 import "./App.css";
 // import RequireAdmin from "./utils/RequireAdmin";
 import Login from "./components/login";
 
 function App() {
   return (
+    
     <BrowserRouter>
+      {/* sidebar is into navbar */}
+      <Navbar />
+      
+      <main className=" pt-[80px] pl-0 min-[1050px]:pl-[286px]">
+        <Routes>
+          <Route path="/dashboard" element={<DashBoard />} /> 
+        </Routes>
+      </main>
       <Routes>
+        
         {/* <Route path="/" element={<HomePage />} /> */}
         <Route path="/login" element={<Login />} />
         {/* <Route path="/register" element={<Register />} /> */}
