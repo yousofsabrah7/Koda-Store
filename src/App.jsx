@@ -3,14 +3,21 @@ import "./App.css";
 import RequireAdmin from "./utils/RequireAdmin";
 import Login from "./components/Login";
 import Homepage from "./pages/Homepage";
-
+import { useEffect, useState } from "react";
 function App() {
+const [isDark, setIsDark] = useState(()=>{
+const saved = localStorage.getItem("Theme")
+return saved === "dark"
+});
+useEffect(()=>{
+  localStorage.setItem("Theme",isDark?"dark":"light")},[isDark])
   return (
-    <BrowserRouter>
+  
+    <BrowserRouter >
       <Routes>
         <Route path="/login" element={<Login />} />
         {/* <Route element={<RequireAdmin />}> */}
-        <Route index element={<Homepage />}>
+<Route index element={<Homepage isDark={isDark} setIsDark={setIsDark} />}>
           {/* <Route path="users" element={<Users />} /> */}
           {/* <Route path="products" element={<Products />} /> */}
           {/* <Route path="products/edit/:id" element={<EditProduct />} /> */}
@@ -24,6 +31,7 @@ function App() {
       </Routes>
       <Routes>{/* <Route path="*" element={<PageNotFound />} /> */}</Routes>
     </BrowserRouter>
+   
   );
 }
 export default App;
