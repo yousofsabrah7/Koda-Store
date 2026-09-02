@@ -1,7 +1,9 @@
 import axios from "axios";
-import getAuthToken from "../server/hooksApi";
+import { getAuthToken } from "../server/hooksApi";
+const BASE_URL = import.meta.env.VITE_API_BASE_UTL;
+
 const apiClient = axios.create({
-  baseURL: "https://e-commerce-api-3wara.vercel.app",
+  baseURL: BASE_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -26,23 +28,35 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
+      console.log(error.response);
       const status = error.response.status;
-
+      let message = "Something went wrong";
       if (status === 401) {
-        console.log("Unauthorized - token expired or invalid");
+        message = "Unauthorized - token expired or invalid";
       } else if (status === 403) {
-        console.log("Forbidden - no permission");
+        message = "Forbidden - no permission";
       } else if (status === 404) {
-        console.log("Resource not found");
+        message = "Resource not found";
       } else if (status >= 500) {
-        console.log("Server error");
+        message = "Server error";
       }
+      return Promise.reject({
+        statusCode: status,
+        message,
+      });
     } else if (error.request) {
-      console.log("No response from server");
+      return Promise.reject({
+        statusCode: null,
+        message: "No response from server",
+      });
     } else {
-      console.log("Request configuration error");
+      return Promise.reject({
+        statusCode: null,
+        message: "Request configuration error",
+      });
     }
 
     return Promise.reject(error);
-  })
+  },
+);
 export default apiClient;
