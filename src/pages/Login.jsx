@@ -1,4 +1,3 @@
-import React from "react";
 import { LockKeyhole, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 function Login() {

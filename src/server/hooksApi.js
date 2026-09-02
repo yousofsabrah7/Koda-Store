@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { sendRegisterOtp,
+
+import {
+  sendRegisterOtp,
   verifyRegisterOtp,
   loginUser,
   logoutUser,
@@ -26,6 +28,18 @@ import { sendRegisterOtp,
   deleteReview,
 } from "./endpointapi";
 
+import {
+  setVerify,
+  setLogin,
+  setRole,
+  setLogout,
+  setProfile,
+  setAdmin,
+  setAuthorize,
+} from "../redux/services/authSlice";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+
 const setAuthToken = (token) => {
   if (token) {
     localStorage.setItem("userToken", token);
@@ -33,7 +47,7 @@ const setAuthToken = (token) => {
     localStorage.removeItem("userToken");
   }
 };
-const getAuthToken = () => localStorage.getItem("userToken");
+export const getAuthToken = () => localStorage.getItem("userToken");
 
 export const useSendRegisterOtp = () => {
   return useMutation({
@@ -51,12 +65,17 @@ export const useSendRegisterOtp = () => {
 };
 
 export const useVerifyRegisterOtp = () => {
+  const dispatch = useDispatch();
+
   return useMutation({
     mutationFn: verifyRegisterOtp,
+
     onSuccess: () => {
+      dispatch(setVerify(true));
       toast.success("Account created successfully! You can now log in.");
     },
     onError: (error) => {
+      dispatch(setVerify(false));
       const message =
         error?.response?.data?.message ||
         "OTP verification failed. Please check your code.";
@@ -67,6 +86,7 @@ export const useVerifyRegisterOtp = () => {
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: loginUser,
@@ -75,6 +95,10 @@ export const useLogin = () => {
       if (token) {
         setAuthToken(token);
       }
+      queryClient.invalidateQueries({
+        queryKey: ["currentUser"],
+      });
+      dispatch(setLogin(response));
       toast.success("Welcome back! Logged in successfully.");
     },
     onError: (error) => {
@@ -88,25 +112,25 @@ export const useLogin = () => {
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {
       setAuthToken(null);
       queryClient.clear();
+      dispatch(setLogout());
       toast.success("Logged out successfully.");
     },
     onError: (error) => {
-      setAuthToken(null);
-      queryClient.clear();
+      //  setAuthToken(null);
+      //      queryClient.clear();
       const message =
         error?.response?.data?.message || "An error occurred during logout.";
       toast.error(message);
     },
   });
 };
-
-
 export const useSendForgotPasswordOtp = () => {
   return useMutation({
     mutationFn: sendForgotPasswordOtp,
@@ -139,27 +163,67 @@ export const useVerifyResetPassword = () => {
 };
 
 export const useCurrentUser = () => {
-  return useQuery({
+  const dispatch = useDispatch();
+
+  const query = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUser,
   });
+
+  useEffect(() => {
+    if (query.isSuccess) {
+      toast.success();
+      dispatch(setProfile(query.data));
+    }
+  }, [query.isSuccess, query.data, dispatch]);
+
+  useEffect(() => {
+    if (query.isError) {
+      const message =
+        query.error?.response?.data?.message || "Something went wrong";
+      dispatch(setAuthorize(query.error?.response?.status));
+      toast.error(message);
+    }
+  }, [query.isError, query.error]);
+
+  return query;
 };
 
 export const useAdminTest = () => {
-  const token = getAuthToken();
-  return useQuery({
+  const dispatch = useDispatch();
+
+  const query = useQuery({
     queryKey: ["adminTest"],
     queryFn: adminTest,
   });
+  useEffect(() => {
+    if (query.isSuccess) {
+      toast.success("Welcome back");
+      dispatch(setAdmin(query.data));
+    }
+  }, [query.isSuccess, query.data, dispatch]);
+
+  useEffect(() => {
+    if (query.isError) {
+      const message =
+        query.error?.response?.data?.message || "Something went wrong";
+      dispatch(setAuthorize(query.error?.response?.status));
+      toast.error(message);
+    }
+  }, [query.isError, query.error]);
+
+  return query;
 };
 
 export const useChangeRole = () => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: changeUserRole,
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      dispatch(setRole(response.user.role));
       toast.success("User role updated successfully.");
     },
     onError: (error) => {
@@ -170,7 +234,7 @@ export const useChangeRole = () => {
     },
   });
 };
-// Admin Dashboard
+
 export const useAdminDashboard = () => {
   return useQuery({
     queryKey: ["admin-dashboard"],
@@ -250,10 +314,11 @@ export const useCreateProduct = () => {
     mutationFn: createProduct,
     onSuccess: () => {
       toast.success("Product created successfully");
-      queryClient.invalidateQueries({ queryKey: ["products"] });  // auto update products
+      queryClient.invalidateQueries({ queryKey: ["products"] }); // auto update products
     },
     onError: (error) => {
-      const message = error?.response?.data?.message || "Failed to create product";
+      const message =
+        error?.response?.data?.message || "Failed to create product";
       toast.error(message);
     },
   });
@@ -265,7 +330,7 @@ export const useSearchProducts = (searchTerm) => {
     queryFn: () => searchProducts(searchTerm),
     enabled: !!searchTerm,
   });
-}
+};
 
 export const useProduct = (id) => {
   return useQuery({
@@ -273,7 +338,7 @@ export const useProduct = (id) => {
     queryFn: () => getProductById(id),
     enabled: !!id,
   });
-}
+};
 
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
@@ -285,11 +350,12 @@ export const useDeleteProduct = () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
     onError: (error) => {
-      const message = error?.response?.data?.message || "Failed to delete product";
+      const message =
+        error?.response?.data?.message || "Failed to delete product";
       toast.error(message);
     },
   });
-}
+};
 
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
@@ -301,11 +367,12 @@ export const useUpdateProduct = () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
     onError: (error) => {
-      const message = error?.response?.data?.message || "Failed to update product";
+      const message =
+        error?.response?.data?.message || "Failed to update product";
       toast.error(message);
     },
   });
-}
+};
 
 // Reviews
 export const useGetProductReviews = (productId) => {
@@ -323,7 +390,9 @@ export const useAddReview = () => {
     mutationFn: ({ productId, payload }) => addReview(productId, payload),
     onSuccess: (data, variables) => {
       toast.success("Review added successfully");
-      queryClient.invalidateQueries({ queryKey: ["productReviews", variables.productId] });
+      queryClient.invalidateQueries({
+        queryKey: ["productReviews", variables.productId],
+      });
     },
     onError: (error) => {
       const message = error?.response?.data?.message || "Failed to add review";
@@ -339,10 +408,13 @@ export const useDeleteReview = () => {
     mutationFn: ({ productId, reviewId }) => deleteReview(productId, reviewId),
     onSuccess: (data, variables) => {
       toast.success("Review deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["productReviews", variables.productId] });
+      queryClient.invalidateQueries({
+        queryKey: ["productReviews", variables.productId],
+      });
     },
     onError: (error) => {
-      const message = error?.response?.data?.message || "Failed to delete review";
+      const message =
+        error?.response?.data?.message || "Failed to delete review";
       toast.error(message);
     },
   });

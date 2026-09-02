@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { LockKeyhole, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useLoginUser } from '../server/hooksApi';
-import { useNavigate } from 'react-router-dom';
+import { useLoginUser } from "../server/hooksApi";
+import { useNavigate } from "react-router-dom";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,13 +30,13 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validate()) return;
 
     try {
       const response = await loginUser({ email, password });
-      localStorage.setItem('token', response.token);
-      navigate('/store'); 
+      localStorage.setItem("token", response.token);
+      navigate("/store");
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -72,7 +72,7 @@ function Login() {
 
       {/* Form Login */}
       <div className="mt-6 w-full md:w-110 px-6 md:px-0 flex justify-center ">
-        <form 
+        <form
           onSubmit={handleSubmit}
           className="h-auto w-full md:w-110 border border-gray-300 rounded-lg p-6 flex flex-col gap-4"
         >
@@ -96,7 +96,9 @@ function Login() {
               }`}
             />
             {errors.email && (
-              <span className="text-red-500 text-xs mt-0.5">{errors.email}</span>
+              <span className="text-red-500 text-xs mt-0.5">
+                {errors.email}
+              </span>
             )}
           </div>
 
@@ -122,7 +124,9 @@ function Login() {
               }`}
             />
             {errors.password && (
-              <span className="text-red-500 text-xs mt-0.5">{errors.password}</span>
+              <span className="text-red-500 text-xs mt-0.5">
+                {errors.password}
+              </span>
             )}
           </div>
 
@@ -138,12 +142,12 @@ function Login() {
 
           {/* Button Login */}
           <div>
-            <button 
+            <button
               type="submit"
               className="bg-[#4F46E5]/90 hover:bg-[#4F46E5] w-full p-3 rounded-lg text-white font-semibold text-md cursor-pointer"
             >
-              Sign In
-            </button>
+            Sign In 
+             </button>
           </div>
 
           {/* Footer Login & Sign Up */}
