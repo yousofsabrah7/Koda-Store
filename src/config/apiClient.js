@@ -30,6 +30,8 @@ apiClient.interceptors.response.use(
 
       if (status === 401) {
         console.log("Unauthorized - token expired or invalid");
+        localStorage.removeItem("userToken");
+        window.location.href = "/login";
       } else if (status === 403) {
         console.log("Forbidden - no permission");
       } else if (status === 404) {
