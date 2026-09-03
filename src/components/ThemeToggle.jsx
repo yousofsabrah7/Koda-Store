@@ -1,17 +1,15 @@
-import { IoMoonOutline,IoSunnyOutline  } from "react-icons/io5";
+import { IoMoonOutline, IoSunnyOutline } from "react-icons/io5";
 
 function ThemeToggle({ isDark, setIsDark }) {
   return (
-     <button
+    <button
       onClick={() => setIsDark(!isDark)}
-      className={`flex items-center justify-center cursor-pointer rounded-[15px] border px-4 py-3 text-[20px] transition ${
-        isDark
-          ? "bg-gray-900 border-gray-700 text-white hover:shadow-[0px_3px_5px_0px_rgb(255,255,255)]"
-          : "bg-white border-gray-300 text-black hover:shadow-[0px_3px_5px_0px_rgb(1,1,1)]"
-      }`}
+      className="flex items-center justify-center cursor-pointer rounded-[15px] border border-border-subtle bg-surface-elevated text-text-primary hover:border-border-strong px-4 py-3 text-[20px] transition"
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
-      {isDark ? <IoSunnyOutline /> : <IoMoonOutline />}
+      {isDark ? <IoSunnyOutline className="text-amber-400" /> : <IoMoonOutline />}
     </button>
   );
 }
+
 export default ThemeToggle;

@@ -1,23 +1,34 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import RequireAdmin from "./utils/RequireAdmin";
-import Login from "./components/Login";
+import Login from "./pages/Login";
 import Homepage from "./pages/Homepage";
 import { useEffect, useState } from "react";
+
 function App() {
-const [isDark, setIsDark] = useState(()=>{
-const saved = localStorage.getItem("Theme")
-return saved === "dark"
-});
-useEffect(()=>{
-  localStorage.setItem("Theme",isDark?"dark":"light")},[isDark])
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem("Theme");
+    return saved === "dark";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("Theme", isDark ? "dark" : "light");
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDark]);
+
   return (
-  
-    <BrowserRouter >
+    <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         {/* <Route element={<RequireAdmin />}> */}
-<Route index element={<Homepage isDark={isDark} setIsDark={setIsDark} />}>
+        <Route
+          index
+          element={<Homepage isDark={isDark} setIsDark={setIsDark} />}
+        >
           {/* <Route path="users" element={<Users />} /> */}
           {/* <Route path="products" element={<Products />} /> */}
           {/* <Route path="products/edit/:id" element={<EditProduct />} /> */}
@@ -29,9 +40,11 @@ useEffect(()=>{
         </Route>
         {/* </Route> */}
       </Routes>
-      <Routes>{/* <Route path="*" element={<PageNotFound />} /> */}</Routes>
+      <Routes>
+        <Route path="*" to="/" replace />
+      </Routes>
     </BrowserRouter>
-   
   );
 }
+
 export default App;
