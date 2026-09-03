@@ -8,9 +8,13 @@ you lift it up only as far as needed to reach every component that requires it,
  then pass it back down via props to whoever's in between. */
 const index = ({ isDark, setIsDark }) => {
   return (
-    <div className={isDark ? "bg-gray-900 text-white min-h-screen" : "bg-white text-black min-h-screen"}>
+    <div
+      className={`${isDark ? "dark" : ""} bg-surface-base text-text-primary min-h-screen transition-colors`}
+    >
       <div className="grid min-h-screen grid-cols-1 md:grid-cols-[260px_1fr]">
-        <aside className={`hidden md:block border-r ${isDark ? "bg-gray-900" : "bg-white"}`}>
+        <aside
+          className="hidden md:block border-r border-border-subtle bg-surface-card"
+        >
           <div className="sticky top-0 h-screen overflow-y-auto">
             <Sidebar isDark={isDark} />
           </div>

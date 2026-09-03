@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAuthToken } from "../server/hooksApi";
+import { getAuthToken } from "../services/hooksApi";
 const BASE_URL = import.meta.env.VITE_API_BASE_UTL;
 
 const apiClient = axios.create({
