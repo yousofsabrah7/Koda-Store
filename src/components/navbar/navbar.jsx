@@ -3,10 +3,8 @@ import ThemeToggle from "../ThemeToggle";
 import { PiBellRingingLight } from "react-icons/pi";
 import { IoIosLogOut } from "react-icons/io";
 import { CiMenuBurger } from "react-icons/ci";
-import Sidebar from "../sidebar/Sidebar";
 
-function Navbar({ isDark, setIsDark }) {
-  const [open, setOpen] = useState(false);
+function Navbar({ isDark, setIsDark , showSidebar, setShowSidebar}) {
 
   return (
     <div>
@@ -18,7 +16,7 @@ function Navbar({ isDark, setIsDark }) {
         <div className="flex items-center gap-[15px]">
           <button
             className="hidden max-[1050px]:block items-center justify-center rounded-[15px] border border-border-subtle bg-surface-elevated text-text-primary hover:border-border-strong px-3 py-[9px] text-[20px] cursor-pointer ml-[10px] transition"
-            onClick={() => setOpen(!open)}
+            onClick={() => setShowSidebar(!showSidebar)}
           >
             <CiMenuBurger />
           </button>
@@ -44,7 +42,7 @@ function Navbar({ isDark, setIsDark }) {
             className="max-[820px]:hidden rounded-[15px] border border-border-subtle bg-surface-elevated px-[60px] py-[30px]"
           ></button>
 
-          <button className="max-[620px]:px-[10px] max-[620px]:py-[10px] flex items-center justify-center rounded-[15px] border border-rose-500/20 bg-rose-600 px-[22px] py-[10px] text-white mr-5 transition duration-500 hover:bg-rose-700 cursor-pointer">
+          <button className="max-[620px]:px-[10px] max-[620px]:py-[10px] flex items-center justify-center rounded-[15px] border border-rose-500/20 bg-rose-600 px-[22px] py-[10px] text-white  transition duration-500 hover:bg-rose-700 cursor-pointer">
             <IoIosLogOut className="text-[20px] text-white mr-1" />{" "}
             <h4> Logout </h4>
           </button>

@@ -7,21 +7,22 @@ import { FaRegFileAlt } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 
-function Sidebar({ open, isDark }) {
+function Sidebar({ showSidebar, isDark }) {
   return ( 
     <div className="sidebar-nav">
-      <div className={`sidebar pt-[23px] pb-[24px] pl-[25px] w-[285px] h-screen bg-surface-card text-text-primary border-r border-border-subtle fixed left-0 top-0 bottom-0 z-[6] overflow-auto flex flex-col justify-between align-center transition-transform ${
-        open ? "max-[1050px]:translate-x-0" : "max-[1050px]:-translate-x-full"
+      <div className={`sidebar pt-[23px] pb-[24px] pl-[25px] w-[285px] h-screen bg-surface-card text-text-primary border-r border-border-subtle fixed left-0 top-0 bottom-0 z-[6] overflow-auto flex flex-col ${
+        showSidebar ? "max-[1050px]:translate-x-0" : "max-[1050px]:-translate-x-full"
       }`}>
-        <div className='sidebar-top'>
+
+        <div className='mb-5'>
           <h4 className="tracking-[2px] text-accent mb-[3px] font-mono text-xs uppercase font-bold"> Commerce </h4>
           <h3 className="font-display font-bold text-text-primary text-lg"> Admin Panel </h3>
         </div>    
         
-        <nav className="w-[90%] h-[64vh] py-[5px]">
-          <ul className="list-none mt-[15px] mb-[5px] space-y-1">
-            <li className="mt-[2px] h-[50px] rounded-[15px] flex items-center text-[18px] transition duration-200">
-              <NavLink to="/dashboard" className={({ isActive }) =>
+        <nav className="w-[90%] py-[5px]">
+          <ul className="list-none mt-[10px] mb-[5px] space-y-1">
+            <li className="mt-[2px] h-[48px] rounded-[15px] flex items-center text-[18px] transition duration-200 hover:bg-white/20">
+              <NavLink to="/" className={({ isActive }) =>
               isActive
                 ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
                 : "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition duration-200"
@@ -31,7 +32,7 @@ function Sidebar({ open, isDark }) {
               </NavLink>
             </li>
 
-            <li className="mt-[2px] h-[50px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
               <NavLink to="/users" className={({ isActive }) =>
               isActive
                 ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
@@ -42,7 +43,7 @@ function Sidebar({ open, isDark }) {
               </NavLink>
             </li>
 
-            <li className="mt-[2px] h-[50px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
               <NavLink to="/products" className={({ isActive }) =>
               isActive
                 ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
@@ -53,7 +54,7 @@ function Sidebar({ open, isDark }) {
               </NavLink>
             </li>
              
-            <li className="mt-[2px] h-[50px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
               <NavLink to="/add" className={({ isActive }) =>
               isActive
                 ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
@@ -64,7 +65,7 @@ function Sidebar({ open, isDark }) {
               </NavLink>
             </li>
 
-            <li className="mt-[2px] h-[50px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
               <NavLink to="/orders" className={({ isActive }) =>
               isActive
                 ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
@@ -75,7 +76,7 @@ function Sidebar({ open, isDark }) {
               </NavLink>
             </li>
 
-            <li className="mt-[2px] h-[50px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
               <NavLink to="/carts" className={({ isActive }) =>
               isActive
                 ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
@@ -86,7 +87,7 @@ function Sidebar({ open, isDark }) {
               </NavLink>
             </li>
              
-            <li className="mt-[2px] h-[50px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
               <NavLink to="/setting" className={({ isActive }) =>
               isActive
                 ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
@@ -99,7 +100,7 @@ function Sidebar({ open, isDark }) {
           </ul>
         </nav>
 
-        <div className="mb-[1%] mt-[10px] w-[86%] h-[18%] rounded-[15px] bg-surface-elevated border border-border-subtle p-[10px] text-text-secondary text-[18px]">
+        <div className="mt-auto w-[95%] h-[130px] rounded-[25px] bg-surface-elevated border border-border-subtle py-[10px] px-[18px] text-text-secondary text-[18px]">
           <h4 className="text-[15px] tracking-[2px] text-emerald-500 font-bold"> Live </h4>
           <p className="text-text-muted text-sm mt-1">
             Connected to the E-commerce API
