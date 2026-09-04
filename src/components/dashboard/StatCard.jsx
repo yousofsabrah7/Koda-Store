@@ -12,28 +12,22 @@ const StatCard = ({ title, value, subtitle, type, isDark }) => {
   const Icon = config.icon;
   return (
     <div
-      className={`border border-border-subtle bg-surface-card hover:border-border-strong relative overflow-hidden p-8 rounded-3xl flex flex-col justify-between gap-4 ${config.cardBg} ${config.border} hover:scale-104 transition shadow-xs`}
+      className={`border border-border-subtle bg-surface-card hover:border-border-strong relative overflow-hidden p-8 rounded-3xl flex flex-col justify-between gap-4 ${config.cardBg} ${config.border} hover:scale-98 transition duration-300 ease-linear shadow-xs`}
     >
       <div className="flex justify-between gap-4 w-full ">
         <div className={`absolute left-0 top-0 h-1 w-full ${config.iconBg}`} />
         <div className="flex flex-col gap-2">
-          <p className="font-medium text-text-secondary">
-            {title}
-          </p>
+          <p className="font-medium text-text-secondary">{title}</p>
           <h2 className="text-3xl font-bold font-display tracking-tight text-text-primary">
             {value}
           </h2>
-          <p className="text-sm font-mono text-text-muted">
-            {subtitle}
-          </p>
+          <p className="text-sm font-mono text-text-muted">{subtitle}</p>
         </div>
         <Icon
-          className={`${config.iconBg} size-14 p-2 rounded-xl shadow-lg hover:scale-115 hover:rotate-15 transition shrink-0`}
+          className={`${config.iconBg} size-14 p-2 rounded-xl shadow-lg hover:scale-90 hover:rotate-15 transition duration-300 ease-linear shrink-0`}
         />
       </div>
-      <div
-        className="mt-8 h-[2px] bg-gradient-to-r from-transparent via-border-strong to-transparent"
-      />
+      <div className="mt-8 h-[2px] bg-gradient-to-r from-transparent via-border-strong to-transparent" />
     </div>
   );
 };

@@ -7,7 +7,7 @@ import { FaRegFileAlt } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 
-function Sidebar({ showSidebar, isDark }) {
+function Sidebar({ showSidebar }) {
   return ( 
     <div className="sidebar-nav">
       <div className={`sidebar pt-[23px] pb-[24px] pl-[25px] w-[285px] h-screen bg-surface-card text-text-primary border-r border-border-subtle fixed left-0 top-0 bottom-0 z-[6] overflow-auto flex flex-col ${
@@ -21,21 +21,21 @@ function Sidebar({ showSidebar, isDark }) {
         
         <nav className="w-[90%] py-[5px]">
           <ul className="list-none mt-[10px] mb-[5px] space-y-1">
-            <li className="mt-[2px] h-[48px] rounded-[15px] flex items-center text-[18px] transition duration-200 hover:bg-white/20">
+            <li className="mt-[2px] h-[48px] rounded-[15px] flex items-center text-[16px] transition duration-200 hover:bg-white/20">
               <NavLink to="/" className={({ isActive }) =>
               isActive
-                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
+                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent text-[17px] border border-accent/20 font-semibold"
                 : "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition duration-200"
               }>
-              <FiHome className="text-[18px] mr-[6px] text-accent" />
+              <FiHome className="text-[18px] mr-[6px]" />
               Dashboard
               </NavLink>
             </li>
 
-            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[16px] transition duration-200">
               <NavLink to="/users" className={({ isActive }) =>
               isActive
-                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
+                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent text-[17px] border border-accent/20 font-semibold"
                 : "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition duration-200"
               }>
                 <LuUsers className="text-[18px] mr-[6px]" />
@@ -43,10 +43,10 @@ function Sidebar({ showSidebar, isDark }) {
               </NavLink>
             </li>
 
-            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[16px] transition duration-200">
               <NavLink to="/products" className={({ isActive }) =>
               isActive
-                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
+                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent text-[17px] border border-accent/20 font-semibold"
                 : "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition duration-200"
               }>
               <AiFillProduct className='text-[18px] mr-[6px]'/>
@@ -54,10 +54,10 @@ function Sidebar({ showSidebar, isDark }) {
               </NavLink>
             </li>
              
-            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
-              <NavLink to="/add" className={({ isActive }) =>
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[16px] transition duration-200">
+              <NavLink to="/product/new" className={({ isActive }) =>
               isActive
-                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
+                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent text-[17px] border border-accent/20 font-semibold"
                 : "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition duration-200"
               }>
               <IoIosAdd className='text-[18px] mr-[6px]'/>
@@ -65,10 +65,10 @@ function Sidebar({ showSidebar, isDark }) {
               </NavLink>
             </li>
 
-            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[16px] transition duration-200">
               <NavLink to="/orders" className={({ isActive }) =>
               isActive
-                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
+                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent text-[17px] border border-accent/20 font-semibold"
                 : "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition duration-200"
               }>
               <FaRegFileAlt className='text-[18px] mr-[6px]'/>
@@ -76,10 +76,10 @@ function Sidebar({ showSidebar, isDark }) {
               </NavLink>
             </li>
 
-            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[16px] transition duration-200">
               <NavLink to="/carts" className={({ isActive }) =>
               isActive
-                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
+                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent text-[17px] border border-accent/20 font-semibold"
                 : "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition duration-200"
               }>
               <IoCartOutline className='text-[18px] mr-[6px]'/>
@@ -87,10 +87,10 @@ function Sidebar({ showSidebar, isDark }) {
               </NavLink>
             </li>
              
-            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[18px] transition duration-200">
-              <NavLink to="/setting" className={({ isActive }) =>
+            <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[16px] transition duration-200">
+              <NavLink to="/settings" className={({ isActive }) =>
               isActive
-                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent border border-accent/20 font-semibold"
+                ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent text-[17px] border border-accent/20 font-semibold"
                 : "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition duration-200"
               }>
               <IoMdSettings className='text-[18px] mr-[6px]'/>
