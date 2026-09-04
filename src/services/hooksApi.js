@@ -42,12 +42,12 @@ import { useEffect } from "react";
 
 const setAuthToken = (token) => {
   if (token) {
-    localStorage.setItem("userToken", token);
+    localStorage.setItem("token", token);
   } else {
-    localStorage.removeItem("userToken");
+    localStorage.removeItem("token");
   }
 };
-export const getAuthToken = () => localStorage.getItem("userToken");
+export const getAuthToken = () => localStorage.getItem("token");
 
 export const useSendRegisterOtp = () => {
   return useMutation({

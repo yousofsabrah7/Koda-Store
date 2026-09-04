@@ -9,6 +9,7 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
+  withCredentials: true,
 });
 apiClient.interceptors.request.use(
   (config) => {
@@ -28,17 +29,16 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      console.log(error.response);
       const status = error.response.status;
-      let message = "Something went wrong";
+      let message = error.response.data?.message || "An error occurred";
       if (status === 401) {
-        message = "Unauthorized - token expired or invalid";
+        message = error.response.data?.message || "An error occurred";
       } else if (status === 403) {
-        message = "Forbidden - no permission";
+        message = error.response.data?.message || "An error occurred";
       } else if (status === 404) {
-        message = "Resource not found";
+        message = error.response.data?.message || "An error occurred";
       } else if (status >= 500) {
-        message = "Server error";
+        message = error.response.data?.message || "An error occurred";
       }
       return Promise.reject({
         statusCode: status,
@@ -46,7 +46,7 @@ apiClient.interceptors.response.use(
       });
     } else if (error.request) {
       return Promise.reject({
-        statusCode: null,
+        statusCode: 400,
         message: "No response from server",
       });
     } else {

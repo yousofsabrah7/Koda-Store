@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { LockKeyhole, Mail } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLoginUser } from "../services/hooksApi";
+import { useLogin } from "../services/hooksApi";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const { loginUser } = useLoginUser();
+  const { mutateAsync, isPending, isError, error, data, isSuccess } =
+    useLogin();
   const navigate = useNavigate();
 
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     if (!email.trim()) {
       newErrors.email = "Email is required";
     } else if (!emailRegex.test(email)) {
@@ -29,25 +29,28 @@ function Login() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validate()) return;
 
     try {
-      const response = await loginUser({ email, password });
-      localStorage.setItem("token", response.token);
-      navigate("/store");
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
+      const response = await mutateAsync({
+        email,
+        password,
+      });
+      if (response?.user?.role === "admin") {
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      }
+    } catch (e) {}
   };
 
   return (
-    <div className="flex flex-col gap-2 items-center justify-center">
+    <div className="min-h-screen flex flex-col gap-2 items-center justify-center">
       {/* Logo & Title */}
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center -translate-x-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -63,13 +66,24 @@ function Login() {
         >
           <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path>
         </svg>
-        <h1 className="font-bold text-accent text-2xl font-display">Koda Store</h1>
+        <h1 className="font-bold text-accent text-2xl font-display">
+          Koda Store
+        </h1>
       </div>
 
       {/* Welcome & Sign in */}
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-xl font-semibold font-display text-text-primary">Welcome back</h1>
-        <p className="font-normal text-text-secondary">Sign in to your account</p>
+        <p
+          className={`text-sm transition duration-300 ease-linear ${isError ? "text-red-400" : isSuccess ? (data.user.role === "admin" ? "text-emerald-500" : "text-red-400") : "text-text-muted"}`}
+        >
+          {isError
+            ? error.message
+            : isSuccess
+              ? data.user.role === "admin"
+                ? "Login successfully"
+                : "User not has access to dashboard"
+              : "Sign in to your account"}
+        </p>
       </div>
 
       {/* Form Login */}
@@ -145,19 +159,18 @@ function Login() {
           {/* Button Login */}
           <div>
             <button
+              disabled={isPending}
               type="submit"
-              className="bg-accent hover:bg-accent-hover w-full p-3 rounded-xl text-white font-semibold text-md cursor-pointer transition shadow-sm"
+              className="bg-accent flex items-center justify-center hover:bg-accent-hover w-full p-3 rounded-xl text-white font-semibold text-md cursor-pointer transition shadow-sm disabled:cursor-not-allowed disabled:bg-accent/50"
             >
-              Sign In
+              {isPending ? (
+                <span
+                  className={`size-6 block  rounded-full border-4 border-white border-r-transparent ${isPending ? "animate-spin" : ""}`}
+                ></span>
+              ) : (
+                "Login"
+              )}
             </button>
-          </div>
-
-          {/* Footer Login & Sign Up */}
-          <div className="flex justify-center gap-1 items-center">
-            <p className="text-text-muted font-normal text-sm">Don't have an account?</p>
-            <Link to={"/register"} className="text-accent hover:underline font-normal text-sm">
-              Sign up
-            </Link>
           </div>
         </form>
       </div>
