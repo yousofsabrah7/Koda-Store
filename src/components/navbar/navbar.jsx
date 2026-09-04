@@ -3,8 +3,20 @@ import ThemeToggle from "../ThemeToggle";
 import { PiBellRingingLight } from "react-icons/pi";
 import { IoIosLogOut } from "react-icons/io";
 import { CiMenuBurger } from "react-icons/ci";
+import { useLogout } from "../../services/hooksApi";
+import { useNavigate } from "react-router-dom";
 
-function Navbar({ isDark, setIsDark , showSidebar, setShowSidebar}) {
+function Navbar({ isDark, setIsDark, showSidebar, setShowSidebar }) {
+  const navigate = useNavigate();
+  const logoutMutation = useLogout();
+
+  const handleLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        navigate("/login");
+      },
+    });
+  };
 
   return (
     <div>
@@ -38,7 +50,7 @@ function Navbar({ isDark, setIsDark , showSidebar, setShowSidebar}) {
             <PiBellRingingLight />
           </button>
 
-          <button className="max-[620px]:px-[10px] max-[620px]:py-[10px] flex items-center justify-center rounded-[15px] border border-rose-500/20 bg-rose-600 px-[22px] py-[10px] text-white  transition duration-500 hover:bg-rose-700 cursor-pointer group overflow-hidden">
+          <button onClick={handleLogout} className="max-[620px]:px-[10px] max-[620px]:py-[10px] flex items-center justify-center rounded-[15px] border border-rose-500/20 bg-rose-600 px-[22px] py-[10px] text-white  transition duration-500 hover:bg-rose-700 cursor-pointer group overflow-hidden">
             <IoIosLogOut className="text-[20px] text-white mr-1" />{" "}
             <h4 className="w-0 invisible group-hover:w-13 group-hover:visible duration-300 ease-linear"> Logout </h4>
           </button>
