@@ -136,7 +136,7 @@ function FormLogin() {
           Continuo with Google
         </button>
       </div>
-      <p className="text-center text-white/80">Secure Admin Access</p>
+      <p className="text-center text-text-secondary">Secure Admin Access</p>
     </div>
   );
 }
