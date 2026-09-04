@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import { useEffect, useState } from "react";
 import RequireAdmin from "./utils/RequireAdmin";
-import Login from "./components/Login";
+import Login from "./pages/Login/Login";
 import Users from "./pages/Users";
 import Products from "./pages/Products";
 import Dashboard from "./pages/Dashboard";

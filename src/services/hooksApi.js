@@ -172,7 +172,6 @@ export const useCurrentUser = () => {
 
   useEffect(() => {
     if (query.isSuccess) {
-      toast.success();
       dispatch(setProfile(query.data));
     }
   }, [query.isSuccess, query.data, dispatch]);
@@ -185,7 +184,6 @@ export const useCurrentUser = () => {
       toast.error(message);
     }
   }, [query.isError, query.error]);
-
   return query;
 };
 
