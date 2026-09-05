@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
-  token: null,
+  token: localStorage.getItem("token") || null,
   role: null,
   verified: false,
   authLoading: false,
@@ -49,7 +49,6 @@ const authSlice = createSlice({
     },
     setProfile: (state, action) => {
       state.user = action.payload.user;
-      state.token = action.payload.token;
       state.verified = action.payload.isVerified;
       state.role = action.payload.user.role;
       state.isAuthorize = true;

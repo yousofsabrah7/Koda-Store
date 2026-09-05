@@ -1,30 +1,25 @@
-import { useState } from "react";
 import ThemeToggle from "../ThemeToggle";
 import { PiBellRingingLight } from "react-icons/pi";
 import { IoIosLogOut } from "react-icons/io";
 import { CiMenuBurger } from "react-icons/ci";
 import { useLogout } from "../../services/hooksApi";
-import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../redux/services/authSlice";
 
 function Navbar({ isDark, setIsDark, showSidebar, setShowSidebar }) {
-  const navigate = useNavigate();
   const logoutMutation = useLogout();
-
-  const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => {
-        navigate("/login");
-      },
-    });
+  const user = useSelector(selectUser);
+  const handleLogout = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+    } catch (error) {
+      // handle error
+    }
   };
 
   return (
     <div>
-      {/* <Sidebar open={open} /> */}
-
-      <div
-        className="pl-[320px] w-full h-[80px] fixed top-0 z-[5] pt-0 pb-0 pr-[30px] border-b border-border-subtle bg-surface-card/90 text-text-primary backdrop-blur-md flex justify-between items-center max-[1050px]:pl-[10px] max-[1050px]:z-[7] transition-colors"
-      >
+      <div className="pl-[320px] w-full h-[80px] fixed top-0 z-[5] pt-0 pb-0 pr-[30px] border-b border-border-subtle bg-surface-card/90 text-text-primary backdrop-blur-md flex justify-between items-center max-[1050px]:pl-[10px] max-[1050px]:z-[7] transition-colors">
         <div className="flex items-center gap-[15px]">
           <button
             className="hidden max-[1050px]:block items-center justify-center rounded-[15px] border border-border-subtle bg-surface-elevated text-text-primary hover:border-border-strong px-3 py-[9px] text-[20px] cursor-pointer ml-[10px] transition"
@@ -33,8 +28,10 @@ function Navbar({ isDark, setIsDark, showSidebar, setShowSidebar }) {
             <CiMenuBurger />
           </button>
 
-          <div className="max-[640px]:hidden">
-            <h4 className="text-[17px] font-display font-semibold text-text-primary">Koda Dashboard</h4>
+          <div className="max-[620px]:hidden">
+            <h4 className="text-[17px] font-display font-semibold text-text-primary">
+              Koda Dashboard
+            </h4>
             <h5 className="text-[11px] mt-1 font-mono text-text-muted">
               E-Commerce Admin Panel
             </h5>
@@ -44,15 +41,35 @@ function Navbar({ isDark, setIsDark, showSidebar, setShowSidebar }) {
         <div className="flex items-center gap-[10px]">
           <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
 
-          <button
-            className="flex items-center justify-center cursor-pointer rounded-[15px] border border-border-subtle bg-surface-elevated text-text-primary hover:border-border-strong px-4 py-3 text-[20px] transition"
-          >
+          <button className="flex items-center justify-center cursor-pointer rounded-[15px] border border-border-subtle bg-surface-elevated text-text-primary hover:border-border-strong px-4 py-3 text-[20px] transition">
             <PiBellRingingLight />
           </button>
-
-          <button onClick={handleLogout} className="max-[620px]:px-[10px] max-[620px]:py-[10px] flex items-center justify-center rounded-[15px] border border-rose-500/20 bg-rose-600 px-[22px] py-[10px] text-white  transition duration-500 hover:bg-rose-700 cursor-pointer group overflow-hidden">
-            <IoIosLogOut className="text-[20px] text-white mr-1" />{" "}
-            <h4 className="w-0 invisible group-hover:w-13 group-hover:visible duration-300 ease-linear"> Logout </h4>
+          <div className="rounded-[15px] max-[720px]:hidden border border-border-subtle bg-surface-elevated text-text-primary hover:border-border-strong px-4 py-1.5 text-[20px]">
+            <p className="font-semibold text-sm text-accent">
+              {user?.username}
+            </p>
+            <p className=" text-xs text-center text-secondary"> {user?.role}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            disabled={logoutMutation.isPending}
+            className={`rounded-[15px] border border-rose-500/20 bg-rose-600 text-white transition duration-500 hover:bg-rose-700 ${logoutMutation.isPending ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+          >
+            {logoutMutation.isPending ? (
+              <div className="flex items-center gap-1 px-[22px] py-[10px]">
+                <span
+                  className={`size-6 block  rounded-full border-4 border-white border-r-transparent ${logoutMutation.isPending ? "animate-spin" : ""}`}
+                ></span>
+                <h4 className="-translate-y-0.5">Logout</h4>
+              </div>
+            ) : (
+              <div className="flex items-center group w-full  overflow-hidden px-[22px] py-[10px]">
+                <IoIosLogOut className="text-[20px] text-white mr-1" />
+                <h4 className="w-0 invisible group-hover:w-13 group-hover:visible duration-300 ease-linear -translate-y-0.5">
+                  Logout
+                </h4>
+              </div>
+            )}
           </button>
         </div>
       </div>

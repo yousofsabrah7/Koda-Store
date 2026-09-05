@@ -7,8 +7,7 @@ import { useProfile } from "../services/useProfile";
 const RequireAdmin = () => {
   const role = useSelector(selectRole);
   const isAuthorize = useSelector(selectIsAuthorize);
-
-  const { isLoading, user } = useProfile();
+  const { isLoading, data } = useProfile();
 
   if (isLoading) {
     return (
@@ -17,7 +16,7 @@ const RequireAdmin = () => {
       </div>
     );
   }
-  if (!user?.success && (role !== "admin" || !isAuthorize)) {
+  if (!data?.success && (role !== "admin" || !isAuthorize)) {
     return <Navigate to="/login" replace />;
   }
 

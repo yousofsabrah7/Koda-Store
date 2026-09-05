@@ -36,8 +36,10 @@ import {
   setProfile,
   setAdmin,
   setAuthorize,
+  selectToken,
+  selectRole,
 } from "../redux/services/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 
 const setAuthToken = (token) => {
@@ -99,7 +101,11 @@ export const useLogin = () => {
         queryKey: ["currentUser"],
       });
       dispatch(setLogin(response));
-      toast.success("Welcome back! Logged in successfully.");
+      if (response?.user?.role !== "admin") {
+        toast.error("User not has access to dashboard");
+      } else {
+        toast.success("Welcome back! Logged in successfully.");
+      }
     },
     onError: (error) => {
       const message =
@@ -117,14 +123,12 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {
-      setAuthToken(null);
       queryClient.clear();
+      setAuthToken(null);
       dispatch(setLogout());
       toast.success("Logged out successfully.");
     },
     onError: (error) => {
-      //  setAuthToken(null);
-      //      queryClient.clear();
       const message =
         error?.response?.data?.message || "An error occurred during logout.";
       toast.error(message);
@@ -164,10 +168,12 @@ export const useVerifyResetPassword = () => {
 
 export const useCurrentUser = () => {
   const dispatch = useDispatch();
+  const token = useSelector(selectToken);
 
   const query = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUser,
+    enabled: !!token,
   });
 
   useEffect(() => {
@@ -181,6 +187,7 @@ export const useCurrentUser = () => {
       const message =
         query.error?.response?.data?.message || "Something went wrong";
       dispatch(setAuthorize(query.error?.response?.status));
+      if (token === null) return;
       toast.error(message);
     }
   }, [query.isError, query.error]);
