@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setLogin } from "../redux/services/authSlice";
+import { setProfile } from "../redux/services/authSlice";
 import { useCurrentUser } from "./hooksApi";
 
 export const useProfile = () => {
@@ -10,12 +10,11 @@ export const useProfile = () => {
 
   useEffect(() => {
     if (isSuccess && data) {
-      dispatch(setLogin(data));
+      dispatch(setProfile(data));
     }
   }, [isSuccess, data, dispatch]);
-
   return {
-    user: data,
+    data: data,
     isLoading,
     isError,
     isSuccess,

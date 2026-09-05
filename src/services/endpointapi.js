@@ -12,7 +12,6 @@ export const verifyRegisterOtp = async (payload) => {
 };
 
 export const loginUser = async (payload) => {
-  console.log(payload)
   const response = await apiClient.post("/auth/login", payload);
   return response.data;
 };

@@ -7,10 +7,10 @@ function FormLogin() {
   const [email1, setEmail] = useState("");
   const [password1, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const { mutate, isPending } = useLogin();
+  const { mutate, isPending, isSuccess, isError, error, data } = useLogin();
   // Navigate
   const navigate = useNavigate();
-  // tes vlidation input
+  // test validation input
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,7 +32,6 @@ function FormLogin() {
     e.preventDefault();
     const email = email1.trim();
     const password = password1.trim();
-    console.log("handelubmit", email, password);
     if (!validate()) return;
     mutate(
       {
@@ -56,9 +55,19 @@ function FormLogin() {
           className=""
         />
         <h1 className="text-3xl font-bold text-text-primary">Welcome Back</h1>
-        <p className="text-text-secondary">Sign in to your admin dashboard</p>
+        <p
+          className={`text-sm transition duration-300 ease-linear ${isError ? "text-red-400" : isSuccess ? (data.user.role === "admin" ? "text-emerald-500" : "text-red-400") : "text-text-muted"}`}
+        >
+          {isError
+            ? error.message
+            : isSuccess
+              ? data.user.role === "admin"
+                ? "Login successfully"
+                : "User not has access to dashboard"
+              : "Sign in to your admin dashboard"}
+        </p>
       </div>
-      <form className="" onSubmit={handelSubmit}>
+      <form onSubmit={handelSubmit}>
         <div className="flex flex-col gap-5 ">
           <div className="flex flex-col gap-1 relative justify-center">
             <Mail
@@ -70,9 +79,12 @@ function FormLogin() {
             <input
               value={email1}
               type="text"
-              className="px-10 p-3 bg-surface-base! text-text-primary border rounded-2xl focus:outline-none focus:border-accent"
+              className="px-10 py-3 bg-surface-base! text-text-primary border rounded-2xl focus:outline-none focus:border-accent"
               placeholder="Enter your Email"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
+                setEmail(e.target.value);
+              }}
             />
           </div>
           {errors.email ? (
@@ -91,8 +103,11 @@ function FormLogin() {
             <input
               value={password1}
               type="password"
-              onChange={(e) => setPassword(e.target.value)}
-              className="px-10 p-3 bg-surface-base! text-text-primary border rounded-2xl focus:outline-none focus:border-accent"
+              onChange={(e) => {
+                setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
+                setPassword(e.target.value);
+              }}
+              className="px-10 py-3 bg-surface-base! text-text-primary border rounded-2xl focus:outline-none focus:border-accent"
               placeholder="Enter your Password"
             />
             <span className="text-red-400/90 text-md">
@@ -101,7 +116,7 @@ function FormLogin() {
           </div>
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isPending ? true : isSuccess}
             className="bg-accent hover:bg-accent-hover disabled:opacity-70 disabled:cursor-not-allowed w-full p-3 rounded-lg text-text-primary font-semibold text-md cursor-pointer flex items-center justify-center gap-2"
           >
             {isPending ? (
@@ -115,23 +130,17 @@ function FormLogin() {
           </button>
         </div>
       </form>
-      <div className="flex gap-4  *:text-white/60 *:text-sm">
-        <p className="hidden md:block">
-          _______________________________________
-        </p>
-        <p className="md:hidden">___________________________</p>
-        <p>OR</p>
-        <p className="md:hidden">_____________________________</p>
-        <p className="hidden md:block">
-          _________________________________________
-        </p>
+      <div className="flex gap-4 items-center *:text-white/60 *:text-sm">
+        <div className="h-px flex-1 bg-gray-400" />
+        <p className="text-sm text-gray-500">OR</p>
+        <div className="h-px flex-1 bg-gray-400" />{" "}
       </div>
       <div>
         <button className="flex gap-2 border justify-center items-center cursor-pointer bg-surface-card border-border-subtle  bg- w-full p-3 rounded-lg text-text-primary hover:bg-surface-elevated transition font-bold">
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
             alt="google"
-            class="h-5 w-5"
+            className="h-5 w-5"
           ></img>
           Continuo with Google
         </button>
