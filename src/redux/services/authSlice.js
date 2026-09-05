@@ -38,8 +38,9 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.verified = action.payload.isVerified;
-      state.role = action.payload.user.role;
+      state.role = action.payload.user?.role;
       state.isAuthorize = true;
+      console.log(action.payload)
     },
     setLogout: (state) => {
       state.user = null;
@@ -50,7 +51,7 @@ const authSlice = createSlice({
     setProfile: (state, action) => {
       state.user = action.payload.user;
       state.verified = action.payload.isVerified;
-      state.role = action.payload.user.role;
+      state.role = action.payload.user?.role;
       state.isAuthorize = true;
     },
     setAdmin: (state, action) => {

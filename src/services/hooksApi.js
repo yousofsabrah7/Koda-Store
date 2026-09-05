@@ -93,17 +93,17 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (response) => {
-      const token = response?.token || response?.accessToken;
-      if (token) {
-        setAuthToken(token);
-      }
-      queryClient.invalidateQueries({
-        queryKey: ["currentUser"],
-      });
-      dispatch(setLogin(response));
       if (response?.user?.role !== "admin") {
         toast.error("User not has access to dashboard");
       } else {
+        const token = response?.token;
+        if (token) {
+          setAuthToken(token);
+        }
+        queryClient.invalidateQueries({
+          queryKey: ["currentUser"],
+        });
+        dispatch(setLogin(response));
         toast.success("Welcome back! Logged in successfully.");
       }
     },

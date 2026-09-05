@@ -7,7 +7,8 @@ function FormLogin() {
   const [email1, setEmail] = useState("");
   const [password1, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const { mutate, isPending, isSuccess, isError, error, data } = useLogin();
+  const { mutateAsync, isPending, isSuccess, isError, error, data } =
+    useLogin();
   // Navigate
   const navigate = useNavigate();
   // test validation input
@@ -28,22 +29,22 @@ function FormLogin() {
     return Object.keys(newErrors).length === 0;
   };
   // Submit data
-  const handelSubmit = (e) => {
+  const handelSubmit = async (e) => {
     e.preventDefault();
     const email = email1.trim();
     const password = password1.trim();
     if (!validate()) return;
-    mutate(
-      {
+    try {
+      const response = await mutateAsync({
         email,
         password,
-      },
-      {
-        onSuccess: () => {
-          navigate("/");
-        },
-      },
-    );
+      });
+      if (response?.user?.role === "admin") {
+        navigate("/");
+      }
+    } catch (error) {
+      //err
+    }
   };
 
   return (
