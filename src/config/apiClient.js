@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getAuthToken } from "../services/hooksApi";
-const BASE_URL = import.meta.env.VITE_API_BASE_UTL;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
