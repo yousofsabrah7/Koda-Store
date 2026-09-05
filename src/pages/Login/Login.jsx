@@ -2,9 +2,9 @@ import { Check } from "lucide-react";
 import FormLogin from "../../components/FormLoginDash";
 function Login() {
   return (
-    <div className="bg-surface-base flex justify-center items-center min-h-screen py-10 ">
+    <div className="bg-surface-base flex justify-center items-center  min-h-screen py-10 px-10  xl:px-0">
       <div className="md:border w-300 rounded-xl flex ">
-        <div className="hidden rounded-l-xl py-25 bg-surface-elevated border border-border-subtle w-1/2 h-auto md:flex justify-center px-15 gap-8 flex-col">
+        <div className="hidden rounded-l-xl py-25 bg-surface-elevated border border-border-subtle w-1/2 h-auto lg:flex justify-center px-15 gap-8 flex-col">
           <div className="flex gap-3 items-center  ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +46,7 @@ function Login() {
             </li>
           </ul>
         </div>
-        <div className="  w-115 mx-auto  bg-surface-card border border-border-subtle md:w-1/2 py-15 rounded-xl md:rounded-l-none md:rounded-r-xl">
+        <div className=" mx-auto  w-115 sm:w-full bg-surface-card border border-border-subtle lg:w-1/2 py-15 rounded-xl md:rounded-l-none md:rounded-r-xl">
             <FormLogin  />
         </div>
       </div>

@@ -1,7 +1,6 @@
 import axios from "axios";
 import { getAuthToken } from "../services/hooksApi";
 const BASE_URL = import.meta.env.VITE_API_BASE_UTL;
-
 const apiClient = axios.create({
   baseURL: BASE_URL,
   timeout: 10000,

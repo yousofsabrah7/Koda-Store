@@ -1,4 +1,4 @@
-import apiClient from '../config/apiClient';
+import apiClient from "../config/apiClient";
 // Auth
 
 export const sendRegisterOtp = async (payload) => {
@@ -12,7 +12,6 @@ export const verifyRegisterOtp = async (payload) => {
 };
 
 export const loginUser = async (payload) => {
-  console.log(payload)
   const response = await apiClient.post("/auth/login", payload);
   return response.data;
 };
@@ -54,80 +53,85 @@ export const changeUserRole = async (payload) => {
 };
 
 // Order Admin Dashboard
-export const getAdminDashboard=async()=>{
-  const response=await apiClient.get("/orders/admin/dashboard")
-  return response.data
-}
+export const getAdminDashboard = async () => {
+  const response = await apiClient.get("/orders/admin/dashboard");
+  return response.data;
+};
 
 // User
-export const getAllUsers=async()=>{
-  const response=await apiClient.get("/users/all")
-  return response.data
-}
+export const getAllUsers = async () => {
+  const response = await apiClient.get("/users/all");
+  return response.data;
+};
 
-export const getUserById=async (id)=>{
-  const response=await apiClient.get(`/users/${id}`)
-  return response.data
-}
+export const getUserById = async (id) => {
+  const response = await apiClient.get(`/users/${id}`);
+  return response.data;
+};
 
-export const addUser=async (payload)=>{
-  const response=await apiClient.post("/users/add",payload);
-  return response.data
-}
+export const addUser = async (payload) => {
+  const response = await apiClient.post("/users/add", payload);
+  return response.data;
+};
 
-export const updataUser=async(id,payload)=>{
-  const response=await apiClient.patch(`/users/${id}`,payload)
-  return response.data
-}
+export const updataUser = async (id, payload) => {
+  const response = await apiClient.patch(`/users/${id}`, payload);
+  return response.data;
+};
 
-export const deleteUser=async (id)=>{
-  const response=await apiClient.delete(`/users/${id}`)
-  return response.data
-}
+export const deleteUser = async (id) => {
+  const response = await apiClient.delete(`/users/${id}`);
+  return response.data;
+};
 
 // Products
-export const getAllProducts=async()=>{
-  const response=await apiClient.get("/products")
-  return response.data
-}
+export const getAllProducts = async () => {
+  const response = await apiClient.get("/products");
+  return response.data;
+};
 
-export const createProduct=async(payload)=>{
-  const response=await apiClient.post("/products",payload)
-  return response.data
-}
+export const createProduct = async (payload) => {
+  const response = await apiClient.post("/products", payload);
+  return response.data;
+};
 
-export const searchProducts=async(query)=>{
-  const response=await apiClient.get(`/products/search?query=${query}`)
-  return response.data
-}
+export const searchProducts = async (query) => {
+  const response = await apiClient.get(`/products/search?query=${query}`);
+  return response.data;
+};
 
-export const getProductById=async(id)=>{
-  const response=await apiClient.get(`/products/${id}`)
-  return response.data
-}
+export const getProductById = async (id) => {
+  const response = await apiClient.get(`/products/${id}`);
+  return response.data;
+};
 
-export const deleteProduct=async(id)=>{
-  const response=await apiClient.delete(`/products/${id}`)
-  return response.data
-}
+export const deleteProduct = async (id) => {
+  const response = await apiClient.delete(`/products/${id}`);
+  return response.data;
+};
 
-export const updateProduct=async(id,payload)=>{
-  const response=await apiClient.patch(`/products/update/${id}`,payload)
-  return response.data
-}
+export const updateProduct = async (id, payload) => {
+  const response = await apiClient.patch(`/products/update/${id}`, payload);
+  return response.data;
+};
 
-// Reviews 
-export const getProductReviews=async(productId)=>{
-  const response=await apiClient.get(`/products/${productId}/reviews`)
-  return response.data
-}
+// Reviews
+export const getProductReviews = async (productId) => {
+  const response = await apiClient.get(`/products/${productId}/reviews`);
+  return response.data;
+};
 
-export const addReview=async(productId,payload)=>{
-  const response=await apiClient.post(`/products/${productId}/reviews`,payload)
-  return response.data
-}
+export const addReview = async (productId, payload) => {
+  const response = await apiClient.post(
+    `/products/${productId}/reviews`,
+    payload,
+  );
+  return response.data;
+};
 
-export const deleteReview=async(productId,reviewId)=>{
-  const response=await apiClient.delete(`/products/${productId}/reviews/${reviewId}`)
-  return response.data
-}
+export const deleteReview = async (productId, reviewId) => {
+  const response = await apiClient.delete(
+    `/products/${productId}/reviews/${reviewId}`,
+  );
+  return response.data;
+};

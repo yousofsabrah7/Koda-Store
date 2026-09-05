@@ -48,7 +48,7 @@ function FormLogin() {
   };
 
   return (
-    <div className="flex flex-col gap-4  w-full h-full px-10 ">
+    <div className="flex flex-col gap-4   h-full px-10 ">
       <div className="flex justify-center flex-col items-center gap-3">
         <img
           src="https://koda-store-dashboard.vercel.app/assets/KodaLogo2-D3eRgjLV.png"
@@ -58,9 +58,9 @@ function FormLogin() {
         <h1 className="text-3xl font-bold text-text-primary">Welcome Back</h1>
         <p className="text-text-secondary">Sign in to your admin dashboard</p>
       </div>
-      <form className="" onSubmit={handelSubmit}>
-        <div className="flex flex-col gap-5 ">
-          <div className="flex flex-col gap-1 relative justify-center">
+      <form className="flex flex-col " onSubmit={handelSubmit}>
+        <div className="flex flex-col gap-5 items-center lg:items-start">
+          <div className="flex flex-col gap-1 w-100 lg:w-full relative justify-center ">
             <Mail
               width={22}
               height={20}
@@ -70,7 +70,7 @@ function FormLogin() {
             <input
               value={email1}
               type="text"
-              className="px-10 p-3 bg-surface-base! text-text-primary border rounded-2xl focus:outline-none focus:border-accent"
+              className="px-10 w-auto p-3 bg-surface-base! text-text-primary border rounded-2xl focus:outline-none focus:border-accent"
               placeholder="Enter your Email"
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -80,7 +80,7 @@ function FormLogin() {
           ) : (
             ""
           )}
-          <div className="flex flex-col gap-2 relative">
+          <div className="flex flex-col gap-2 relative w-100 lg:w-full">
             <LockKeyhole
               width={27}
               height={20}
@@ -102,7 +102,7 @@ function FormLogin() {
           <button
             type="submit"
             disabled={isPending}
-            className="bg-accent hover:bg-accent-hover disabled:opacity-70 disabled:cursor-not-allowed w-full p-3 rounded-lg text-text-primary font-semibold text-md cursor-pointer flex items-center justify-center gap-2"
+            className="w-100 lg:w-full bg-accent hover:bg-accent-hover disabled:opacity-70 disabled:cursor-not-allowed p-3 rounded-lg text-text-primary font-semibold text-md cursor-pointer flex items-center justify-center gap-2"
           >
             {isPending ? (
               <>
@@ -113,30 +113,29 @@ function FormLogin() {
               "Sign In"
             )}
           </button>
+          <div className="flex w-100 lg:w-full  gap-3 text-sm text-white/60">
+            <div className="flex-1 border-b min-w-0 items-start  border-border-subtle" />
+            <p className="shrink-0">OR</p>
+            <div className="flex-1 min-w-0   border-b-2  border-border-subtle" />
+          </div>
+          <div className="w-100 lg:w-full">
+            <button
+              className="flex w-full
+            gap-2 border justify-center items-center cursor-pointer bg-surface-card border-border-subtle p-3 rounded-lg text-text-primary hover:bg-surface-elevated transition font-bold"
+            >
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="google"
+                class="h-5 w-5"
+              ></img>
+              Continuo with Google
+            </button>
+          </div>
+          <p className="text-center w-full text-text-secondary">
+            Secure Admin Access
+          </p>
         </div>
       </form>
-      <div className="flex gap-4  *:text-white/60 *:text-sm">
-        <p className="hidden md:block">
-          _______________________________________
-        </p>
-        <p className="md:hidden">___________________________</p>
-        <p>OR</p>
-        <p className="md:hidden">_____________________________</p>
-        <p className="hidden md:block">
-          _________________________________________
-        </p>
-      </div>
-      <div>
-        <button className="flex gap-2 border justify-center items-center cursor-pointer bg-surface-card border-border-subtle  bg- w-full p-3 rounded-lg text-text-primary hover:bg-surface-elevated transition font-bold">
-          <img
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-            alt="google"
-            class="h-5 w-5"
-          ></img>
-          Continuo with Google
-        </button>
-      </div>
-      <p className="text-center text-text-secondary">Secure Admin Access</p>
     </div>
   );
 }
