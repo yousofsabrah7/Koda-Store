@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getAuthToken } from "../services/hooksApi";
-const BASE_URL = import.meta.env.VITE_API_BASE_UTL;
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -11,18 +12,22 @@ const apiClient = axios.create({
   },
   withCredentials: true,
 });
+
 apiClient.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => {
     return Promise.reject(error);
   },
 );
+
 apiClient.interceptors.response.use(
   (response) => {
     return response;
@@ -31,6 +36,7 @@ apiClient.interceptors.response.use(
     if (error.response) {
       const status = error.response.status;
       let message = error.response.data?.message || "An error occurred";
+
       if (status === 401) {
         message = error.response.data?.message || "An error occurred";
       } else if (status === 403) {
@@ -40,6 +46,7 @@ apiClient.interceptors.response.use(
       } else if (status >= 500) {
         message = error.response.data?.message || "An error occurred";
       }
+
       return Promise.reject({
         statusCode: status,
         message,
@@ -55,8 +62,7 @@ apiClient.interceptors.response.use(
         message: "Request configuration error",
       });
     }
-
-    return Promise.reject(error);
   },
 );
+
 export default apiClient;
