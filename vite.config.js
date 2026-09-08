@@ -9,6 +9,10 @@ export default defineConfig({
   ],
 
   server: {
+    watch: {
+      usePolling: true,
+    },
+
     proxy: {
       "/api": {
         target: "https://e-commerce-api-3wara.vercel.app",
