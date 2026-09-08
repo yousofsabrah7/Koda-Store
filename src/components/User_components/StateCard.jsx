@@ -17,10 +17,10 @@ const Statecard = () => {
   const totalVerified = users.filter((u) => u.isVerified === true).length;
 
   const statsData = [
-    { label: "Total Users", value: totalUsers, icon: faUsers, color: 'bg-cyan-500' },
-    { label: "Admins", value: totalAdmins, icon: faShieldHalved, color: 'bg-cyan-500' },
-    { label: "Customers", value: totalCustomers, icon: faUsers, color: 'bg-cyan-500' },
-    { label: "Verified", value: totalVerified, icon: faUserCheck, color: 'bg-cyan-500' },
+    { label: "Total Users", value: totalUsers, icon: faUsers, color: 'bg-red-500' },
+    { label: "Admins", value: totalAdmins, icon: faShieldHalved, color: 'bg-red-500' },
+    { label: "Customers", value: totalCustomers, icon: faUsers, color: 'bg-red-500' },
+    { label: "Verified", value: totalVerified, icon: faUserCheck, color: 'bg-red-500' },
   ];
 
   return (
