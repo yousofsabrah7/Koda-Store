@@ -1,13 +1,18 @@
 import React from "react";
-import { selectIsAuthorize, selectRole } from "../redux/services/authSlice";
+import {
+  selectIsAuthorize,
+  selectRole,
+  setProfile,
+} from "../redux/services/authSlice";
 import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useProfile } from "../services/useProfile";
+import { useLoading } from "../services/customHooks/useLoading";
+import { useProfile } from "../services/apiHooks/authHook";
 
 const RequireAdmin = () => {
   const role = useSelector(selectRole);
   const isAuthorize = useSelector(selectIsAuthorize);
-  const { isLoading, data } = useProfile();
+  const { isLoading, data } = useLoading(useProfile, setProfile);
 
   if (isLoading) {
     return (

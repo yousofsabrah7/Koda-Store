@@ -11,7 +11,6 @@ import AddProduct from "./pages/AddProduct";
 import Cart from "./pages/Cart";
 import Settings from "./pages/Settings";
 import HomeDashboard from "./components/dashboard/HomeDashboard";
-import { useProfile } from "./services/useProfile";
 
 function App() {
   const [isDark, setIsDark] = useState(() => {
