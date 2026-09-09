@@ -1,7 +1,7 @@
 import React from 'react'
 import { faUsers, faShieldHalved, faUserCheck } from '@fortawesome/free-solid-svg-icons';
 import Stateformation from './Stateformation';
-import { useUsers } from '../../services/hooksApi';
+import { useUsers } from '../../services/apiHooks/usersHook';
 
 const Statecard = () => {
   const { data, isLoading, isError } = useUsers();

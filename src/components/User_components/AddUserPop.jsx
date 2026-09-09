@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { addUser } from '../../services/endpointapi';
+import { addUser } from "../../services/api/usersApi";
 const AddUserPop = ({ modal, Setmodal,setToast }) => {
   if (!modal) return null; // علشان لو حصل مشكلة يرجع null 
 const [username,setUsername]=useState('');
