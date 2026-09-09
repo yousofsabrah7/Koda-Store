@@ -123,7 +123,7 @@ export default function Orders() {
           }
         })}
         <td className=" ">
-          {(o.paymentMethod === "cash") & (o.paymentStatus === "pending") ? (
+          {(o.paymentMethod === "cash") && (o.paymentStatus === "pending") ? (
             <div className="flex flex-col items-start gap-1 me-5">
               <span className="text-yellow-500 p-1 rounded-md text-start w-30 bg-yellow-500/20 border-yellow-500 px-2">
                 {o.paymentStatus.charAt(0).toUpperCase() +
