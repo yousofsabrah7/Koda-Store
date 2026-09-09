@@ -1,21 +1,11 @@
-const TableSkeleton = ({ columns = 7, rows = 6 }) => {
+const TableSkeleton = ({ columns = 7, rows = 6 ,gridColumns}) => {
   return (
     <tbody>
       {Array.from({ length: rows }).map((_, rowIndex) => (
         <tr
+          style={{gridTemplateColumns:gridColumns}}
           key={rowIndex}
-          className="
-            grid
-            gap-x-5
-            p-3
-            bg-surface-elevated
-            animate-pulse
-            *:text-[11px]
-            *:text-white/60
-          "
-          style={{
-            gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-          }}
+          className="bg-surface-elevated animate-pulse grid"
         >
           {Array.from({ length: columns }).map((_, columnIndex) => (
             <td
@@ -24,9 +14,7 @@ const TableSkeleton = ({ columns = 7, rows = 6 }) => {
             >
               <div
                 className={`
-                  h-4
-                  rounded
-                  bg-gray-500/60
+                  h-4 rounded bg-gray-500/60
                   ${
                     columnIndex % 4 === 0
                       ? "w-32"
@@ -47,5 +35,3 @@ const TableSkeleton = ({ columns = 7, rows = 6 }) => {
 };
 
 export default TableSkeleton;
-
-

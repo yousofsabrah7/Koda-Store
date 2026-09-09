@@ -71,7 +71,6 @@ export const useAdminCart = (page, limit) => {
 
 export const useAllOrders = (page, limit, filter) => {
   const dispatch = useDispatch();
-
   const query = useQuery({
     queryKey: ["orders", page, limit, filter],
     queryFn:()=> getAllOrders(page, limit, filter),

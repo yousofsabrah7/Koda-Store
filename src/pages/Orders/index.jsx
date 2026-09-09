@@ -2,11 +2,9 @@ import {useState } from "react";
 import TableFilter from "../../components/table/TableFilter";
 import { useSelector } from "react-redux";
 import TableCom from "../../components/table/TableCom";
-import { getAllOrders } from "../../services/api/ordersApi";
-
+import { useAllOrders } from "../../services/apiHooks/OrdersHook";
 export default function Orders() {
-  const { data: Dataorders, isLoading } = getAllOrders();
-  console.log(Dataorders)
+  const { data: Dataorders, isLoading } = useAllOrders(1);
   console.log(Dataorders)
   const [dataorders, setDataorders] = useState(Dataorders?.orders);
   // Names columns in Table orders
@@ -79,12 +77,15 @@ export default function Orders() {
       </th>
     );
   });
+  const gridColumns = "1fr 2fr 1fr 1fr 1fr 1fr";
   // print tr in tbody table
   const tbody = dataorders?.map((o) => {
+    console.log(o)
     return (
       <tr
+       style={{gridTemplateColumns:gridColumns}}
         key={o._id}
-        className={`*:text-sm   *:flex  *:justify-center   *:items-center *:p-2 *:h-full  grid grid-cols-${ThTable.length + 1}  bg-surface-card   border-t border-border-subtle `}
+        className={`*:text-sm grid  *:flex  *:justify-center   *:items-center *:p-2 *:h-full   bg-surface-card   border-t border-border-subtle `}
       >
         <td className="">#{o._id.slice(0, 9)}</td>
         <td className="">
@@ -168,12 +169,13 @@ export default function Orders() {
           checkSelect={checkSelect}
         />
       </div>
-      <div className="overflow-x-auto w-full">
+      <div className="overflow-x-auto overflow-y-auto w-full">
         <TableCom
           isLoading={isLoading}
           tbody={tbody}
           thead={thead}
           Arrycolumns={ThTable}
+          gridColumns={gridColumns}
         />
       </div>
     </div>
