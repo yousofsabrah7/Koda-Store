@@ -12,7 +12,6 @@ import toast from "react-hot-toast";
 
 export const useAdminDashboard = () => {
   const dispatch = useDispatch();
-
   const query = useQuery({
     queryKey: ["adminDashboard"],
     queryFn: getAdminDashboard,
