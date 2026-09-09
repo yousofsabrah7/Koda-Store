@@ -52,7 +52,6 @@ function TableFilter({ dataorders ,isLoading,checkSelect}) {
           })}
         </select>
       </form>
-   
     </div>
   );
 }
