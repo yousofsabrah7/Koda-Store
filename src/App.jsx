@@ -3,7 +3,7 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import RequireAdmin from "./utils/RequireAdmin";
 import Login from "./pages/Login/Login";
-import Users from "./pages/Users";
+import Users from "./pages/Users/Users";
 import Products from "./pages/Products";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
@@ -26,6 +26,12 @@ function App() {
       document.documentElement.classList.remove("dark");
     }
   }, [isDark]);
+
+
+    /* they must be inside */
+const [modal,Setmodal]=useState(false)
+
+
   return (
     <BrowserRouter>
       <Routes>
@@ -36,7 +42,7 @@ function App() {
             element={<Dashboard isDark={isDark} setIsDark={setIsDark} />}
           >
             <Route index element={<HomeDashboard />} />
-            <Route path="users" element={<Users />} />
+            <Route path="users" element={<Users modal={modal} Setmodal={Setmodal} />} />
             <Route path="products" element={<Products />} />
             {/* <Route path="products/edit/:id" element={<EditProduct />} /> */}
             {/* <Route path="products/view/:id" element={<ViewProduct />} /> */}
