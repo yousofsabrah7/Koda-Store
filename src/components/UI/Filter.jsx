@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 
 const Filter = ({ filters = [], values = {}, onChange, showFilters }) => {
-
+  const filterCols = filters.length === 5 ? "lg:grid-cols-5" : "lg:grid-cols-4";
   return (
     <div className="relative">
       {/* Filters */}
@@ -34,7 +34,7 @@ const Filter = ({ filters = [], values = {}, onChange, showFilters }) => {
           md:bg-transparent
           md:p-0
           md:shadow-none          
-          lg:grid-cols-5
+          ${filterCols}
 
         `}
       >
@@ -108,7 +108,6 @@ const Filter = ({ filters = [], values = {}, onChange, showFilters }) => {
                 value={values[name] ?? ""}
                 placeholder={placeholder || label}
                 onChange={(e) => onChange?.(name, e.target.value)}
-                
                 className="
                   h-12
                   md:min-w-35

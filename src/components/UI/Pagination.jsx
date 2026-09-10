@@ -1,6 +1,10 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination = ({
+  currentPage ,
+  totalPages,
+  onPageChange,
+}) => {
   const paginationBar = () => {
     const pages = [];
 
@@ -47,7 +51,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       );
     }
 
-    return <div className="flex items-center gap-1.5">{pages}</div>;
+    return (
+      <div className="flex items-center gap-1.5">
+        {pages}
+      </div>
+    );
   };
 
   const handlePrevious = () => {

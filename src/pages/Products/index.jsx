@@ -1,5 +1,5 @@
 // src/pages/products/index.jsx
-import { React, useState } from "react";
+import { useState } from "react";
 import StatCard from "../../components/products/statCard";
 import {
   PackageSearch,
@@ -17,10 +17,8 @@ import Filter from "../../components/UI/Filter";
 import { useNavigate } from "react-router-dom";
 import {
   useProducts,
-  useSearchProducts,
 } from "../../services/apiHooks/productsHook";
 import ProductsCard from "../../components/products/productCart";
-import Loading from "../../utils/Loading";
 import { productFilters } from "../../utils/Filters";
 import Pagination from "../../components/UI/Pagination";
 
@@ -69,7 +67,7 @@ const index = () => {
   return (
     <div>
       <div className="products  pt-6 flex flex-col gap-4 items-center px-8">
-        <div className="product-top flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 w-full bg-surface-elevated rounded-3xl px-5 sm:px-8 py-9 border border-border-subtle">
+        <div className="product-top flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 w-full bg-surface-elevated rounded-3xl px-5 sm:p-8 border border-border-subtle">
           <div className="div1 flex flex-row items-center gap-4">
             <div className="flex items-center justify-center bg-accent-light rounded-2xl size-15 shrink-0 border border-border-subtle">
               <PackageSearch
