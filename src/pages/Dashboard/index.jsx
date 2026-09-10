@@ -23,7 +23,7 @@ const index = ({ isDark, setIsDark }) => {
           setIsDark={setIsDark}
         />
 
-        <section className="pt-3 mt-17 ml-71 max-[1050px]:ml-0">
+        <section className="mt-20 lg:ml-71">
           <Outlet />
         </section>
       </main>
