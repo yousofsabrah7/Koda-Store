@@ -7,7 +7,7 @@ import {
 import StatCard from "./StatCard";
 import OrderStatusCard from "./OrderStatusCard";
 import Header from "../UI/Header";
-import { useAdminDashboard } from "../../services/hooksApi"
+import { useAdminDashboard } from "../../services/apiHooks/OrdersHook"
 import RevenueChart from "../Chart/RevenueChart";
 const HomeDashboard = () => {
   // const cardStyles = {

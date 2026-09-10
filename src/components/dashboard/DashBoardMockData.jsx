@@ -17,57 +17,68 @@ const formatDate = (date) => {
 // Dashboard Overview
 // =========================
 
+const dashboardStatsConfig = [
+    {
+        id: 1,
+        title: "Total Orders",
+        subtitle: "All orders received",
+        type: "orders",
+        getValue: (dashboard) => dashboard.orders?.total ?? 0,
+    },
+    {
+        id: 2,
+        title: "Pending Orders",
+        subtitle: "Awaiting action",
+        type: "pending",
+        getValue: (dashboard) => dashboard.orders?.pending ?? 0,
+    },
+    {
+        id: 3,
+        title: "Revenue",
+        subtitle: "Total gross revenue",
+        type: "revenue",
+        isMoney: true,
+        getValue: (dashboard) => dashboard.revenue?.total ?? 0,
+    },
+    {
+        id: 4,
+        title: "This Month",
+        subtitle: "Monthly sales target",
+        type: "monthlySales",
+        isMoney: true,
+        getValue: (dashboard) => dashboard.revenue?.thisMonth ?? 0,
+    },
+    {
+        id: 5,
+        title: "Top Product",
+        subtitle: "Best seller",
+        type: "topProduct",
+        getValue: (dashboard) =>
+            dashboard.topProducts?.[0]?.name ?? "No product",
+    },
+    {
+        id: 6,
+        title: "Users",
+        subtitle: "Registered customers",
+        type: "users",
+        getValue: (dashboard) => dashboard.totalCustomers ?? 0,
+    },
+];
+
 export const getDashboardStats = (dashboard) => {
     if (!dashboard) return [];
 
-    const topProduct = dashboard.topProducts?.[0];
+    return dashboardStatsConfig.map((stat) => {
+        const value = stat.getValue(dashboard);
 
-    return [
-        {
-            id: 1,
-            title: "Total Orders",
-            value: dashboard.orders?.total ?? 0,
-            subtitle: "All orders received",
-            type: "orders",
-        },
-        {
-            id: 2,
-            title: "Pending Orders",
-            value: dashboard.orders?.pending ?? 0,
-            subtitle: "Awaiting action",
-            type: "pending",
-        },
-        {
-            id: 3,
-            title: "Revenue",
-            value: `$${dashboard.revenue?.total ?? 0}`,
-            subtitle: "Total gross revenue",
-            type: "revenue",
-        },
-        {
-            id: 4,
-            title: "This Month",
-            value: `$${dashboard.revenue?.thisMonth ?? 0}`,
-            subtitle: "Monthly sales target",
-            type: "monthlySales",
-        },
-        {
-            id: 5,
-            title: "Top Product",
-            value: topProduct?.name ?? "No product",
-            subtitle: `${topProduct?.totalSold ?? 0} sold`,
-            type: "topProduct",
-        },
-        {
-            id: 6,
-            title: "Users",
-            value: dashboard.totalCustomers ?? 0,
-            subtitle: "Registered customers",
-            type: "users",
-        },
-    ];
+        return {
+            ...stat,
+            value: stat.isMoney
+                ? `$${Number(value).toLocaleString()}`
+                : value,
+        };
+    });
 };
-
 
 // =========================
 // Order Status

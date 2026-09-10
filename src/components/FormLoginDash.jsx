@@ -1,7 +1,10 @@
 import { LockKeyhole, Mail } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useLogin } from "../services/hooksApi";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useLogin } from "../services/apiHooks/authHook";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { selectToken } from "../redux/services/authSlice";
+
 function FormLogin() {
   // State
   const [email1, setEmail] = useState("");
@@ -11,6 +14,10 @@ function FormLogin() {
     useLogin();
   // Navigate
   const navigate = useNavigate();
+  const token = useSelector(selectToken);
+  if (token) {
+    return <Navigate to={"/"} replace />;
+  }
   // test validation input
   const validate = () => {
     const newErrors = {};
@@ -44,6 +51,8 @@ function FormLogin() {
       }
     } catch (error) {
       //err
+      setEmail("");
+      setPassword("");
     }
   };
 
@@ -79,6 +88,7 @@ function FormLogin() {
             <label className="text-text-secondary">Email Address</label>
             <input
               value={email1}
+              disabled={isPending}
               type="text"
               className="px-10 py-3 bg-surface-base! text-text-primary border rounded-2xl focus:outline-none focus:border-accent"
               placeholder="Enter your Email"
@@ -102,6 +112,7 @@ function FormLogin() {
             <label className="text-text-secondary">Password</label>
 
             <input
+              disabled={isPending}
               value={password1}
               type="password"
               onChange={(e) => {

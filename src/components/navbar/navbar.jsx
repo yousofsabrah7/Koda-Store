@@ -2,9 +2,10 @@ import ThemeToggle from "../ThemeToggle";
 import { PiBellRingingLight } from "react-icons/pi";
 import { IoIosLogOut } from "react-icons/io";
 import { CiMenuBurger } from "react-icons/ci";
-import { useLogout } from "../../services/hooksApi";
+
 import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/services/authSlice";
+import { useLogout } from "../../services/apiHooks/authHook";
 
 function Navbar({ isDark, setIsDark, showSidebar, setShowSidebar }) {
   const logoutMutation = useLogout();
