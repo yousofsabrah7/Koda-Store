@@ -1,11 +1,21 @@
 const OrderStatusCard = ({ status, count }) => {
-  const statusConfig = orderStatusConfig[status];
+  const statusConfig = orderStatusConfig[status] || {
+    textColor: "text-slate-400",
+    cardBg: "bg-slate-400/10",
+    border: "border-slate-400/30 border-2",
+  };
+
   return (
     <div
       className={`${statusConfig.cardBg} ${statusConfig.border} ${statusConfig.textColor} rounded-3xl flex flex-col gap-2 p-4`}
     >
-      <p>{status}</p>
-      <p>{count}</p>
+      <p className="text-2xl font-semibold tracking-widest">
+        {status}
+      </p>
+
+      <p className="text-3xl font-bold">
+        {count}
+      </p>
     </div>
   );
 };
