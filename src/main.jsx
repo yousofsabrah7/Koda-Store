@@ -13,8 +13,8 @@ import { store } from "./redux/store.js";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // data stays "fresh" for 5 min — no refetch needed
-      gcTime: 1000 * 60 * 30,   // keep unused cache around for 30 min
+   //   staleTime: 1000 * 60 * 5, // data stays "fresh" for 5 min — no refetch needed
+     // gcTime: 1000 * 60 * 30,   // keep unused cache around for 30 min
     },
   },
 });

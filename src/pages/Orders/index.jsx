@@ -1,11 +1,68 @@
+import { SlidersHorizontal } from "lucide-react";
 import TableFilter from "../../components/table/TableFilter";
-import TableCom from "../../components/table/TableCom";
+import Filter from "../../components/UI/Filter";
+import Table from "../../components/UI/Table";
 import { useAllOrders } from "../../services/apiHooks/OrdersHook";
+import { orderFilters } from "../../utils/Filters";
+import Search from "../../components/UI/Search";
+import { useState } from "react";
+import Pagination from "../../components/UI/Pagination";
+
 export default function Orders() {
-  const { data: Dataorders, isLoading } = useAllOrders(3,5);
-  // Names columns in Table orders
-  const ThTable = ["Order", "Customer", "Date", "Status", "Payment", "Total"];
-  // Values in Select Filter
+  const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState({
+    category: "",
+    brand: "",
+    minPrice: "",
+    maxPrice: "",
+    sort: "",
+  });
+  const { data: ordersData, isLoading } = useAllOrders(page, 10, filters);
+  /* =========================
+     Table Columns
+  ========================= */
+  console.log(filters);
+  const columns = [
+    {
+      key: "order",
+      label: "Order",
+    },
+    {
+      key: "customer",
+      label: "Customer",
+    },
+    {
+      key: "date",
+      label: "Date",
+    },
+    {
+      key: "status",
+      label: "Status",
+      type: "status",
+    },
+    {
+      key: "payment",
+      label: "Payment",
+      type: "payment",
+    },
+    {
+      key: "total",
+      label: "Total",
+      type: "money",
+    },
+  ];
+
+  /* =========================
+     Filters
+  ========================= */
+  const handleFilterChange = (name, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   const checkSelect = {
     statues: [
       "All statuses",
@@ -17,163 +74,170 @@ export default function Orders() {
       "Cancelled",
       "Returned",
     ],
+
     payment: ["All payments", "Pending", "Paid", "Failed"],
+
     method: ["All methods", "Cash", "Stripe"],
   };
-  // Style Data Columns in Table [td : status]
-  const TdStatusBg = [
-    {
-      name: "confirmed",
-      textColor: "text-accent-hover",
-      bgColor: "bg-accent-light",
-      borderColor: "border-border-subtle",
-    },
-    {
-      name: "shipped",
-      textColor: "text-accent-hover",
-      bgColor: "bg-accent-light",
-      borderColor: "border-border-subtle",
-    },
-    {
-      name: "delivered",
-      textColor: "text-emerald-500",
-      bgColor: "bg-emerald-500/10",
-      borderColor: "border-emerald-500",
-    },
-    {
-      name: "cancelled",
-      textColor: "text-red-500/80",
-      bgColor: "bg-red-500/10",
-      borderColor: "border-red-500",
-    },
-    {
-      name: "returned",
-      textColor: "text-blue-500",
-      bgColor: "bg-blue-500/10",
-      borderColor: "border-blue-500",
-    },
-    {
-      name: "processing",
-      textColor: "text-fuchsia-500",
-      bgColor: "bg-fuchsia-500/10",
-      borderColor: "border-fuchsia-500",
-    },
-    {
-      name: "pending",
-      textColor: "text-yellow-500",
-      bgColor: "bg-yellow-500/20",
-      borderColor: "border-yellow-500",
-    },
-  ];
-  // prit th in thead table
-  const thead = ThTable?.map((t, n) => {
-    return (
-      <th className="text-center   p-3" key={n}>
-        {t.toUpperCase()}
-      </th>
-    );
-  });
-  const gridColumns = "1fr 2fr 1fr 1fr 1fr 1fr";
-  // print tr in tbody table
-  const tbody = Dataorders?.orders?.map((o) => {
-    console.log(o)
-    return (
-      <tr
-       style={{gridTemplateColumns:gridColumns}}
-        key={o._id}
-        className={`*:text-xs grid   *:flex  *:justify-center   *:items-center *:p-2 *:h-full   bg-surface-card   border-t border-border-subtle `}
-      >
-        <td className="">#{o._id.slice(0, 9)}</td>
-        <td className="">
-          <div className="flex items-center justify-center w-full gap-2 ">
-            <div className="bg-surface-elevated  text-text-secondary rounded-full  p-2 w-9 h-9 flex justify-center items-center">
-              {o.user?.username.charAt(0) || "U"}
+
+  /* =========================
+     Orders Table Data
+  ========================= */
+  const rows =
+    ordersData?.orders
+      ?.filter((order) => {
+        if (!search.trim()) return true;
+
+        const query = search.trim().toLowerCase();
+
+        return Object.values(order).some((value) =>
+          String(value).toLowerCase().includes(query),
+        );
+      })
+      ?.map((order) => ({
+        id: order._id,
+
+        order: (
+          <span className="font-mono text-xs font-medium text-text-primary">
+            #{order._id?.slice(-8).toUpperCase()}
+          </span>
+        ),
+
+        customer: (
+          <div className="flex items-center gap-3">
+            <div
+              className="
+              flex
+              size-9
+              shrink-0
+              items-center
+              justify-center
+              rounded-xl
+              bg-surface-elevated
+              text-sm
+              font-semibold
+              text-text-secondary
+              ring-1
+              ring-border-subtle
+            "
+            >
+              {order.user?.username?.charAt(0)?.toUpperCase() || "U"}
             </div>
-            <div className="flex flex-col items-start ">
-              <p className="text-text-primary">{o.user?.username || "____"}</p>
-              <p className="text-text-secondary">{o.user?.email || "____"}</p>
+
+            <div className="min-w-0 text-left">
+              <p className="truncate text-sm font-medium text-text-primary">
+                {order.user?.username || "Unknown user"}
+              </p>
+
+              <p className="max-w-[180px] truncate text-[11px] text-text-muted">
+                {order.user?.email || "No email"}
+              </p>
             </div>
           </div>
-        </td>
-        <td className="">
-          {new Date(o.createdAt).toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          })}
-        </td>
-        {TdStatusBg.map((s) => {
-          if (s.name === o.status) {
-            return (
-              <td className="">
-                <div
-                  className={`w-auto px-[5px] border  rounded-xl flex justify-start items-center gap-1  ${s.textColor} ${s.bgColor} ${s.borderColor} `}
-                >
-                  <span className="text-lg">•</span>
-                  <span>
-                    {s.name.charAt(0).toUpperCase() + s.name.slice(1)}
-                  </span>
-                </div>
-              </td>
-            );
-          }
-        })}
-        <td className=" ">
-          {(o.paymentMethod === "cash") && (o.paymentStatus === "pending") ? (
-            <div className="flex flex-col items-start gap-1 me-5">
-              <span className="text-yellow-500 p-1 rounded-md text-start w-30 bg-yellow-500/20 border-yellow-500 px-2">
-                {o.paymentStatus.charAt(0).toUpperCase() +
-                  o.paymentStatus.slice(1)}
-              </span>
-              <span>
-                {o.paymentMethod.charAt(0).toUpperCase() +
-                  o.paymentMethod.slice(1)}
-              </span>
-            </div>
-          ) : (
-            ""
-          )}
-        </td>
-        <td className="text-text-primary font-bold  text-center ">
-          {o.totalPrice.toLocaleString()} EGP
-        </td>
-      </tr>
-    );
-  });
+        ),
+
+        date: order.createdAt
+          ? new Date(order.createdAt).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+          : "—",
+
+        status: order.status,
+
+        payment: {
+          status: order.paymentStatus,
+          method: order.paymentMethod,
+        },
+
+        total: order.totalPrice,
+      })) || [];
+
   return (
-    <div className="p-13 flex flex-col gap-5">
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col gap-2">
-          <p className="text-text-secondary text-xs uppercase tracking-[3px]">
-            Admin · Management
-          </p>
-          <h1 className="text-text-primary text-3xl font-bold">Orders</h1>
-        </div>
-        <div className="bg-surface-card border rounded-lg p-3 border-border-subtle">
-          <div className="flex gap-2 items-center justify-center">
-            <p className="text-xl font-bold text-text-primary">
-              {Dataorders?.total}
-            </p>
-            <p className="text-text-muted">total orders</p>
+    <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-5">
+        {/* =========================
+            Header
+        ========================= */}
+        <div className="product-top flex justify-between items-start sm:items-center gap-5 w-full bg-surface-elevated rounded-3xl p-5 md:p-8 border border-border-subtle">
+          <div className="div1 flex flex-row items-center gap-4">
+            <div>
+              <p className="text-accent text-xs font-semibold tracking-[1px] uppercase">
+                Orders Dashboard
+              </p>
+              <h2 className="text-text-primary text-2xl md:text-3xl font-extrabold">
+                Orders
+              </h2>
+            </div>
+          </div>
+          <div
+            className="
+              rounded-xl
+              border
+              border-border-subtle
+              bg-surface-card
+              px-4
+              py-2.5
+            "
+          >
+            <span className="text-lg font-semibold text-text-primary">
+              {ordersData?.total ?? 0}
+            </span>
+
+            <span className="ml-2 text-xs text-text-muted">total orders</span>
           </div>
         </div>
+
+        <div className="w-full bg-surface-card rounded-3xl border border-border-subtle p-6">
+          <div>
+            <div className="flex gap-3">
+              <div className="flex-2">
+                <Search value={search} onChange={setSearch} />
+              </div>
+              <div className="flex-0">
+                <button
+                  type="button"
+                  onClick={() => setShowFilters((prev) => !prev)}
+                  className="
+                  flex size-12 items-center justify-center
+                  rounded-xl
+                  border border-border-subtle
+                  bg-surface-card
+                  text-text-secondary
+                  transition
+                  hover:border-border-strong
+                "
+                >
+                  <SlidersHorizontal size={18} />
+                </button>
+              </div>
+            </div>
+
+            <div className={`${showFilters ? "mt-3" : ""} overflow-hidden`}>
+              <Filter
+                filters={orderFilters}
+                values={filters}
+                onChange={handleFilterChange}
+                showFilters={showFilters}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* =========================
+            Table
+        ========================= */}
+
+        <Table columns={columns} rows={rows} isLoading={isLoading} />
+        <div className="w-full mb-8">
+          <Pagination
+            currentPage={ordersData?.currentPage || page}
+            totalPages={ordersData?.totalPages || 1}
+            onPageChange={setPage}
+          />
+        </div>
       </div>
-      <div>
-        <TableFilter
-          dataorders={Dataorders}
-          isLoading={isLoading}
-          checkSelect={checkSelect}
-        />
-      </div>
-      <div className="overflow-x-auto overflow-y-auto w-full">
-        <TableCom
-          isLoading={isLoading}
-          tbody={tbody}
-          thead={thead}
-          Arrycolumns={ThTable}
-          gridColumns={gridColumns}
-        />
-      </div>
-    </div>
+    </main>
   );
 }

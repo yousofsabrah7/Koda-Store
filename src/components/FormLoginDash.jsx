@@ -16,7 +16,7 @@ function FormLogin() {
   const navigate = useNavigate();
   const token = useSelector(selectToken);
   if (token) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={"/"} replace />;
   }
   // test validation input
   const validate = () => {

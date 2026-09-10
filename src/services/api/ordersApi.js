@@ -11,12 +11,13 @@ export const getAdminCart = async (page, limit) => {
 };
 
 export const getAllOrders = async (page, limit, filter = {}) => {
+  console.log(filter)
   const response = await apiClient.get("/orders/admin", {
     params: {
       page,
       limit,
       status: filter.status || undefined,
-      paymentStatus: filter.payment || undefined,
+      paymentStatus: filter.paymentStatus || undefined,
       paymentMethod: filter.method || undefined,
       from: filter.from || undefined,
       to: filter.to || undefined,

@@ -1,10 +1,26 @@
 // src/pages/products/index.jsx
-import { React, useState } from "react";
+import { useState } from "react";
 import StatCard from "../../components/products/statCard";
-import { PackageSearch, Plus, Package, Star, TrendingUp, Boxes, Search, SlidersHorizontal, Tags, Bookmark } from "lucide-react";
+import {
+  PackageSearch,
+  Plus,
+  Package,
+  Star,
+  TrendingUp,
+  Boxes,
+  SlidersHorizontal,
+  Tags,
+  Bookmark,
+} from "lucide-react";
+import Search from "../../components/UI/Search";
+import Filter from "../../components/UI/Filter";
 import { useNavigate } from "react-router-dom";
-import { useProducts } from "../../services/apiHooks/productsHook";
+import {
+  useProducts,
+} from "../../services/apiHooks/productsHook";
 import ProductsCard from "../../components/products/productCart";
+import { productFilters } from "../../utils/Filters";
+import Pagination from "../../components/UI/Pagination";
 
 const staticConfig = [
   { key: "total", icon: Package, label: "Total" },
@@ -16,19 +32,28 @@ const staticConfig = [
 const index = () => {
   const navigate = useNavigate();
   const [showFilters, setShowFilters] = useState(false);
-  const { data: response, isLoading, isError } = useProducts();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState({
+    category: "",
+    brand: "",
+    minPrice: "",
+    maxPrice: "",
+    sort: "",
+  });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <span className="w-[60px] h-[60px] border-[6px] border-accent border-r-transparent rounded-full animate-spin"></span>
-      </div>
-    );
-  }
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useProducts(page, 10, search, filters);
 
-  if (isError) {
-    return <div className="w-[90%]">Wrong</div>;
-  }
+  const handleFilterChange = (name, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const productList = response?.products || [];
 
@@ -41,20 +66,23 @@ const index = () => {
 
   return (
     <div>
-      <div className="products mt-9 pt-6 flex flex-col gap-10 items-center w-[95%] m-auto">
-
-        <div className="product-top flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 w-[90%] bg-surface-elevated rounded-3xl min-h-[140px] px-5 sm:px-8 py-6 border border-border-subtle">
+      <div className="products  pt-6 flex flex-col gap-4 items-center px-8">
+        <div className="product-top flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 w-full bg-surface-elevated rounded-3xl px-5 sm:p-8 border border-border-subtle">
           <div className="div1 flex flex-row items-center gap-4">
-            <div className="flex items-center justify-center bg-accent-light rounded-2xl w-[60px] h-[60px] shrink-0 border border-border-subtle">
-              <PackageSearch size={28} strokeWidth={1.75} className="text-accent" />
+            <div className="flex items-center justify-center bg-accent-light rounded-2xl size-15 shrink-0 border border-border-subtle">
+              <PackageSearch
+                size={28}
+                strokeWidth={1.75}
+                className="text-accent"
+              />
             </div>
             <div>
-              <p className="text-accent text-xs sm:text-sm font-semibold tracking-[3px] uppercase">
+              <p className="text-accent text-xs font-semibold tracking-[1px] uppercase">
                 Product Dashboard
               </p>
-              <h3 className="text-text-primary text-3xl sm:text-4xl font-extrabold leading-tight">
+              <h2 className="text-text-primary text-2xl md:text-3xl font-extrabold">
                 Products
-              </h3>
+              </h2>
             </div>
           </div>
 
@@ -71,7 +99,7 @@ const index = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-[90%]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
           {staticConfig.map((item) => (
             <StatCard
               key={item.key}
@@ -82,79 +110,55 @@ const index = () => {
           ))}
         </div>
 
-        <div className="w-[90%] bg-surface-card rounded-3xl border border-border-subtle p-6">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex items-center flex-1 gap-3 border border-border-subtle rounded-2xl px-4 py-3">
-              <Search size={20} className="text-text-muted shrink-0" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full outline-none text-text-primary placeholder:text-text-muted bg-transparent"
-              />
+        <div className="w-full bg-surface-card rounded-3xl border border-border-subtle p-6">
+          <div>
+            <div className="flex gap-3">
+              <div className="flex-2">
+                <Search value={search} onChange={setSearch} />
+              </div>
+              <div className="flex-0">
+                <button
+                  type="button"
+                  onClick={() => setShowFilters((prev) => !prev)}
+                  className="
+                  flex size-12 items-center justify-center
+                  rounded-xl
+                  border border-border-subtle
+                  bg-surface-card
+                  text-text-secondary
+                  transition
+                  hover:border-border-strong
+                "
+                >
+                  <SlidersHorizontal size={18} />
+                </button>
+              </div>
             </div>
 
-            <button
-              onClick={() => setShowFilters((prev) => !prev)}
-              className={`flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-medium transition-colors shrink-0 cursor-pointer ${
-                showFilters
-                  ? "bg-accent text-white"
-                  : "bg-accent-light text-accent hover:bg-accent/20"
-              }`}
-            >
-              <SlidersHorizontal size={18} />
-              Filters
-            </button>
-
-            <button className="flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover transition-colors text-white font-semibold rounded-2xl px-6 py-3 shrink-0 cursor-pointer">
-              <Search size={18} />
-              Search
-            </button>
-          </div>
-
-          <div
-            className={`grid transition-all duration-300 ease-in-out ${
-              showFilters ? "grid-rows-[1fr] opacity-100 mt-6" : "grid-rows-[0fr] opacity-0"
-            }`}
-          >
-            <div className="overflow-hidden">
-              <div className="border-t border-border-subtle pt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
-                    <Tags size={16} />
-                    Category
-                  </label>
-                  <select
-                    defaultValue="all"
-                    className="w-full border border-accent rounded-2xl px-4 py-3 outline-none bg-surface-card text-text-primary focus:ring-2 focus:ring-accent-light"
-                  >
-                    <option value="all">All Categories</option>
-                    <option value="electronics">electronics</option>
-                    <option value="phones">phones</option>
-                    <option value="fashion">fashion</option>
-                    <option value="home">home</option>
-                    <option value="beauty">beauty</option>
-                    <option value="sports">sports</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2">
-                    <Bookmark size={16} />
-                    Subcategory
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. smartphones"
-                    className="w-full border border-border-subtle rounded-2xl px-4 py-3 outline-none bg-surface-card text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent-light"
-                  />
-                </div>
-              </div>
+            <div className={`${showFilters ? "mt-3" : ""} overflow-hidden`}>
+              <Filter
+                filters={productFilters}
+                values={filters}
+                onChange={handleFilterChange}
+                showFilters={showFilters}
+              />
             </div>
           </div>
         </div>
 
-        <div className="mb-15 w-[90%]">
-          <ProductsCard products={productList} />
+        <div className="w-full">
+          <ProductsCard
+            products={productList}
+            isLoading={isLoading}
+            isError={isError}
+          />
+        </div>
+        <div className="w-full mb-8">
+          <Pagination
+            currentPage={response?.currentPage || page}
+            totalPages={response?.totalPages || 1}
+            onPageChange={setPage}
+          />
         </div>
       </div>
     </div>
