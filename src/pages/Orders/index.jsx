@@ -1,12 +1,8 @@
-import {useState } from "react";
 import TableFilter from "../../components/table/TableFilter";
-import { useSelector } from "react-redux";
 import TableCom from "../../components/table/TableCom";
 import { useAllOrders } from "../../services/apiHooks/OrdersHook";
 export default function Orders() {
-  const { data: Dataorders, isLoading } = useAllOrders(1);
-  console.log(Dataorders)
-  const [dataorders, setDataorders] = useState(Dataorders?.orders);
+  const { data: Dataorders, isLoading } = useAllOrders(3,5);
   // Names columns in Table orders
   const ThTable = ["Order", "Customer", "Date", "Status", "Payment", "Total"];
   // Values in Select Filter
@@ -79,17 +75,17 @@ export default function Orders() {
   });
   const gridColumns = "1fr 2fr 1fr 1fr 1fr 1fr";
   // print tr in tbody table
-  const tbody = dataorders?.map((o) => {
+  const tbody = Dataorders?.orders?.map((o) => {
     console.log(o)
     return (
       <tr
        style={{gridTemplateColumns:gridColumns}}
         key={o._id}
-        className={`*:text-sm grid  *:flex  *:justify-center   *:items-center *:p-2 *:h-full   bg-surface-card   border-t border-border-subtle `}
+        className={`*:text-xs grid   *:flex  *:justify-center   *:items-center *:p-2 *:h-full   bg-surface-card   border-t border-border-subtle `}
       >
         <td className="">#{o._id.slice(0, 9)}</td>
         <td className="">
-          <div className="flex items-center w-full gap-2 ">
+          <div className="flex items-center justify-center w-full gap-2 ">
             <div className="bg-surface-elevated  text-text-secondary rounded-full  p-2 w-9 h-9 flex justify-center items-center">
               {o.user?.username.charAt(0) || "U"}
             </div>

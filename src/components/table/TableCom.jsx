@@ -9,11 +9,11 @@ function TableCom({ isLoading,tbody,thead,Arrycolumns,gridColumns}) {
 return (
     <table className="bg-surface-card  md:w-full h-auto px-8 ">
       <thead>
-        <tr style={{gridTemplateColumns:gridColumns}} className={`*:text-sm  grid cursor-pointer  gap-8 *:p-2    px-8  bg-surface-card   border-t border-border-subtle *:text-text-muted`}>
+        <tr style={{gridTemplateColumns:gridColumns}} className={`*:text-xs  grid cursor-pointer  gap-8 *:p-2    px-8  bg-surface-card   border-t border-border-subtle *:text-text-muted`}>
          {thead}
         </tr>
       </thead>
-      {isLoading ? (<TableSkeleton columns={Arrycolumns.length} gridColumns={gridColumns} />) :
+      {isLoading  ? (<TableSkeleton columns={Arrycolumns.length} gridColumns={gridColumns} />) :
       <tbody className="*:hover:bg-surface-elevated *:cursor-pointer *:text-text-muted">
       {tbody}
       </tbody>

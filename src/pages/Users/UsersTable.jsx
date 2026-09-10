@@ -4,15 +4,11 @@ import { Check, X } from "lucide-react";
 
 const UsersTable = () => {
     const { data: usersData, isLoading } = useUsers(1);
-
     const ThTable = ["User", "Role", "Verified", "Actions"];
-
-
     const roleStyles = {
         admin: "bg-fuchsia-500/10 text-fuchsia-500 border-fuchsia-500",
         customer: "bg-accent-light text-accent-hover border-border-subtle",
     };
-
     const gridColumns = "2fr 1fr 1fr 1fr";
 
     const thead = ThTable?.map((title, index) => {
