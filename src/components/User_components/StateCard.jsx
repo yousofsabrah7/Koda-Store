@@ -6,7 +6,7 @@ import { useUsers } from '../../services/apiHooks/usersHook';
 const Statecard = () => {
   const { data, isLoading, isError } = useUsers();
 
-  if (isLoading) return <p className="text-white mx-12">Loading stats...</p>;
+  if (isLoading) return <p className="text-text-secondary mx-12">Loading stats...</p>;
   if (isError) return <p className="text-red-400 mx-12">Failed to load stats.</p>;
 
   const users = data?.users || [];
@@ -16,12 +16,12 @@ const Statecard = () => {
   const totalCustomers = users.filter((u) => u.role !== 'admin').length;
   const totalVerified = users.filter((u) => u.isVerified === true).length;
 
-  const statsData = [
-    { label: "Total Users", value: totalUsers, icon: faUsers, color: 'bg-red-500' },
-    { label: "Admins", value: totalAdmins, icon: faShieldHalved, color: 'bg-red-500' },
-    { label: "Customers", value: totalCustomers, icon: faUsers, color: 'bg-red-500' },
-    { label: "Verified", value: totalVerified, icon: faUserCheck, color: 'bg-red-500' },
-  ];
+const statsData = [
+  { label: "Total Users", value: totalUsers, icon: faUsers, color: 'bg-[#cf7142ff]' },
+  { label: "Admins", value: totalAdmins, icon: faShieldHalved, color: 'bg-blue-500' },
+  { label: "Customers", value: totalCustomers, icon: faUsers, color: 'bg-emerald-500' },
+  { label: "Verified", value: totalVerified, icon: faUserCheck, color: 'bg-purple-500' },
+];
 
   return (
     <div className="flex gap-4 mx-12">
