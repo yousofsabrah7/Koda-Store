@@ -10,10 +10,10 @@ import {
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 
-export const useProducts = () => {
+export const useProducts = (page, limit, search, filter = {}) => {
   return useQuery({
-    queryKey: ["products"],
-    queryFn: getAllProducts,
+    queryKey: ["products", page, limit, search, filter],
+    queryFn: () => getAllProducts(page, limit, search, filter),
   });
 };
 
@@ -35,14 +35,10 @@ export const useCreateProduct = () => {
   });
 };
 
-export const useSearchProducts = (productId) => {
-  const dispatch = useDispatch();
-
+export const useSearchProducts = (page, limit, search, filter = {}) => {
   return useQuery({
-    queryKey: ["searchProducts", productId],
-    queryFn: () => searchProducts(productId),
-    enabled: !!productId,
-    staleTime: 1000 * 60 * 5,
+    queryKey: ["searchProducts", page, limit, search, filter],
+    queryFn: () => searchProducts(page, limit, search, filter),
   });
 };
 
@@ -61,7 +57,7 @@ export const useDeleteProduct = () => {
   const dispatch = useDispatch();
 
   return useMutation({
-    mutationFn: () => deleteProduct(),
+    mutationFn: (id) => deleteProduct(id),
     onSuccess: () => {
       toast.success("Product deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["products"] });

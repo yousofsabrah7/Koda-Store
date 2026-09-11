@@ -1,7 +1,9 @@
 import apiClient from "../../config/apiClient";
 
-export const getAllProducts = async () => {
-  const response = await apiClient.get("/products");
+export const getAllProducts = async (page, limit, search, filter) => {
+  const response = await apiClient.get(
+    `/products?page=${page}&limit=${limit}&category=${filter.category}&subcategory=${filter.subcategory}&brand=${filter.brand}&minPrice=${filter.minPrice}&maxPrice=${filter.maxPrice}&search=${search}&sort=${filter.sort}`,
+  );
   return response.data;
 };
 

@@ -7,12 +7,11 @@ import {
   updateOrderStatus,
 } from "../api/ordersApi";
 import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 export const useAdminDashboard = () => {
   const dispatch = useDispatch();
-
   const query = useQuery({
     queryKey: ["adminDashboard"],
     queryFn: getAdminDashboard,
@@ -20,7 +19,6 @@ export const useAdminDashboard = () => {
   useEffect(() => {
     if (query.isSuccess) {
       //if success
-      
     }
   }, []);
 
@@ -40,7 +38,7 @@ export const useAdminCart = (page, limit) => {
 
   const query = useQuery({
     queryKey: ["adminCart", page, limit],
-    queryFn:()=> getAdminCart(page, limit),
+    queryFn: () => getAdminCart(page, limit),
     enabled: !!page || !!limit,
   });
   useEffect(() => {
@@ -70,12 +68,11 @@ export const useAdminCart = (page, limit) => {
 //   sortDir
 // }
 
-export const useAllOrders = (page, limit, filter) => {
+export const useAllOrders = (page, limit, filter = "") => {
   const dispatch = useDispatch();
-
   const query = useQuery({
     queryKey: ["orders", page, limit, filter],
-    queryFn:()=> getAllOrders(page, limit, filter),
+    queryFn: () => getAllOrders(page, limit, filter),
     enabled: !!page || !!limit || !!filter,
   });
   useEffect(() => {
@@ -100,7 +97,7 @@ export const useOrderById = (orderId) => {
 
   const query = useQuery({
     queryKey: ["order", orderId],
-    queryFn:()=> getOrderById(orderId),
+    queryFn: () => getOrderById(orderId),
     enabled: !!orderId,
   });
   useEffect(() => {
@@ -121,11 +118,10 @@ export const useOrderById = (orderId) => {
 };
 export const useOrderStatus = () => {
   const queryClient = useQueryClient();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   return useMutation({
-    mutationFn: ({ orderId, status }) =>
-      updateOrderStatus(orderId, status),
+    mutationFn: ({ orderId, status }) => updateOrderStatus(orderId, status),
 
     onSuccess: (_, variables) => {
       toast.success("Order status updated successfully");

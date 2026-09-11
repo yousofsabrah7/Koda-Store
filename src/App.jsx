@@ -8,9 +8,10 @@ import Products from "./pages/Products";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
 import AddProduct from "./pages/AddProduct";
-import Cart from "./pages/Cart";
+import Wishlist from "./pages/Wishlist";
 import Settings from "./pages/Settings";
 import HomeDashboard from "./components/dashboard/HomeDashboard";
+import ViewProduct from "./pages/Products/viewProduct";
 
 function App() {
   const [isDark, setIsDark] = useState(() => {
@@ -45,11 +46,11 @@ const [modal,Setmodal]=useState(false)
             <Route path="users" element={<Users modal={modal} Setmodal={Setmodal} />} />
             <Route path="products" element={<Products />} />
             {/* <Route path="products/edit/:id" element={<EditProduct />} /> */}
-            {/* <Route path="products/view/:id" element={<ViewProduct />} /> */}
+            <Route path="products/view/:id" element={<ViewProduct />} />
             <Route path="product/new" element={<AddProduct />} />
             <Route path="orders" element={<Orders />} />
             {/* <Route path="orders/:id" element={<OrderDetails />} /> */}
-            <Route path="carts" element={<Cart />} />
+            <Route path="wishlist" element={<Wishlist />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
