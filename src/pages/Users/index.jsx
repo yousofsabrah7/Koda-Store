@@ -1,46 +1,44 @@
 import { useEffect, useState } from "react";
-import { getAllUsers } from "../../services/endpointapi";
+import { useDispatch,useSelector } from "react-redux";
+import { fetchUsers,createUser } from "../../redux/usersSlice";
 import UsersTable from "./UserTable";
 import AddUserModal from "./AddUser";
 import { FaUsers, FaUserCheck, FaUserShield, FaUserPlus, FaSearch } from "react-icons/fa";
 
 const Users = () => {
-  const [users, setUsers] = useState([]);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const {list:users,loading} = useSelector((state) => state.users)
+  useEffect(() => {
+    dispatch(fetchUsers())
+  })
+    const [search, setSearch] = useState("");
+ 
   const [showAddModal, setShowAddModal] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [recentlyAdded, setRecentlyAdded] = useState([]); 
 
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const data = await getAllUsers();
-      setUsers(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.log(err);
-      setUsers([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  // 
+useEffect(() => {
+  dispatch(fetchUsers())
+},[dispatch])
 
   const filteredUsers = users.filter((u) =>
     u.username?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleAddUser = (newUser) => {
-    setUsers([...users, newUser]);
-    setRecentlyAdded([newUser, ...recentlyAdded]); 
-        setShowAddModal(false);
-    setSuccessMsg(`Done"${newUser.username}"Good`);
-    setTimeout(() => setSuccessMsg(""), 3000);
-  };
-
+  // const handleAddUser = (newUser) => {
+  //   setUsers([...users, newUser]);
+  //   setRecentlyAdded([newUser, ...recentlyAdded]); 
+  //       setShowAddModal(false);
+  //   setSuccessMsg(`Done"${newUser.username}"Good`);
+  //   setTimeout(() => setSuccessMsg(""), 3000);
+  // };
+const handleAddUser= async(newUser) => {
+  await dispatch(createUser(newUser));
+  setShowAddModal(false);
+  setSuccessMsg(`Done"${newUser.username}" success`);
+  setTimeout(() => setSuccessMsg("") , 3000)
+};
   const stats = [
     { label: "Total Users", value: users.length, icon: <FaUsers /> },
     { label: "Admins", value: users.filter((u) => u.role === "admin").length, icon: <FaUserShield /> },

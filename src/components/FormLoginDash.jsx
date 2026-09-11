@@ -1,6 +1,6 @@
 import { LockKeyhole, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useLogin } from "../services/hooksApi";
+import { useLoginUser } from "../services/hooksApi";
 import { useState } from "react";
 function FormLogin() {
   // State
@@ -8,7 +8,7 @@ function FormLogin() {
   const [password1, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const { mutateAsync, isPending, isSuccess, isError, error, data } =
-    useLogin();
+    useLoginUser();
   // Navigate
   const navigate = useNavigate();
   // test validation input
@@ -36,12 +36,13 @@ function FormLogin() {
     if (!validate()) return;
     try {
       const response = await mutateAsync({
-        email,
-        password,
-      });
-      if (response?.user?.role === "admin") {
-        navigate("/");
-      }
+  email,
+  password,
+});
+console.log("شكل الـ response:", response);
+if (response?.user?.role === "admin") {
+  navigate("/");
+}
     } catch (error) {
       //err
     }
