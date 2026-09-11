@@ -17,7 +17,7 @@ function Sidebar({ showSidebar }) {
             : "max-[1050px]:-translate-x-full"
         }`}
       >
-        <div className="mb-5">
+        <div className="mb-2">
           <h4 className="tracking-[2px] text-accent mb-[3px] font-mono text-xs uppercase font-bold">
             {" "}
             Commerce{" "}
@@ -28,8 +28,8 @@ function Sidebar({ showSidebar }) {
           </h3>
         </div>
 
-        <nav className="w-[90%] py-[5px]">
-          <ul className="list-none mt-[10px] mb-[5px] space-y-1">
+        <nav className="w-[90%] py-[2px]">
+          <ul className="list-none mt-[5px] mb-[5px] space-y-1">
             <li className="mt-[2px] h-[48px] rounded-[15px] flex items-center text-[16px] transition duration-200 hover:bg-white/20">
               <NavLink
                 to="/"
@@ -130,11 +130,11 @@ function Sidebar({ showSidebar }) {
           </ul>
         </nav>
 
-        <div className="mt-auto w-[95%] h-[130px] rounded-[25px] bg-surface-elevated border border-border-subtle py-[10px] px-[18px] text-text-secondary text-[18px]">
+        <div className="mt-auto w-[95%] rounded-[25px] bg-surface-elevated border border-border-subtle py-5 pl-3 pr-5 text-text-secondary text-[20px]">
           <h4 className="text-[15px] tracking-[2px] text-emerald-500 font-bold">
-            {" "}
-            Live{" "}
-          </h4>
+             {""}
+             Live {""} 
+             </h4>
           <p className="text-text-muted text-sm mt-1">
             Connected to the E-commerce API
           </p>

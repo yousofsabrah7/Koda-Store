@@ -1,13 +1,14 @@
 import {
-  dashboardStats,
-  orderStatuses,
-  topProducts,
-  recentOrders,
+  getDashboardStats,
+  getOrderStatuses,
+  getTopProducts,
+  getRecentOrders,
 } from "./DashBoardMockData";
 import StatCard from "./StatCard";
 import OrderStatusCard from "./OrderStatusCard";
 import Header from "../UI/Header";
-
+import { useAdminDashboard } from "../../services/apiHooks/OrdersHook"
+import RevenueChart from "../Chart/RevenueChart";
 const HomeDashboard = () => {
   // const cardStyles = {
   //     orders: "bg-emerald-400",
@@ -17,7 +18,20 @@ const HomeDashboard = () => {
   //     topProduct: "bg-purple-500",
   //     users: "bg-slate-400",
   // };
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useAdminDashboard();
+
+  const dashboard = data?.dashboard;
+
+  const dashboardStats = getDashboardStats(dashboard);
+  const orderStatuses = getOrderStatuses(dashboard)
+  const topProducts = getTopProducts(dashboard)
+  const recentOrders = getRecentOrders(dashboard)
   return (
+    
     <div className="p-4 sm:p-6 lg:p-8 min-h-screen bg-surface-base">
       <Header
         title={"Admin overview"}
@@ -38,7 +52,7 @@ const HomeDashboard = () => {
           />
         ))}
       </div>
-
+      <RevenueChart data={data?.dashboard?.dailyRevenue || []} />
       <div className="medium mt-8 flex flex-col lg:flex-row gap-8">
         <div className="orderStatus w-full lg:w-[55%] border border-border-subtle bg-surface-card p-5 sm:p-6 lg:p-8 rounded-3xl shadow-xs">
           <div className="top flex flex-row items-center justify-between gap-4">
@@ -92,13 +106,14 @@ const HomeDashboard = () => {
                   </p>
 
                   <p className="text-sm font-mono sm:text-base text-text-muted">
-                    {product.unitsSold} units sold • {product.revenue}
+                    {product.unitsSold} units sold • ${product.revenue}
                   </p>
                 </div>
               </article>
             ))}
           </div>
         </div>
+
       </div>
       <div className="bottom mt-8 w-full border border-border-subtle bg-surface-card p-5 sm:p-6 lg:p-8 rounded-3xl shadow-xs">
         <div className="top flex flex-row items-center justify-between gap-4">
@@ -113,32 +128,38 @@ const HomeDashboard = () => {
           </div>
 
           <p className="bg-accent-light border border-accent/20 text-xs text-accent rounded-full py-1 px-3 w-fit font-mono font-medium">
-            5 orders
+            {recentOrders.length} orders
           </p>
         </div>
-        <div className="rounded-3xl flex flex-col p-4 gap-4 bg-surface-card">
+
+        <div className="flex flex-col gap-4 mt-6">
           {recentOrders.map((order) => (
             <div
               key={order.id}
-              className="border border-border-subtle bg-surface-elevated/60 rounded-3xl flex flex-col md:flex-row md:justify-between p-4 items-start gap-2"
+              className="border border-border-subtle bg-surface-elevated/60 rounded-3xl flex flex-col md:flex-row md:items-center md:justify-between px-5 py-6 gap-4"
             >
-              <div>
-                <h2 className="font-semibold break-words text-text-primary">
+              <div className="min-w-0">
+                <h2 className="font-semibold text-text-primary">
                   {order.customer}
                 </h2>
-                <p className="text-xs break-words font-mono text-text-muted">
-                  {order.product} {order.date}
+
+                <p className="text-xs font-mono text-text-muted mt-1">
+                  {order.product} • {order.date}
                 </p>
               </div>
 
-              <p className="break-words text-text-secondary">
-                <span className="bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-600 dark:text-emerald-400 rounded-full py-1 px-3 w-fit mr-3 font-medium">
+              <div className="flex items-center gap-4 shrink-0">
+                <span className="bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-600 dark:text-emerald-400 rounded-full py-1 px-3 font-medium">
                   {order.status}
-                </span>{" "}
-                <span className="font-mono font-bold text-text-primary">
-                  ${order.total}
                 </span>
-              </p>
+
+                <span className="font-mono font-bold text-text-primary">
+                  ${Number(order.total).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+              </div>
             </div>
           ))}
         </div>
