@@ -4,28 +4,38 @@ import { LuUsers } from "react-icons/lu";
 import { AiFillProduct } from "react-icons/ai";
 import { IoIosAdd } from "react-icons/io";
 import { FaRegFileAlt } from "react-icons/fa";
-import { IoCartOutline } from "react-icons/io5";
+import { IoCartOutline, IoClose } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 
-function Sidebar({ showSidebar }) {
+function Sidebar({ showSidebar, setShowSidebar }) {
   return (
     <div className="sidebar-nav">
       <div
-        className={`sidebar pt-[23px] pb-[24px] pl-[25px] w-[285px] transition duration-300 ease-linear h-screen bg-surface-card text-text-primary border-r border-border-subtle fixed left-0 top-0 bottom-0 z-[6] overflow-auto flex flex-col ${
-          showSidebar
-            ? "max-[1050px]:translate-x-0"
-            : "max-[1050px]:-translate-x-full"
-        }`}
+        className={`sidebar pt-[23px] pb-[24px] pl-[25px] w-[285px] transition duration-300 ease-linear h-screen bg-surface-card text-text-primary border-r border-border-subtle fixed top-0 left-0 z-40 overflow-auto flex flex-col ${
+          showSidebar ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0`}
       >
-        <div className="mb-2">
-          <h4 className="tracking-[2px] text-accent mb-[3px] font-mono text-xs uppercase font-bold">
-            {" "}
-            Commerce{" "}
-          </h4>
-          <h3 className="font-display font-bold text-text-primary text-lg">
-            {" "}
-            Admin Panel{" "}
-          </h3>
+        <div className="flex items-center justify-between">
+          <div className="mb-2">
+            <h4 className="tracking-[2px] text-accent mb-[3px] font-mono text-xs uppercase font-bold">
+              {" "}
+              E-Commerce{" "}
+            </h4>
+            <h3 className="font-display font-bold text-text-primary text-lg">
+              {" "}
+              Admin Panel{" "}
+            </h3>
+          </div>
+          <div>
+            <button
+              className="p-1.5 lg:hidden border rounded-lg mr-2 text-secondary hover:text-text-primary cursor-pointer"
+              onClick={() => {
+                setShowSidebar(false);
+              }}
+            >
+              <IoClose size={20} />
+            </button>
+          </div>
         </div>
 
         <nav className="w-[90%] py-[2px]">
@@ -102,7 +112,7 @@ function Sidebar({ showSidebar }) {
 
             <li className="mt-[2px] h-[48px] rounded-[15px] mb-[2px] flex items-center text-[16px] transition duration-200">
               <NavLink
-                to="/carts"
+                to="/wishlist"
                 className={({ isActive }) =>
                   isActive
                     ? "flex items-center w-full h-full no-underline rounded-[15px] pl-[15px] bg-accent-light text-accent text-[17px] border border-accent/20 font-semibold"
@@ -110,7 +120,7 @@ function Sidebar({ showSidebar }) {
                 }
               >
                 <IoCartOutline className="text-[18px] mr-[6px]" />
-                Carts
+                Wishlist
               </NavLink>
             </li>
 
@@ -132,9 +142,9 @@ function Sidebar({ showSidebar }) {
 
         <div className="mt-auto w-[95%] rounded-[25px] bg-surface-elevated border border-border-subtle py-5 pl-3 pr-5 text-text-secondary text-[20px]">
           <h4 className="text-[15px] tracking-[2px] text-emerald-500 font-bold">
-             {""}
-             Live {""} 
-             </h4>
+            {""}
+            Live {""}
+          </h4>
           <p className="text-text-muted text-sm mt-1">
             Connected to the E-commerce API
           </p>

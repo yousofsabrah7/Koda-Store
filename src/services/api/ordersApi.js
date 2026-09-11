@@ -11,7 +11,6 @@ export const getAdminCart = async (page, limit) => {
 };
 
 export const getAllOrders = async (page, limit, filter = {}) => {
-  console.log(filter)
   const response = await apiClient.get("/orders/admin", {
     params: {
       page,
@@ -34,7 +33,7 @@ export const getOrderById = async (orderId) => {
   return response.data;
 };
 
-export const updateOrderStatus = async (payload, orderId) => {
+export const updateOrderStatus = async (orderId, payload) => {
   const response = await apiClient.patch(
     `/orders/admin/${orderId}/status`,
     payload,

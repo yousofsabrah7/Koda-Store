@@ -1,8 +1,15 @@
+import ErrorState from "./Error";
+
 const Table = ({
   columns = [],
   rows = [],
   isLoading = false,
+  isError = false,
+  onRowClick,
 }) => {
+  if (isError) {
+    return <ErrorState />;
+  }
   return (
     <div
       className="
@@ -16,7 +23,6 @@ const Table = ({
     >
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-[800px] border-collapse">
-
           {/* =========================
               THEAD
           ========================= */}
@@ -33,6 +39,7 @@ const Table = ({
                 <th
                   key={column.key}
                   className="
+                    whitespace-nowrap
                     px-5
                     py-4
                     text-left
@@ -41,7 +48,6 @@ const Table = ({
                     uppercase
                     tracking-[1.5px]
                     text-text-muted
-                    whitespace-nowrap
                   "
                 >
                   {column.label}
@@ -60,25 +66,32 @@ const Table = ({
             ) : rows.length > 0 ? (
               rows.map((row) => (
                 <tr
+                  title={"Admin Note: " + row?.originalOrder?.adminNote}
                   key={row.id}
-                  className="
+                  onClick={() => onRowClick?.(row)}
+                  className={`
                     border-b
                     border-border-subtle
                     last:border-b-0
                     transition-colors
                     duration-200
-                    hover:bg-accent-light
-                  "
+
+                    ${
+                      onRowClick
+                        ? "cursor-pointer hover:bg-accent-light"
+                        : "hover:bg-surface-elevated"
+                    }
+                  `}
                 >
                   {columns.map((column) => (
                     <td
                       key={column.key}
                       className="
+                        whitespace-nowrap
                         px-5
                         py-4
                         text-sm
                         text-text-secondary
-                        whitespace-nowrap
                       "
                     >
                       {renderCell(row[column.key], column)}
@@ -109,18 +122,13 @@ const Table = ({
   );
 };
 
-
 /* =========================
    Cell Renderer
 ========================= */
 
 const renderCell = (value, column) => {
   if (value === null || value === undefined) {
-    return (
-      <span className="text-text-muted">
-        —
-      </span>
-    );
+    return <span className="text-text-muted">—</span>;
   }
 
   /* Status */
@@ -132,19 +140,20 @@ const renderCell = (value, column) => {
   /* Payment */
 
   if (column.type === "payment") {
-    return (
-      <PaymentCell
-        status={value?.status}
-        method={value?.method}
-      />
-    );
+    return <PaymentCell status={value?.status} method={value?.method} />;
   }
 
   /* Money */
 
   if (column.type === "money") {
     return (
-      <span className="font-semibold tabular-nums text-text-primary">
+      <span
+        className="
+          font-semibold
+          tabular-nums
+          text-text-primary
+        "
+      >
         {Number(value).toLocaleString()} EGP
       </span>
     );
@@ -159,33 +168,25 @@ const renderCell = (value, column) => {
   return value;
 };
 
-
 /* =========================
    Status Badge
 ========================= */
 
 const StatusBadge = ({ status }) => {
   const styles = {
-    confirmed:
-      "text-accent-hover bg-accent-light border-accent/30",
+    confirmed: "text-accent-hover bg-accent-light border-accent/30",
 
-    shipped:
-      "text-accent-hover bg-accent-light border-accent/30",
+    shipped: "text-accent-hover bg-accent-light border-accent/30",
 
-    processing:
-      "text-accent-hover bg-accent-light border-accent/30",
+    processing: "text-accent-hover bg-accent-light border-accent/30",
 
-    pending:
-      "text-accent-hover bg-accent-light border-accent/30",
+    pending: "text-accent-hover bg-accent-light border-accent/30",
 
-    delivered:
-      "text-emerald-600 bg-emerald-500/10 border-emerald-500/20",
+    delivered: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20",
 
-    cancelled:
-      "text-red-500/80 bg-red-500/10 border-red-500/20",
+    cancelled: "text-red-500/80 bg-red-500/10 border-red-500/20",
 
-    returned:
-      "text-blue-500/80 bg-blue-500/10 border-blue-500/20",
+    returned: "text-blue-500/80 bg-blue-500/10 border-blue-500/20",
   };
 
   const normalizedStatus = status?.toLowerCase();
@@ -195,8 +196,7 @@ const StatusBadge = ({ status }) => {
     "text-text-secondary bg-surface-elevated border-border-subtle";
 
   const label = normalizedStatus
-    ? normalizedStatus.charAt(0).toUpperCase() +
-      normalizedStatus.slice(1)
+    ? normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1)
     : "Unknown";
 
   return (
@@ -214,15 +214,12 @@ const StatusBadge = ({ status }) => {
         ${style}
       `}
     >
-      <span className="text-[10px]">
-        ●
-      </span>
+      <span className="text-[10px]">●</span>
 
       {label}
     </span>
   );
 };
-
 
 /* =========================
    Payment
@@ -239,9 +236,7 @@ const PaymentCell = ({ status, method }) => {
 
   const normalizedStatus = status?.toLowerCase();
 
-  const statusColor =
-    statusStyles[normalizedStatus] ||
-    "text-text-secondary";
+  const statusColor = statusStyles[normalizedStatus] || "text-text-secondary";
 
   return (
     <div className="flex flex-col gap-1">
@@ -252,10 +247,7 @@ const PaymentCell = ({ status, method }) => {
           ${statusColor}
         `}
       >
-        {status
-          ? status.charAt(0).toUpperCase() +
-            status.slice(1)
-          : "—"}
+        {status ? status.charAt(0).toUpperCase() + status.slice(1) : "—"}
       </span>
 
       {method && (
@@ -266,21 +258,21 @@ const PaymentCell = ({ status, method }) => {
             text-text-muted
           "
         >
-          {method.charAt(0).toUpperCase() +
-            method.slice(1)}
+          {method.charAt(0).toUpperCase() + method.slice(1)}
         </span>
       )}
     </div>
   );
 };
 
-
 /* =========================
    Skeleton
 ========================= */
 
 const TableSkeleton = ({ columns }) => {
-  return Array.from({ length: 5 }).map((_, rowIndex) => (
+  return Array.from({
+    length: 5,
+  }).map((_, rowIndex) => (
     <tr
       key={rowIndex}
       className="
@@ -289,11 +281,10 @@ const TableSkeleton = ({ columns }) => {
         last:border-b-0
       "
     >
-      {Array.from({ length: columns }).map((_, columnIndex) => (
-        <td
-          key={columnIndex}
-          className="px-5 py-5"
-        >
+      {Array.from({
+        length: columns,
+      }).map((_, columnIndex) => (
+        <td key={columnIndex} className="px-5 py-5">
           <div
             className="
               h-3

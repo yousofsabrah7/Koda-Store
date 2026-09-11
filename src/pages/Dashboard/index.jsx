@@ -1,19 +1,28 @@
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
+
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
-/* This is the exact rule mentioned earlier as "lifting state up" — 
-you lift it up only as far as needed to reach every component that requires it,
- then pass it back down via props to whoever's in between. */
-const index = ({ isDark, setIsDark }) => {
+const DashboardLayout = ({ isDark, setIsDark }) => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
     <div
-      className={`${isDark ? "dark" : ""} bg-surface-base text-text-primary min-h-screen transition-colors`}
+      className={`
+        min-h-screen
+        bg-surface-base
+        text-text-primary
+        transition-colors
+        duration-300
+        ${isDark ? "dark" : ""}
+      `}
     >
-      <Sidebar isDark={isDark} showSidebar={showSidebar} />
+      <Sidebar
+        isDark={isDark}
+        showSidebar={showSidebar}
+        setShowSidebar={setShowSidebar}
+      />
 
       <main>
         <Navbar
@@ -31,4 +40,4 @@ const index = ({ isDark, setIsDark }) => {
   );
 };
 
-export default index;
+export default DashboardLayout;

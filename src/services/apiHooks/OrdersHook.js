@@ -7,7 +7,7 @@ import {
   updateOrderStatus,
 } from "../api/ordersApi";
 import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 export const useAdminDashboard = () => {

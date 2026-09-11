@@ -6,7 +6,8 @@ export const adminWishlist = async (page, limit) => {
   );
   return response.data;
 };
+
 export const adminWishlistStatus = async () => {
-  const response = await apiClient.get(`/wishlists/admin/status`);
+  const response = await apiClient.get(`/wishlists/admin/stats`);
   return response.data;
 };
