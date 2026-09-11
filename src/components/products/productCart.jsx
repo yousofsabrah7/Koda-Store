@@ -8,6 +8,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Loading from "../../utils/Loading";
+import ErrorState from "../UI/Error";
 
 function ProductsCard({ products, isLoading, isError }) {
   const deleteProduct = useDeleteProduct();
@@ -22,7 +23,7 @@ function ProductsCard({ products, isLoading, isError }) {
   }
 
   if (isError) {
-    return <div className="w-[90%]">Wrong</div>;
+    return <ErrorState/>
   }
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">

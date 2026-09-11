@@ -29,6 +29,7 @@ export const orderFilters = [
     label: "Sort By",
     options: [
       { value: "createdAt", label: "Created At" },
+      { value: "updatedAt", label: "Updated At" },
       { value: "totalPrice", label: "Total Price" },
     ],
   },
