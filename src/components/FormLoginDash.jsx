@@ -1,6 +1,8 @@
 import { LockKeyhole, Mail } from "lucide-react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { useLogin } from "../services/apiHooks/authHook";
+
+import { useNavigate } from "react-router-dom";
+import { useLoginUser } from "../services/hooksApi";
+
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectToken } from "../redux/services/authSlice";
@@ -11,7 +13,7 @@ function FormLogin() {
   const [password1, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const { mutateAsync, isPending, isSuccess, isError, error, data } =
-    useLogin();
+    useLoginUser();
   // Navigate
   const navigate = useNavigate();
   const token = useSelector(selectToken);
@@ -43,12 +45,13 @@ function FormLogin() {
     if (!validate()) return;
     try {
       const response = await mutateAsync({
-        email,
-        password,
-      });
-      if (response?.user?.role === "admin") {
-        navigate("/");
-      }
+  email,
+  password,
+});
+console.log("شكل الـ response:", response);
+if (response?.user?.role === "admin") {
+  navigate("/");
+}
     } catch (error) {
       //err
       setEmail("");
