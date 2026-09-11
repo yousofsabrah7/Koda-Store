@@ -1,8 +1,9 @@
 // src/components/products/productCart.jsx
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination  } from "swiper/modules";
 import { Star, Eye, Pencil, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useDeleteProduct } from "../../services/apiHooks/productsHook";
+import { useNavigate } from "react-router-dom";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -11,6 +12,7 @@ import Loading from "../../utils/Loading";
 
 function ProductsCard({ products, isLoading, isError }) {
   const deleteProduct = useDeleteProduct();
+  const navigate = useNavigate();
 
   const handleDelete = (id) => {
     if (window.confirm("Are You Sure To Delete ? ")) {
@@ -24,6 +26,7 @@ function ProductsCard({ products, isLoading, isError }) {
   if (isError) {
     return <div className="w-[90%]">Wrong</div>;
   }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
       {products.map((product) => {
@@ -40,7 +43,6 @@ function ProductsCard({ products, isLoading, isError }) {
           price,
           discount,
           tags = [],
-          onView,
           onEdit,
           onQuickEdit,
         } = product;
@@ -152,7 +154,9 @@ function ProductsCard({ products, isLoading, isError }) {
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
                   <button
-                    onClick={onView}
+                    onClick={() => {
+                      navigate(`/products/view/${id}`)
+                    }}
                     className="cursor-pointer flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 bg-surface-elevated text-text-secondary hover:bg-border-subtle hover:text-text-primary transition-colors text-sm font-medium whitespace-nowrap"
                   >
                     <Eye size={16} />
