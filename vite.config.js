@@ -7,12 +7,4 @@ export default defineConfig({
   server: {
     port: 5174,
   },
-  proxy: {
-    "/api": {
-      target: "https://e-commerce-api-3wara.vercel.app",
-      changeOrigin: true,
-      secure: true,
-      rewrite: (path) => path.replace(/^\/api/, ""),
-    },
-  },
 });

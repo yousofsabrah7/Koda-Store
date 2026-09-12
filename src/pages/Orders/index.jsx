@@ -120,7 +120,10 @@ const index = () => {
     if (!row?.originalOrder) return;
 
     setSelectedOrder(row.originalOrder);
-    setShowOrder(true);
+
+    requestAnimationFrame(() => {
+      setShowOrder(true);
+    });
   };
 
   // =========================
@@ -370,6 +373,7 @@ const index = () => {
 
       <ViewOrder
         showOrder={showOrder}
+        selectedOrder={selectedOrder}
         setShowOrder={handleCloseOrder}
         order={selectedOrder}
         onStatusChange={handleStatusChange}
