@@ -23,23 +23,16 @@ const Toastuser = ({ message, type = "success" }) => {
   };
 
   return (
-    <div
-      className={`
-        fixed top-5 left-1/2 -translate-x-1/2
-        bg-white text-black
-        px-5 py-3
-        rounded-xl
-        shadow-lg
-        z-50
-        border-l-4
-        flex items-center gap-3
-        min-w-[280px]
-        ${styles[type]}
-      `}
-    >
-      <FontAwesomeIcon icon={icons[type]} />
-      <span className="text-black">{message}</span>
-    </div>
+   <div className={`
+  fixed top-5 left-1/2 -translate-x-1/2
+  bg-surface-card text-text-primary
+  px-5 py-3 rounded-xl shadow-lg z-50
+  border-l-4 flex items-center gap-3 min-w-[280px]
+  ${styles[type]}
+`}>
+  <FontAwesomeIcon icon={icons[type]} />
+  <span className="text-text-primary">{message}</span>
+</div>
   );
 };
 

@@ -11,40 +11,10 @@ import { useUsers } from "../../services/apiHooks/usersHook";
 const Statecard = () => {
   const { data, isLoading, isError } = useUsers();
 
-  if (isLoading) {
-    return (
-      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <div
-            key={index}
-            className="
-              h-[116px]
-              animate-pulse
-              rounded-2xl
-              border border-border-subtle
-              bg-surface-card
-            "
-          />
-        ))}
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div
-        className="
-          w-full rounded-2xl
-          border border-red-500/20
-          bg-red-500/5
-          px-5 py-4
-          text-sm text-red-500
-        "
-      >
-        Failed to load users statistics.
-      </div>
-    );
-  }
+  if (isLoading)
+    return <p className="text-text-secondary mx-12">Loading stats...</p>;
+  if (isError)
+    return <p className="text-red-400 mx-12">Failed to load stats.</p>;
 
   const users = data?.users || [];
 
@@ -65,21 +35,25 @@ const Statecard = () => {
       label: "Total Users",
       value: totalUsers,
       icon: faUsers,
+      color: "bg-[#cf7142ff]",
     },
     {
       label: "Admins",
       value: totalAdmins,
       icon: faShieldHalved,
+      color: "bg-blue-500",
     },
     {
       label: "Customers",
       value: totalCustomers,
       icon: faUsers,
+      color: "bg-emerald-500",
     },
     {
       label: "Verified",
       value: totalVerified,
       icon: faUserCheck,
+      color: "bg-purple-500",
     },
   ];
 
