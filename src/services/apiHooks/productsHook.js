@@ -79,9 +79,11 @@ export const useUpdateProduct = () => {
     onSuccess: () => {
       toast.success("Product updated successfully");
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({
-        queryKey: ["product", variables.id],
-      });
+      onSuccess: (_data, variables) => {
+        queryClient.invalidateQueries({
+          queryKey: ["product", variables.id],
+        });
+      };
     },
     onError: (error) => {
       const message =
