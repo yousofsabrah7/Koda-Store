@@ -22,6 +22,7 @@ const STATUS_OPTIONS = [
 
 const ViewOrder = ({
   showOrder,
+  selectedOrder,
   setShowOrder,
   order,
   onStatusChange,
@@ -72,10 +73,11 @@ const ViewOrder = ({
           bg-surface-card
           border-l border-border-subtle
           shadow-[-20px_0_50px_rgba(0,0,0,0.12)]
+          transform-gpu
           transition-transform duration-300 ease-out
           ${showOrder ? "translate-x-0" : "translate-x-full"}
         `}
-      >
+       >
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border-subtle px-5 py-4">

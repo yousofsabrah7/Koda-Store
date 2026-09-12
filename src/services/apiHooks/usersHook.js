@@ -1,6 +1,18 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+
 import toast from "react-hot-toast";
-import { addUser, deleteUser, getAllUsers, getUserById, updataUser } from "../api/usersApi";
+
+import {
+  addUser,
+  deleteUser,
+  getAllUsers,
+  getUserById,
+  updataUser,
+} from "../api/usersApi";
 
 export const useUsers = () => {
   return useQuery({
@@ -9,49 +21,78 @@ export const useUsers = () => {
   });
 };
 
-export const useUser = () => {
-  useQuery({
+export const useUser = (id) => {
+  return useQuery({
     queryKey: ["user", id],
     queryFn: () => getUserById(id),
-    enabled: !!id,
+    enabled: Boolean(id),
   });
 };
 
 export const useAddUser = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: addUser,
+
     onSuccess: () => {
       toast.success("Added user successfully");
+
+      queryClient.invalidateQueries({
+        queryKey: ["users"],
+      });
     },
+
     onError: (error) => {
-      const message = error?.response?.data?.message || "Failed to add user";
+      const message =
+        error?.response?.data?.message || "Failed to add user";
+
       toast.error(message);
     },
   });
 };
 
 export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ id, payload }) => updataUser(id, payload),
+
     onSuccess: () => {
-      toast.success("update user successfully");
+      toast.success("User updated successfully");
+
+      queryClient.invalidateQueries({
+        queryKey: ["users"],
+      });
     },
+
     onError: (error) => {
-      const message = error?.response?.data?.message || "Failed to updata user";
+      const message =
+        error?.response?.data?.message || "Failed to update user";
+
       toast.error(message);
     },
   });
 };
 
 export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: deleteUser,
+
     onSuccess: () => {
-      toast.success("delete user successfully");
+      toast.success("User deleted successfully");
+
+      queryClient.invalidateQueries({
+        queryKey: ["users"],
+      });
     },
+
     onError: (error) => {
       const message =
-        error?.response?.data?.message || "Failed to deleted user";
+        error?.response?.data?.message || "Failed to delete user";
+
       toast.error(message);
     },
   });
