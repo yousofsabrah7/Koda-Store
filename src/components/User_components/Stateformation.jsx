@@ -8,7 +8,7 @@ const Stateformation = ({ label, value, icon }) => {
         <p className="text-text-primary text-3xl font-bold mt-1">{value}</p>
       </div>
       <div
-        className={`w-11 h-11 rounded-xl flex items-center justify-center ${color}`}
+        className={`w-11 h-11 rounded-xl flex items-center justify-center`}
       >
         <FontAwesomeIcon icon={icon} className="text-white text-lg" />
       </div>

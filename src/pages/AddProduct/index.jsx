@@ -1,9 +1,3 @@
-import React from 'react'
+import AddProduct from './AddProduct';
 
-const index = () => {
-  return (
-    <div>Add Product</div>
-  )
-}
-
-export default index
+export default AddProduct;

@@ -8,6 +8,7 @@ import Products from "./pages/Products";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
 import AddProduct from "./pages/AddProduct";
+import EditProduct from "./pages/EditProduct";
 import Wishlist from "./pages/Wishlist";
 import Settings from "./pages/Settings";
 import HomeDashboard from "./components/dashboard/HomeDashboard";
@@ -45,11 +46,10 @@ const [modal,Setmodal]=useState(false)
             <Route index element={<HomeDashboard />} />
             <Route path="users" element={<Users modal={modal} Setmodal={Setmodal} />} />
             <Route path="products" element={<Products />} />
-            {/* <Route path="products/edit/:id" element={<EditProduct />} /> */}
+            <Route path="product/edit/:productId" element={<EditProduct />} />
             <Route path="products/view/:id" element={<ViewProduct />} />
             <Route path="product/new" element={<AddProduct />} />
             <Route path="orders" element={<Orders />} />
-            {/* <Route path="orders/:id" element={<OrderDetails />} /> */}
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="settings" element={<Settings />} />
           </Route>
