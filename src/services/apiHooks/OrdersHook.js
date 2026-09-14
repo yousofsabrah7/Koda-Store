@@ -1,143 +1,99 @@
-import { useDispatch } from "react-redux";
 import {
-  getAllOrders,
-  getOrderById,
-  getAdminCart,
-  getAdminDashboard,
-  updateOrderStatus,
-} from "../api/ordersApi";
-import { useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+
 import toast from "react-hot-toast";
 
-export const useAdminDashboard = () => {
-  const dispatch = useDispatch();
-  const query = useQuery({
-    queryKey: ["adminDashboard"],
-    queryFn: getAdminDashboard,
+import {
+  placeOrder,
+  getMyOrders,
+  getSingleOrder,
+  cancelOrder,
+} from "../api/ordersApi";
+
+
+
+
+export const useMyOrders = () => {
+  return useQuery({
+    queryKey: ["myOrders"],
+    queryFn: getMyOrders,
   });
-  useEffect(() => {
-    if (query.isSuccess) {
-      //if success
-    }
-  }, []);
-
-  useEffect(() => {
-    if (query.isError) {
-      const message =
-        query.error?.response?.data?.message || "Something went wrong";
-      toast.error(message);
-    }
-  }, [query.isError, query.error]);
-
-  return query;
 };
 
-export const useAdminCart = (page, limit) => {
-  const dispatch = useDispatch();
 
-  const query = useQuery({
-    queryKey: ["adminCart", page, limit],
-    queryFn: () => getAdminCart(page, limit),
-    enabled: !!page || !!limit,
+
+
+export const useSingleOrder = (orderId) => {
+  return useQuery({
+    queryKey: ["myOrder", orderId],
+    queryFn: () => getSingleOrder(orderId),
+    enabled: Boolean(orderId),
   });
-  useEffect(() => {
-    if (query.isSuccess) {
-      //if success
-    }
-  }, []);
-
-  useEffect(() => {
-    if (query.isError) {
-      const message =
-        query.error?.response?.data?.message || "Something went wrong";
-      toast.error(message);
-    }
-  }, [query.isError, query.error]);
-
-  return query;
 };
 
-// filter:{
-//   status,
-//   payment,
-//   method,
-//   from,
-//   to,
-//   sortBy,
-//   sortDir
-// }
 
-export const useAllOrders = (page, limit, filter = "") => {
-  const dispatch = useDispatch();
-  const query = useQuery({
-    queryKey: ["orders", page, limit, filter],
-    queryFn: () => getAllOrders(page, limit, filter),
-    enabled: !!page || !!limit || !!filter,
-  });
-  useEffect(() => {
-    if (query.isSuccess) {
-      //if success
-    }
-  }, []);
 
-  useEffect(() => {
-    if (query.isError) {
-      const message =
-        query.error?.response?.data?.message || "Something went wrong";
-      toast.error(message);
-    }
-  }, [query.isError, query.error]);
 
-  return query;
-};
-
-export const useOrderById = (orderId) => {
-  const dispatch = useDispatch();
-
-  const query = useQuery({
-    queryKey: ["order", orderId],
-    queryFn: () => getOrderById(orderId),
-    enabled: !!orderId,
-  });
-  useEffect(() => {
-    if (query.isSuccess) {
-      //if success
-    }
-  }, []);
-
-  useEffect(() => {
-    if (query.isError) {
-      const message =
-        query.error?.response?.data?.message || "Something went wrong";
-      toast.error(message);
-    }
-  }, [query.isError, query.error]);
-
-  return query;
-};
-export const useOrderStatus = () => {
+export const usePlaceOrder = () => {
   const queryClient = useQueryClient();
-  const dispatch = useDispatch();
 
   return useMutation({
-    mutationFn: ({ orderId, status }) => updateOrderStatus(orderId, status),
+    mutationFn: placeOrder,
 
-    onSuccess: (_, variables) => {
-      toast.success("Order status updated successfully");
-
+    onSuccess: () => {
+      // Refresh orders
       queryClient.invalidateQueries({
-        queryKey: ["orders"],
+        queryKey: ["myOrders"],
       });
 
+      // Refresh cart because the order was created
       queryClient.invalidateQueries({
-        queryKey: ["order", variables.orderId],
+        queryKey: ["cart"],
       });
+
+      toast.success("Order placed successfully");
     },
 
     onError: (error) => {
       const message =
-        error?.response?.data?.message || "Failed to update order status";
+        error?.response?.data?.message ||
+        "Failed to place order";
+
+      toast.error(message);
+    },
+  });
+};
+
+
+
+
+export const useCancelOrder = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: cancelOrder,
+
+    onSuccess: (_, orderId) => {
+      // Refresh order list
+      queryClient.invalidateQueries({
+        queryKey: ["myOrders"],
+      });
+
+      // Refresh specific order
+      queryClient.invalidateQueries({
+        queryKey: ["myOrder", orderId],
+      });
+
+      toast.success("Order cancelled successfully");
+    },
+
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to cancel order";
 
       toast.error(message);
     },

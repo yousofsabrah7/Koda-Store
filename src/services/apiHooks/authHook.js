@@ -1,22 +1,34 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+
+import {
+  useDispatch,
+  useSelector,
+} from "react-redux";
+
 import {
   selectToken,
-  setAdmin,
   setAuthorize,
   setLogin,
   setLogout,
   setProfile,
-  setRole,
 } from "../../redux/services/authSlice";
+
 import {
-  adminTest,
-  changeUserRole,
+  sendRegisterOTP,
+  verifyRegisterOTP,
   getProfile,
   loginUser,
   logoutUser,
+  sendForgotPasswordOTP,
+  verifyForgotPasswordOTP,
 } from "../api/authApi";
+
 import { useEffect } from "react";
 
 const setAuthToken = (token) => {
@@ -28,9 +40,23 @@ const setAuthToken = (token) => {
 };
 export const getAuthToken = () => localStorage.getItem("token");
 
-const useSendRegisterOTP = () => {
+export const useSendRegisterOTP = () => {
+  return useMutation({
+    mutationFn: sendRegisterOTP,
 
-}
+    onSuccess: () => {
+      toast.success("OTP sent successfully.");
+    },
+
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to send OTP.";
+
+      toast.error(message);
+    },
+  });
+};
 
 export const useLogin = () => {
   const queryClient = useQueryClient();

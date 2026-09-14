@@ -2,7 +2,24 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 
-import { adminWishlist, adminWishlistStatus } from "../api/wishlistApi";
+import {
+  adminWishlist,
+  adminWishlistStatus,
+} from "../api/wishlistApi";
+
+
+const useQueryErrorToast = (query) => {
+  useEffect(() => {
+    if (query.isError) {
+      const message =
+        query.error?.response?.data?.message || "Something went wrong";
+
+      toast.error(message);
+    }
+  }, [query.isError, query.error]);
+};
+
+
 
 export const useAdminWishlist = (page, limit) => {
   const query = useQuery({
@@ -11,31 +28,20 @@ export const useAdminWishlist = (page, limit) => {
     enabled: Boolean(page && limit),
   });
 
-  useEffect(() => {
-    if (query.isError) {
-      const message =
-        query.error?.response?.data?.message || "Something went wrong";
-
-      toast.error(message);
-    }
-  }, [query.isError, query.error]);
+  useQueryErrorToast(query);
 
   return query;
 };
+
+
 
 export const useAdminWishlistStatus = () => {
   const query = useQuery({
     queryKey: ["adminWishlistStatus"],
     queryFn: adminWishlistStatus,
   });
-  useEffect(() => {
-    if (query.isError) {
-      const message =
-        query.error?.response?.data?.message || "Something went wrong";
 
-      toast.error(message);
-    }
-  }, [query.isError, query.error]);
+  useQueryErrorToast(query);
 
   return query;
 };

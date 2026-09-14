@@ -14,12 +14,16 @@ import {
   updataUser,
 } from "../api/usersApi";
 
+
+
 export const useUsers = () => {
   return useQuery({
     queryKey: ["users"],
     queryFn: getAllUsers,
   });
 };
+
+
 
 export const useUser = (id) => {
   return useQuery({
@@ -29,6 +33,8 @@ export const useUser = (id) => {
   });
 };
 
+
+
 export const useAddUser = () => {
   const queryClient = useQueryClient();
 
@@ -36,7 +42,7 @@ export const useAddUser = () => {
     mutationFn: addUser,
 
     onSuccess: () => {
-      toast.success("Added user successfully");
+      toast.success("User added successfully");
 
       queryClient.invalidateQueries({
         queryKey: ["users"],
@@ -52,17 +58,24 @@ export const useAddUser = () => {
   });
 };
 
+
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ id, payload }) => updataUser(id, payload),
 
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       toast.success("User updated successfully");
 
+      // Refresh users list
       queryClient.invalidateQueries({
         queryKey: ["users"],
+      });
+
+      // Refresh specific user
+      queryClient.invalidateQueries({
+        queryKey: ["user", variables.id],
       });
     },
 
@@ -75,17 +88,25 @@ export const useUpdateUser = () => {
   });
 };
 
+
+
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: deleteUser,
 
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       toast.success("User deleted successfully");
 
+      // Refresh users list
       queryClient.invalidateQueries({
         queryKey: ["users"],
+      });
+
+      // Remove deleted user from cache
+      queryClient.removeQueries({
+        queryKey: ["user", id],
       });
     },
 
