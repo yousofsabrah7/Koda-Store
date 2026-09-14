@@ -31,6 +31,8 @@ import {
 
 import { useEffect } from "react";
 
+
+
 const setAuthToken = (token) => {
   if (token) {
     localStorage.setItem("token", token);
@@ -38,7 +40,12 @@ const setAuthToken = (token) => {
     localStorage.removeItem("token");
   }
 };
-export const getAuthToken = () => localStorage.getItem("token");
+
+export const getAuthToken = () => {
+  return localStorage.getItem("token");
+};
+
+
 
 export const useSendRegisterOTP = () => {
   return useMutation({
@@ -58,32 +65,101 @@ export const useSendRegisterOTP = () => {
   });
 };
 
+
+
+export const useVerifyRegisterOTP = () => {
+  return useMutation({
+    mutationFn: verifyRegisterOTP,
+
+    onSuccess: () => {
+      toast.success("OTP verified successfully.");
+    },
+
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to verify registration OTP.";
+
+      toast.error(message);
+    },
+  });
+};
+
+
+export const useSendForgotPasswordOTP = () => {
+  return useMutation({
+    mutationFn: sendForgotPasswordOTP,
+
+    onSuccess: () => {
+      toast.success("Password reset OTP sent successfully.");
+    },
+
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to send password reset OTP.";
+
+      toast.error(message);
+    },
+  });
+};
+
+
+
+export const useVerifyForgotPasswordOTP = () => {
+  return useMutation({
+    mutationFn: verifyForgotPasswordOTP,
+
+    onSuccess: () => {
+      toast.success("Password reset OTP verified successfully.");
+    },
+
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to verify password reset OTP.";
+
+      toast.error(message);
+    },
+  });
+};
+
+
+
 export const useLogin = () => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: loginUser,
+
     onSuccess: (response) => {
-        const token = response?.token;
-        if (token) {
-          setAuthToken(token);
-        }
-        queryClient.invalidateQueries({
-          queryKey: ["profile"],
-        });
-        dispatch(setLogin(response));
-        toast.success("Welcome back! Logged in successfully.");
+      const token = response?.token;
+
+      if (token) {
+        setAuthToken(token);
       }
+
+      queryClient.invalidateQueries({
+        queryKey: ["profile"],
+      });
+
+      dispatch(setLogin(response));
+
+      toast.success("Welcome back! Logged in successfully.");
     },
+
     onError: (error) => {
       const message =
         error?.response?.data?.message ||
         "Login failed. Please check your email and password.";
+
       toast.error(message);
     },
   });
 };
+
+
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
@@ -91,24 +167,38 @@ export const useLogout = () => {
 
   return useMutation({
     mutationFn: logoutUser,
+
     onSuccess: () => {
       queryClient.clear();
+
       setAuthToken(null);
+
       dispatch(setLogout());
+
       toast.success("Logged out successfully.");
     },
+
     onError: (error) => {
       queryClient.clear();
+
       setAuthToken(null);
+
+      dispatch(setLogout());
+
       const message =
-        error?.response?.data?.message || "An error occurred during logout.";
+        error?.response?.data?.message ||
+        "An error occurred during logout.";
+
       toast.error(message);
     },
   });
 };
 
+
+
 export const useProfile = () => {
   const dispatch = useDispatch();
+
   const token = useSelector(selectToken);
 
   const query = useQuery({
@@ -117,19 +207,37 @@ export const useProfile = () => {
     enabled: !!token,
   });
 
+
   useEffect(() => {
     if (query.isSuccess) {
       dispatch(setProfile(query.data));
     }
-  }, [query.isSuccess, query.data, dispatch]);
+  }, [
+    query.isSuccess,
+    query.data,
+    dispatch,
+  ]);
+
+
 
   useEffect(() => {
     if (query.isError) {
       const message =
-        query.error?.response?.data?.message || "Something went wrong";
-      dispatch(setAuthorize(query.error?.response?.status));
+        query.error?.response?.data?.message ||
+        "Something went wrong.";
+
+      dispatch(
+        setAuthorize(query.error?.response?.status)
+      );
+
       toast.error(message);
     }
-  }, [query.isError, query.error, dispatch, token]);
+  }, [
+    query.isError,
+    query.error,
+    dispatch,
+    token,
+  ]);
+
   return query;
 };
