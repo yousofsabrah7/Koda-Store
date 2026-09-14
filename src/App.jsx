@@ -1,9 +1,29 @@
-import React from 'react'
+import React, { useState } from "react";
+import { mockProducts } from "./components/data/mockProducts";
+import ProductGrid from "./components/shop/ProductGrid";
+
+const ItemsPerPage = 12;
 
 const App = () => {
-  return (
-    <div className='text-center text-3xl'>App</div>
-  )
-}
+  const [visibleCount, setVisibleCount] = useState(ItemsPerPage);
+  const displayedProducts = mockProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < mockProducts.length;
 
-export default App
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + ItemsPerPage);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50/50 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <ProductGrid
+          products={displayedProducts}
+          hasMore={hasMore}
+          onLoadMore={handleLoadMore}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default App;
