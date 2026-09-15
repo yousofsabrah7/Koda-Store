@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { mockProducts } from "./components/data/mockProducts";
-import ProductGrid from "./components/shop/ProductGrid";
-
+import Shop from "./components/pages/ShopPage"
 const ItemsPerPage = 12;
 
 const App = () => {
@@ -14,15 +13,16 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <ProductGrid
-          products={displayedProducts}
-          hasMore={hasMore}
-          onLoadMore={handleLoadMore}
-        />
-      </div>
-    </div>
+    <Shop /> 
+    // <div className="min-h-screen bg-gray-50/50 py-10 px-4 sm:px-6 lg:px-8">
+    //   <div className="max-w-7xl mx-auto">
+    //     <ProductGrid
+    //       products={displayedProducts}
+    //       hasMore={hasMore}
+    //       onLoadMore={handleLoadMore}
+    //     />
+    //   </div>
+    // </div>
   );
 };
 
