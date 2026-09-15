@@ -17,7 +17,7 @@ function Works() {
         </div>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {/* Step 1 */}
           <div className="group relative flex flex-col items-center gap-5 rounded-3xl border border-border-subtle bg-surface-card px-6 py-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:shadow-md">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-light transition-all duration-300 group-hover:bg-accent">
