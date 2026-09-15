@@ -1,9 +1,11 @@
 import React from 'react'
+import Home from './pages/Home'
 
 const App = () => {
   return (
-    <div className='text-center text-3xl'>App</div>
+    <div>
+        <Home   />
+    </div>
   )
 }
-
 export default App

@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getAllProducts,
-  createProduct,
+  // createProduct,
   searchProducts,
   getProductById,
-  deleteProduct,
-  updateProduct,
+  // deleteProduct,
+  // updateProduct,
 } from "../api/productsApi";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
