@@ -26,7 +26,7 @@ export const applyCoupon = async (payload) => {
 };
 
 export const removeCoupon = async () => {
-    const response = await apiClient.post("/carts/coupon")
+    const response = await apiClient.delete("/carts/coupon")
     return response.data
 };
 
