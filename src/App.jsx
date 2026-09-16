@@ -1,9 +1,9 @@
 
 import Home from './pages/Home/index'
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login/index";
 import Register from "./pages/Register/index";
-import VerifyOtp from "./pages/VerifyOtp/index";
+//import VerifyOtp from "./pages/VerifyOtp/index";
 import ForgetPassword from "./pages/ForgetPassword/index";
 import Shop from "./pages/Shop/index";
 import ProductDetails from "./pages/ProductDetails/index";
@@ -16,10 +16,11 @@ import Checkout from "./pages/Checkout/index";
 import Profile from "./pages/Profile/index";
 const App = () => {
   return (
+    
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/verity-otp" element={<VerifyOtp />} />
+       {/* // <Route path="/verity-otp" element={<VerifyOtp />} /> */}
         <Route path="/forget-password" element={<ForgetPassword />} />
         {/* ---------------------------------------------------- */}
         <Route index element={<Home />} />
