@@ -8,7 +8,7 @@ function FeatureProducts() {
         {/* Title & Link view */}
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-3">
-            <h2 className="text-3xl text-text-primary">Featured Products</h2>
+            <h2 className="text-3xl text-text-primary font-bold">Featured Products</h2>
             <p className="text-lg text-text-muted">Handpicked just for you</p>
           </div>
           <div>
