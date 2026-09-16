@@ -3,7 +3,7 @@ import Home from './pages/Home/index'
 import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login/index";
 import Register from "./pages/Register/index";
-//import VerifyOtp from "./pages/VerifyOtp/index";
+import VerifyOtp from "./pages/VerifyOtp/index";
 import ForgetPassword from "./pages/ForgetPassword/index";
 import Shop from "./pages/Shop/index";
 import ProductDetails from "./pages/ProductDetails/index";
@@ -20,7 +20,11 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
        {/* // <Route path="/verity-otp" element={<VerifyOtp />} /> */}
+
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+
         <Route path="/forget-password" element={<ForgetPassword />} />
         {/* ---------------------------------------------------- */}
         <Route index element={<Home />} />
@@ -28,7 +32,7 @@ const App = () => {
         <Route path="/shop/:id" element={<ProductDetails />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/orders/:id" element={<OrderDetails />} />
-        <Route path="/order-success/:id" element={<OrderSuccess />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
