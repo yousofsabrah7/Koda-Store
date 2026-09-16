@@ -1,23 +1,21 @@
-import React from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import VerifyOtp from "./pages/VerifyOtp";
-import ForgetPassword from "./pages/ForgetPassword";
-import Home from "./pages/Home";
-import Shop from "./pages/Shop";
-import ProductDetails from "./pages/ProductDetails";
-import Orders from "./pages/Orders";
-import OrderDetails from "./pages/OrderDetails";
-import OrderSuccess from "./pages/OrderSuccess";
-import Wishlist from "./pages/Wishlist";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import Profile from "./pages/Profile";
+import Home from './pages/Home/index'
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login/index";
+import Register from "./pages/Register/index";
+import VerifyOtp from "./pages/VerifyOtp/index";
+import ForgetPassword from "./pages/ForgetPassword/index";
+import Shop from "./pages/Shop/index";
+import ProductDetails from "./pages/ProductDetails/index";
+import Orders from "./pages/Orders/index";
+import OrderDetails from "./pages/OrderDetails/index";
+import OrderSuccess from "./pages/OrderSuccess/index";
+import Wishlist from "./pages/Wishlist/index";
+import Cart from "./pages/Cart/index";
+import Checkout from "./pages/Checkout/index";
+import Profile from "./pages/Profile/index";
 const App = () => {
   return (
-    <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -37,8 +35,8 @@ const App = () => {
         {/* ---------------------------------------------------- */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
   );
 };
 
 export default App;
+
