@@ -6,7 +6,7 @@ import Loading from "../HandelLoading/Loading";
 function Viewproducts() {
   const { data: response, isLoading, isError } = useProducts(1, 8);
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full mt-6 reative">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full mt-6 relative">
       {isError ? (
           <Error />
       ) : isLoading ? (

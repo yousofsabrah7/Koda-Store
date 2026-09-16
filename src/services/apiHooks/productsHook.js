@@ -1,10 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   getAllProducts,
-  createProduct,
-  searchProducts,
-  deleteProduct,
-  updateProduct,
   getProductById,
 
 } from "../api/productsApi";

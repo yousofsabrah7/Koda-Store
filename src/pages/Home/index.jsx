@@ -6,7 +6,7 @@ import Categories from '../../components/home//Categories/Categories'
 import EmailSection from '../../components/home/Email/EmailSection'
 function Home() {
   return (
-    <div>
+    <div className=''>
       <Hero />
     <section className='my-10 w-11/12 mx-auto flex flex-col gap-19'>
             <Categories />
