@@ -20,6 +20,7 @@ export const getAllProducts = async (page, limit, search, filter= {}) => {
 };
 
 
+
 export const getProductById = async (id) => {
   const response = await apiClient.get(`/products/${id}`);
   return response.data;

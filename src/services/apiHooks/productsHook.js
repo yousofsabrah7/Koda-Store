@@ -11,8 +11,6 @@ export const useProducts = (page, limit, search, filter = {}) => {
     queryFn: () => getAllProducts(page, limit, search, filter),
   });
 };
-
-
 export const useProduct = (productId) => {
 
   return useQuery({
@@ -21,6 +19,3 @@ export const useProduct = (productId) => {
     enabled: !!productId,
   });
 };
-
-
-

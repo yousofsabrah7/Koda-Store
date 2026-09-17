@@ -6,8 +6,8 @@ function EmptyCart() {
   return (
     <div className='flex flex-col items-center justify-center min-h-[55vh] py-12 px-4 text-center'>
           {/* cart icon */}
-          <div className='w-20 h-20 bg-slate-100/80 rounded-full flex items-center justify-center mb-5'>
-            <ShoppingCart className='w-8 h-8 text-indigo-400' />
+          <div className='w-25 h-25 bg-slate-200 rounded-full flex items-center justify-center mb-5'>
+            <ShoppingCart className='w-12 h-12 text-accent' />
           </div>
 
           {/* title */}
@@ -25,7 +25,7 @@ function EmptyCart() {
           {/* shop button */}
           <Link
               to="/shop"
-              className='px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl shadow-sm transition-colors duration-200'
+              className='px-6 py-2.5 bg-accent hover:bg-accent-hover text-white font-semibold text-sm rounded-xl shadow-sm transition-colors duration-200'
           >
           Start Shopping
           </Link>

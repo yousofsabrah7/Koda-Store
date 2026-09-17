@@ -34,9 +34,9 @@ const CartItem = ({ item }) => {
                     className="max-h-full max-w-full object-contain"
                 />
             </div>
-            <div className="flex-1 flex flex-col justify-between self-stretch py-0.5">
-                <div className="flex justify-between items-start gap-2">
-                    <h3 className="text-sm font-semibold text-gray-800 line-clamp-1">
+            <div className="flex-1 flex flex-col justify-between self-stretch py-0.5 min-w-0">
+                <div className="flex justify-between items-start gap-20">
+                    <h3 className="text-sm font-semibold text-gray-800 truncate min-w-0 flex-1" title={item.name}>
                         {item.name}</h3>
 
                     <button
@@ -53,7 +53,7 @@ const CartItem = ({ item }) => {
                     </button>
                 </div>
 
-                <p className="text-sm font-bold text-indigo-600">
+                <p className="text-sm font-bold text-accent">
                     EGP {item.price?.toLocaleString()}</p>
                 
                 <div className="flex justify-between items-center mt-1">
@@ -67,7 +67,7 @@ const CartItem = ({ item }) => {
                         </button>
                         <span className="text-xs font-semibold text-gray-700 min-w-[12px] text-center">
                             {isUpdating ? (
-                                <Loader2 className="w-3 h-3 animate-spin mx-auto text-indigo-600" />
+                                <Loader2 className="w-3 h-3 animate-spin mx-auto text-accent" />
                             ) : item.quantity}
                             </span>
                         <button

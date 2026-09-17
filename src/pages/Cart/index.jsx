@@ -14,7 +14,7 @@ const Cart = () => {
     if (isLoading) {
         return (
             <div className='min-h-[60vh] flex items-center justify-center'>
-                <Loader2 className='w-8 h-8 animate-spin text-gray-500' />
+                <Loader2 className='w-12 h-12 animate-spin text-accent' />
             </div>
         )
     }
@@ -23,11 +23,12 @@ const Cart = () => {
 
     return (
         <main className='min-h-screen bg-slate-50/50 py-8 px-4 sm:px-6 lg:px-8'>
-            <h1 className='text-2xl font-bold text-gray-900 mb-6'>Shopping Cart</h1>
 
             <div className='max-w-7xl mx-auto'>
+            <h1 className='text-2xl font-bold text-gray-900 mb-6'>Shopping Cart</h1>
 
-                <div className="cart-layout grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    {/* grid layout */}
+                <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
                     {/* left side */}
                     <div className="lg:col-span-8 space-y-6">
                         {/* cartItems */}
@@ -44,14 +45,14 @@ const Cart = () => {
                         <div className='pt-1'>
                             <Link
                                 to="/shop"
-                                className='inline-flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors'
+                                className='inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent-hover transition-colors'
                             >
                                 <ArrowLeft className='w-4 h-4'/>Continue Shopping</Link>
                         </div>
-                    </div>▐
+                    </div>
 
                     {/* order summary */}
-                    <div className='lg:col-span-4 lg:sticky lg:top-8'>
+                    <div className='lg:col-span-4 h-full lg:sticky lg:top-8'>
                         <CartSummary
                             subtotal={cart.subtotal}
                             discountAmount={cart.discountAmount}
