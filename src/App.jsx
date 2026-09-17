@@ -1,5 +1,4 @@
-
-import Home from './pages/Home/index'
+import Home from "./pages/Home/index";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login/index";
 import Register from "./pages/Register/index";
@@ -16,6 +15,7 @@ import Checkout from "./pages/Checkout/index";
 import Profile from "./pages/Profile/index";
 const App = () => {
   return (
+    <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -35,8 +35,8 @@ const App = () => {
         {/* ---------------------------------------------------- */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+    </BrowserRouter>
   );
 };
 
 export default App;
-

@@ -9,7 +9,6 @@ export const addToCart = async (payload) => {
     const response = await apiClient.post("/carts/items", payload)
     return response.data
 };
-
 export const updateItemQuantity = async (payload) => {
     const response = await apiClient.patch("/carts/items", payload)
     return response.data

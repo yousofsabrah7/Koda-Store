@@ -2,7 +2,36 @@ import React, { useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
 import { CiHeart } from "react-icons/ci";
+import { FaHeart } from "react-icons/fa";
+import {
+  useAddToWishlist,
+  useRemoveFromWishlist,
+} from "../../services/apiHooks/wishlistHook";
+import { useAddToCart } from "../../services/apiHooks/cartHooks";
 function Cartproduct({ product }) {
+  const [addedwishlist, setAddedwishlist] = useState(false);
+  const [loadingAddCart, setLoadingAddCart] = useState(false);
+  const { mutateAsync: muteAdd } = useAddToWishlist();
+  const { mutateAsync: muteDelete } = useRemoveFromWishlist();
+  const { mutate, isPending } = useAddToCart();
+  const AddWWichlist = async (productId) => {
+    const res = await muteAdd(productId);
+    if (res.success) {
+      setAddedwishlist(true);
+    }
+  };
+  const deletWishlist = async (productId) => {
+    const res = await muteDelete(productId);
+    if (res.success) {
+      setAddedwishlist(false);
+    }
+  };
+  const AddtoCart = async (productId) => {
+    await mutate({
+      productId: productId,
+      quantity: 1,
+    });
+  };
   const RatingArr = [1, 2, 3, 4, 5];
   var count = product.rating;
   return (
@@ -19,10 +48,17 @@ function Cartproduct({ product }) {
           className="h-full w-full object-cover transition duration-300 ease-linear group-hover:scale-105"
           src={product.image}
         />
-        <CiHeart
-          className="absolute top-[6%] left-[83%] text-3xl bg-surface-card/80 text-text-primary z-100 p-1 cursor-pointer hover:bg-accent-light rounded-full"
+        <FaHeart
+          className={`absolute top-[6%] left-[83%] text-3xl bg-surface-card/80  ${addedwishlist ? "text-red-500" : "text-gray-400/60"} z-100 p-1 cursor-pointer hover:bg-accent-light rounded-full`}
           width={50}
           height={50}
+          onClick={() => {
+            if (addedwishlist) {
+              deletWishlist(product.id);
+            } else {
+              AddWWichlist(product.id);
+            }
+          }}
         />
       </div>
       <div className="flex flex-1 flex-col gap-4 px-5 py-5 sm:px-6">
@@ -34,7 +70,6 @@ function Cartproduct({ product }) {
         <div className="flex gap-3 items-center">
           <div className="flex gap-2">
             {RatingArr.map(() => {
-              console.log("count : ", count);
               if (count > 0) {
                 count--;
                 return <FaStar className="text-accent" />;
@@ -56,9 +91,25 @@ function Cartproduct({ product }) {
         </div>
         {/* Button */}
         <div className="flex flex-wrap justify-center items-center gap-2   ">
-          <button className="flex gap-2 items-center cursor-pointer hover: bg-accent-hover py-1 rounded-lg px-17 hover:bg-accent transition-all hover:*:text-text-primary ">
-            <FaShoppingCart className="text-white/90" />
-            <span className="text-white/90">Add to cart</span>
+          <button
+            onClick={() => AddtoCart(product.id)}
+            disabled={isPending}
+            className={`flex gap-2 items-center cursor-pointer
+    bg-accent-hover py-1 rounded-lg px-17
+    transition-all hover:*:text-text-primary
+    ${isPending ? "opacity-80 cursor-wait" : "hover:bg-accent"}`}
+          >
+            {isPending ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="text-white/90">Adding...</span>
+              </>
+            ) : (
+              <>
+                <FaShoppingCart className="text-white/90" />
+                <span className="text-white/90">Add to cart</span>
+              </>
+            )}
           </button>
         </div>
       </div>
