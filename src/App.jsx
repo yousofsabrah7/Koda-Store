@@ -12,7 +12,7 @@ import Orders from "./pages/Orders";
 import OrderDetails from "./pages/OrderDetails";
 import OrderSuccess from "./pages/OrderSuccess";
 import Wishlist from "./pages/Wishlist";
-import Cart from "./pages/Cart";
+import Cart from "./pages/Cart/Cart";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
 const App = () => {
