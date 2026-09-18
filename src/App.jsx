@@ -14,9 +14,12 @@ import Wishlist from "./pages/Wishlist/index";
 import Cart from "./pages/Cart/index";
 import Checkout from "./pages/Checkout/index";
 import Profile from "./pages/Profile/index";
+import { Toaster } from 'react-hot-toast';
 const App = () => {
   return (
-    
+    <>
+      <Toaster position='top-center' reverseOrder={false} />
+      
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -40,6 +43,7 @@ const App = () => {
         {/* ---------------------------------------------------- */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+    </>
   );
 };
 
