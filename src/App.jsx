@@ -1,6 +1,7 @@
 
 import Home from './pages/Home/index'
 import { Navigate, Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Login from "./pages/Login/index";
 import Register from "./pages/Register/index";
 import VerifyOtp from "./pages/VerifyOtp/index";
@@ -14,7 +15,6 @@ import Wishlist from "./pages/Wishlist/index";
 import Cart from "./pages/Cart/index";
 import Checkout from "./pages/Checkout/index";
 import Profile from "./pages/Profile/index";
-import { Toaster } from 'react-hot-toast';
 const App = () => {
   return (
     <>
