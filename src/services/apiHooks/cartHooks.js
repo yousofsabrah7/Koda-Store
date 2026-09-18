@@ -1,187 +1,157 @@
-// import {
-//   useMutation,
-//   useQuery,
-//   useQueryClient,
-// } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-// import toast from "react-hot-toast";
+import toast from "react-hot-toast";
 
-// import {
-//   getCart,
-//   addToCart,
-//   updateItemQuantity,
-//   removeCartItem,
-//   applyCoupon,
-//   removeCoupon,
-//   clearCart,
-// } from "../api/cartApi";
+import {
+  getCart,
+  addToCart,
+  updateItemQuantity,
+  removeCartItem,
+  applyCoupon,
+  removeCoupon,
+  clearCart,
+} from "../api/cartApi";
 
+export const useCart = () => {
+  return useQuery({
+    queryKey: ["cart"],
+    queryFn: getCart,
+  });
+};
 
+export const useAddToCart = () => {
+  const queryClient = useQueryClient();
 
+  return useMutation({
+    mutationFn: addToCart,
 
-// export const useCart = () => {
-//   return useQuery({
-//     queryKey: ["cart"],
-//     queryFn: getCart,
-//   });
-// };
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
 
+      toast.success("Product added to cart");
+    },
 
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message || "Failed to add product to cart";
 
+      toast.error(message);
+    },
+  });
+};
 
-// export const useAddToCart = () => {
-//   const queryClient = useQueryClient();
+export const useUpdateItemQuantity = () => {
+  const queryClient = useQueryClient();
 
-//   return useMutation({
-//     mutationFn: addToCart,
+  return useMutation({
+    mutationFn: updateItemQuantity,
 
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["cart"],
-//       });
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
 
-//       toast.success("Product added to cart");
-//     },
+      toast.success("Cart updated");
+    },
 
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to add product to cart";
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message || "Failed to update quantity";
 
-//       toast.error(message);
-//     },
-//   });
-// };
+      toast.error(message);
+    },
+  });
+};
 
+export const useRemoveCartItem = () => {
+  const queryClient = useQueryClient();
 
+  return useMutation({
+    mutationFn: removeCartItem,
 
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
 
-// export const useUpdateItemQuantity = () => {
-//   const queryClient = useQueryClient();
+      toast.success("Product removed from cart");
+    },
 
-//   return useMutation({
-//     mutationFn: updateItemQuantity,
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message || "Failed to remove product";
 
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["cart"],
-//       });
+      toast.error(message);
+    },
+  });
+};
 
-//       toast.success("Cart updated");
-//     },
+export const useApplyCoupon = () => {
+  const queryClient = useQueryClient();
 
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to update quantity";
+  return useMutation({
+    mutationFn: applyCoupon,
 
-//       toast.error(message);
-//     },
-//   });
-// };
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
 
+      toast.success("Coupon applied successfully");
+    },
 
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message || "Failed to apply coupon";
 
+      toast.error(message);
+    },
+  });
+};
 
-// export const useRemoveCartItem = () => {
-//   const queryClient = useQueryClient();
+export const useRemoveCoupon = () => {
+  const queryClient = useQueryClient();
 
-//   return useMutation({
-//     mutationFn: removeCartItem,
+  return useMutation({
+    mutationFn: removeCoupon,
 
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["cart"],
-//       });
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
 
-//       toast.success("Product removed from cart");
-//     },
+      toast.success("Coupon removed");
+    },
 
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to remove product";
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message || "Failed to remove coupon";
 
-//       toast.error(message);
-//     },
-//   });
-// };
+      toast.error(message);
+    },
+  });
+};
 
+export const useClearCart = () => {
+  const queryClient = useQueryClient();
 
+  return useMutation({
+    mutationFn: clearCart,
 
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
 
-// export const useApplyCoupon = () => {
-//   const queryClient = useQueryClient();
+      toast.success("Cart cleared");
+    },
 
-//   return useMutation({
-//     mutationFn: applyCoupon,
+    onError: (error) => {
+      const message = error?.response?.data?.message || "Failed to clear cart";
 
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["cart"],
-//       });
-
-//       toast.success("Coupon applied successfully");
-//     },
-
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to apply coupon";
-
-//       toast.error(message);
-//     },
-//   });
-// };
-
-
-
-
-// export const useRemoveCoupon = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: removeCoupon,
-
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["cart"],
-//       });
-
-//       toast.success("Coupon removed");
-//     },
-
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to remove coupon";
-
-//       toast.error(message);
-//     },
-//   });
-// };
-
-
-// export const useClearCart = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: clearCart,
-
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["cart"],
-//       });
-
-//       toast.success("Cart cleared");
-//     },
-
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to clear cart";
-
-//       toast.error(message);
-//     },
-//   });
-// };
+      toast.error(message);
+    },
+  });
+};

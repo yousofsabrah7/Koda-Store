@@ -1,123 +1,103 @@
-// import {
-//   useMutation,
-//   useQuery,
-//   useQueryClient,
-// } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-// import { useEffect } from "react";
-// import toast from "react-hot-toast";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
-// import {
-//   getWishlist,
-//   addToWishlist,
-//   removeFromWishlist,
-//   clearWishlist,
-// } from "../api/wishlistApi";
+import {
+  getWishlist,
+  addToWishlist,
+  removeFromWishlist,
+  clearWishlist,
+} from "../api/wishlistApi";
 
+const useQueryErrorToast = (query) => {
+  useEffect(() => {
+    if (query.isError) {
+      const message =
+        query.error?.response?.data?.message || "Something went wrong";
 
+      toast.error(message);
+    }
+  }, [query.isError, query.error]);
+};
 
+export const useWishlist = () => {
+  const query = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: getWishlist,
+  });
 
-// const useQueryErrorToast = (query) => {
-//   useEffect(() => {
-//     if (query.isError) {
-//       const message =
-//         query.error?.response?.data?.message ||
-//         "Something went wrong";
+  useQueryErrorToast(query);
 
-//       toast.error(message);
-//     }
-//   }, [query.isError, query.error]);
-// };
+  return query;
+};
 
+export const useAddToWishlist = () => {
+  const queryClient = useQueryClient();
 
+  return useMutation({
+    mutationFn: addToWishlist,
 
-// export const useWishlist = () => {
-//   const query = useQuery({
-//     queryKey: ["wishlist"],
-//     queryFn: getWishlist,
-//   });
+    onSuccess: () => {
+      toast.success("Product added to wishlist.");
 
-//   useQueryErrorToast(query);
+      queryClient.invalidateQueries({
+        queryKey: ["wishlist"],
+      });
+    },
 
-//   return query;
-// };
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message || "Failed to add product to wishlist.";
 
+      toast.error(message);
+    },
+  });
+};
 
+export const useRemoveFromWishlist = () => {
+  const queryClient = useQueryClient();
 
+  return useMutation({
+    mutationFn: removeFromWishlist,
 
-// export const useAddToWishlist = () => {
-//   const queryClient = useQueryClient();
+    onSuccess: () => {
+      toast.success("Product removed from wishlist.");
 
-//   return useMutation({
-//     mutationFn: addToWishlist,
+      queryClient.invalidateQueries({
+        queryKey: ["wishlist"],
+      });
+    },
 
-//     onSuccess: () => {
-//       toast.success("Product added to wishlist.");
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to remove product from wishlist.";
 
-//       queryClient.invalidateQueries({
-//         queryKey: ["wishlist"],
-//       });
-//     },
+      toast.error(message);
+    },
+  });
+};
 
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to add product to wishlist.";
+export const useClearWishlist = () => {
+  const queryClient = useQueryClient();
 
-//       toast.error(message);
-//     },
-//   });
-// };
+  return useMutation({
+    mutationFn: clearWishlist,
 
+    onSuccess: () => {
+      toast.success("Wishlist cleared successfully.");
 
+      queryClient.invalidateQueries({
+        queryKey: ["wishlist"],
+      });
+    },
 
+    onError: (error) => {
+      const message =
+        error?.response?.data?.message || "Failed to clear wishlist.";
 
-// export const useRemoveFromWishlist = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: removeFromWishlist,
-
-//     onSuccess: () => {
-//       toast.success("Product removed from wishlist.");
-
-//       queryClient.invalidateQueries({
-//         queryKey: ["wishlist"],
-//       });
-//     },
-
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to remove product from wishlist.";
-
-//       toast.error(message);
-//     },
-//   });
-// };
-
-
-
-// export const useClearWishlist = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: clearWishlist,
-
-//     onSuccess: () => {
-//       toast.success("Wishlist cleared successfully.");
-
-//       queryClient.invalidateQueries({
-//         queryKey: ["wishlist"],
-//       });
-//     },
-
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to clear wishlist.";
-
-//       toast.error(message);
-//     },
-//   });
-// };
+      toast.error(message);
+    },
+  });
+};
