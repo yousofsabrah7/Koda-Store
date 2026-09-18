@@ -17,7 +17,9 @@ import Checkout from "./pages/Checkout/index";
 import Profile from "./pages/Profile/index";
 const App = () => {
   return (
-    
+    <>
+      <Toaster position='top-center' reverseOrder={false} />
+      
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -41,6 +43,7 @@ const App = () => {
         {/* ---------------------------------------------------- */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+    </>
   );
 };
 

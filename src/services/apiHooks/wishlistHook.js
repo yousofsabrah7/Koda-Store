@@ -1,4 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { useEffect } from "react";
 import toast from "react-hot-toast";
@@ -10,16 +14,22 @@ import {
   clearWishlist,
 } from "../api/wishlistApi";
 
+
+
+
 const useQueryErrorToast = (query) => {
   useEffect(() => {
     if (query.isError) {
       const message =
-        query.error?.response?.data?.message || "Something went wrong";
+        query.error?.response?.data?.message ||
+        "Something went wrong";
 
       toast.error(message);
     }
   }, [query.isError, query.error]);
 };
+
+
 
 export const useWishlist = () => {
   const query = useQuery({
@@ -31,6 +41,9 @@ export const useWishlist = () => {
 
   return query;
 };
+
+
+
 
 export const useAddToWishlist = () => {
   const queryClient = useQueryClient();
@@ -48,12 +61,16 @@ export const useAddToWishlist = () => {
 
     onError: (error) => {
       const message =
-        error?.response?.data?.message || "Failed to add product to wishlist.";
+        error?.response?.data?.message ||
+        "Failed to add product to wishlist.";
 
       toast.error(message);
     },
   });
 };
+
+
+
 
 export const useRemoveFromWishlist = () => {
   const queryClient = useQueryClient();
@@ -79,6 +96,8 @@ export const useRemoveFromWishlist = () => {
   });
 };
 
+
+
 export const useClearWishlist = () => {
   const queryClient = useQueryClient();
 
@@ -95,7 +114,8 @@ export const useClearWishlist = () => {
 
     onError: (error) => {
       const message =
-        error?.response?.data?.message || "Failed to clear wishlist.";
+        error?.response?.data?.message ||
+        "Failed to clear wishlist.";
 
       toast.error(message);
     },
