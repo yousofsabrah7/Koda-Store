@@ -1,29 +1,47 @@
-import React, { useState } from "react";
-import { mockProducts } from "./components/data/mockProducts";
-import Shop from "./components/pages/ShopPage"
-const ItemsPerPage = 12;
 
+import Home from './pages/Home/index'
+import { Navigate, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login/index";
+import Register from "./pages/Register/index";
+import VerifyOtp from "./pages/VerifyOtp/index";
+import ForgetPassword from "./pages/ForgetPassword/index";
+import Shop from "./pages/Shop/index";
+import ProductDetails from "./pages/ProductDetails/index";
+import Orders from "./pages/Orders/index";
+import OrderDetails from "./pages/OrderDetails/index";
+import OrderSuccess from "./pages/OrderSuccess/index";
+import Wishlist from "./pages/Wishlist/index";
+import Cart from "./pages/Cart/index";
+import Checkout from "./pages/Checkout/index";
+import Profile from "./pages/Profile/index";
 const App = () => {
-  const [visibleCount, setVisibleCount] = useState(ItemsPerPage);
-  const displayedProducts = mockProducts.slice(0, visibleCount);
-  const hasMore = visibleCount < mockProducts.length;
-
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + ItemsPerPage);
-  };
-
   return (
-    <Shop /> 
-    // <div className="min-h-screen bg-gray-50/50 py-10 px-4 sm:px-6 lg:px-8">
-    //   <div className="max-w-7xl mx-auto">
-    //     <ProductGrid
-    //       products={displayedProducts}
-    //       hasMore={hasMore}
-    //       onLoadMore={handleLoadMore}
-    //     />
-    //   </div>
-    // </div>
+    
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+       {/* // <Route path="/verity-otp" element={<VerifyOtp />} /> */}
+
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+
+        <Route path="/forget-password" element={<ForgetPassword />} />
+        {/* ---------------------------------------------------- */}
+        <Route index element={<Home />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/shop/:id" element={<ProductDetails />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/orders/:id" element={<OrderDetails />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/profile" element={<Profile />} />
+        {/* ---------------------------------------------------- */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
   );
 };
 
 export default App;
+
