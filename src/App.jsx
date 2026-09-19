@@ -1,5 +1,8 @@
+
 import Home from "./pages/Home/index";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Login from "./pages/Login/index";
 import Register from "./pages/Register/index";
 import VerifyOtp from "./pages/VerifyOtp/index";
@@ -15,11 +18,18 @@ import Checkout from "./pages/Checkout/index";
 import Profile from "./pages/Profile/index";
 const App = () => {
   return (
+
     <BrowserRouter>
+
+      <Toaster position='top-center' reverseOrder={false} />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/verity-otp" element={<VerifyOtp />} />
+
+       {/* // <Route path="/verity-otp" element={<VerifyOtp />} /> */}
+
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+
         <Route path="/forget-password" element={<ForgetPassword />} />
         {/* ---------------------------------------------------- */}
         <Route index element={<Home />} />
@@ -27,7 +37,7 @@ const App = () => {
         <Route path="/shop/:id" element={<ProductDetails />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/orders/:id" element={<OrderDetails />} />
-        <Route path="/order-success/:id" element={<OrderSuccess />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
@@ -35,6 +45,7 @@ const App = () => {
         {/* ---------------------------------------------------- */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
     </BrowserRouter>
   );
 };

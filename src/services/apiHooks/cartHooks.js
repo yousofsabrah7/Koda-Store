@@ -95,6 +95,7 @@ export const useRemoveCartItem = () => {
       });
 
       toast.success("Product removed from cart");
+
     },
 
     onError: (error) => {
