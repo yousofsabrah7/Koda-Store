@@ -5,11 +5,10 @@ import Order from "./order";
 const ViewOrders = () => {
   const [page, setPage] = useState(1);
   const [dataorders, setDataorders] = useState([]);
-  const { data: Dataorders, isLoading, isError } = useMyOrders(page, 10);
+  const { data: Dataorders, isLoading, isError } = useMyOrders({page, limit:10});
   useEffect(() => {
     if (Dataorders?.orders) {
-      setDataorders((prev) => [...prev, ...Dataorders.orders]);
-    }
+      setDataorders((prev) => [...prev, ...Dataorders.orders]);}
   }, [Dataorders]);
 
   return (
