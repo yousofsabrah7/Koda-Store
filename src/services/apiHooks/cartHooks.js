@@ -94,7 +94,8 @@ export const useRemoveCartItem = () => {
         queryKey: ["cart"],
       });
 
-      toast.success("Removed from cart");
+      toast.success("Product removed from cart");
+
     },
 
     onError: (error) => {

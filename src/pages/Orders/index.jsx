@@ -1,8 +1,10 @@
 import React from 'react'
-
-const index = () => {
+import ViewOrders from '../../components/orders/viewOrders'
+function index() {
   return (
-    <div>index</div>
+    <div className='mt-11'>
+      <ViewOrders/>
+    </div>
   )
 }
 

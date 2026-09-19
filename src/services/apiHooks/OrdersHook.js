@@ -16,6 +16,8 @@ import {
 
 
 
+
+
 export const useMyOrders = ({page= 1, limit= 10, status} = {}) => {
   return useQuery({
     queryKey: ["myOrders", page, limit, status],
@@ -27,9 +29,6 @@ export const useMyOrders = ({page= 1, limit= 10, status} = {}) => {
   });
 };
 
-
-
-
 export const useSingleOrder = (orderId) => {
   return useQuery({
     queryKey: ["myOrder", orderId],
@@ -38,9 +37,6 @@ export const useSingleOrder = (orderId) => {
   });
 };
 
-
-
-
 export const usePlaceOrder = () => {
   const queryClient = useQueryClient();
 
@@ -48,12 +44,10 @@ export const usePlaceOrder = () => {
     mutationFn: placeOrder,
 
     onSuccess: () => {
-      // Refresh orders
       queryClient.invalidateQueries({
         queryKey: ["myOrders"],
       });
 
-      // Refresh cart because the order was created
       queryClient.invalidateQueries({
         queryKey: ["cart"],
       });
@@ -71,9 +65,6 @@ export const usePlaceOrder = () => {
   });
 };
 
-
-
-
 export const useCancelOrder = () => {
   const queryClient = useQueryClient();
 
@@ -81,12 +72,10 @@ export const useCancelOrder = () => {
     mutationFn: cancelOrder,
 
     onSuccess: (_, orderId) => {
-      // Refresh order list
       queryClient.invalidateQueries({
         queryKey: ["myOrders"],
       });
 
-      // Refresh specific order
       queryClient.invalidateQueries({
         queryKey: ["myOrder", orderId],
       });

@@ -26,8 +26,7 @@ function Viewproducts() {
               ((p.price - p.discountPrice) / p.price) * 100,
             ),
           };
-          console.log(product);
-          return <Cartproduct product={{ ...product }} />;
+          return <Cartproduct key={product.id} product={{ ...product }} />;
         })
       )}
     </div>
