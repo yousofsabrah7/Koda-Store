@@ -1,6 +1,7 @@
 
-import Home from './pages/Home/index'
-import { Navigate, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home/index";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Login from "./pages/Login/index";
 import Register from "./pages/Register/index";
 import VerifyOtp from "./pages/VerifyOtp/index";
@@ -16,7 +17,10 @@ import Checkout from "./pages/Checkout/index";
 import Profile from "./pages/Profile/index";
 const App = () => {
   return (
-    
+
+    <BrowserRouter>
+
+      <Toaster position='top-center' reverseOrder={false} />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -40,8 +44,8 @@ const App = () => {
         {/* ---------------------------------------------------- */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+    </BrowserRouter>
   );
 };
 
 export default App;
-
