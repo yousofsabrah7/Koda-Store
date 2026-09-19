@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import { mockProducts } from "../../components/data/mockProducts";
-import ProductGrid from "../Shop/ProductGrid";
-import SearchBar from "../Shop/SearchBar";
-import FilterSidebar from "../Shop/FilterSidebar";
-import ActiveFilterChips from "../Shop/ActiveFilterChips";
+import { useProducts } from "../../services/apiHooks/productsHook";
+import ProductGrid from "../../components/shop/ProductGrid";
+import SearchBar from "../../components/shop/SearchBar";
+import FilterSidebar from "../../components/shop/FilterSidebar";
+import ActiveFilterChips from "../../components/shop/ActiveFilterChips";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -14,18 +15,24 @@ function getEffectivePrice(product) {
 }
 
 export default function ShopPage() {
+  const {data, isLoading} = useProducts(1, 50);
+  const products = data?.products || [];
+
   const categories = useMemo(
-    () => [...new Set(mockProducts.map((p) => p.category))],
-    []
+    () => [...new Set(products.map((p) => p.category).filter(Boolean))],
+    [products]
   );
 
   const priceBounds = useMemo(() => {
-    const prices = mockProducts.map(getEffectivePrice);
+    const prices = products.map(getEffectivePrice);
     return {
-      min: Math.floor(Math.min(...prices)),
-      max: Math.ceil(Math.max(...prices)),
+      min: prices.length ? Math.floor(Math.min(...prices)) : 0,
+      max: prices.length ? Math.ceil(Math.max(...prices)) : 1000
     };
-  }, []);
+  }, [products]);
+
+
+
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -40,10 +47,12 @@ export default function ShopPage() {
     setVisibleCount(ITEMS_PER_PAGE);
   }, [searchQuery, selectedCategories, priceRange, minRating, sortBy]);
 
+
+
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
-    let result = mockProducts.filter((product) => {
+    let result = products.filter((product) => {
       const price = getEffectivePrice(product);
 
       const matchesSearch =
@@ -81,7 +90,7 @@ export default function ShopPage() {
     }
 
     return result;
-  }, [searchQuery, selectedCategories, priceRange, minRating, sortBy]);
+  }, [products, searchQuery, selectedCategories, priceRange, minRating, sortBy]);
 
   const displayedProducts = filteredProducts.slice(0, visibleCount);
   const hasMore = visibleCount < filteredProducts.length;
@@ -107,6 +116,18 @@ export default function ShopPage() {
     minRating > 0 ||
     priceRange.min !== priceBounds.min ||
     priceRange.max !== priceBounds.max;
+
+
+  if (isLoading){
+    return(
+      <div className="min-h-screen bg-gray-50/50 py-10 px-4 sm:px-6 lg:px-8 flext items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+          <p className="text-sm font-medium text-gray-500">Loading products from server...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50/50 py-10 px-4 sm:px-6 lg:px-8">
