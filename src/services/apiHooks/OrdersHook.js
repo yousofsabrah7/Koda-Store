@@ -13,10 +13,19 @@ import {
   cancelOrder,
 } from "../api/ordersApi";
 
-export const useMyOrders = ({page=1, limit=10,status}) => {
+
+
+
+
+
+export const useMyOrders = ({page= 1, limit= 10, status} = {}) => {
   return useQuery({
-    queryKey: ["myOrders", page, limit,status],
-    queryFn: () => getMyOrders({page, limit,status}),
+    queryKey: ["myOrders", page, limit, status],
+    queryFn: () => getMyOrders({
+      page,
+      limit,
+      status
+    }),
   });
 };
 
