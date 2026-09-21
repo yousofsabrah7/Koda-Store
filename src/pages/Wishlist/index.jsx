@@ -105,7 +105,7 @@ export default function WishlistPage (){
               });
 
               const quantityInCart = itemInCart?.quantity || 0;
-              const MAX_LIMIT =  4;
+              const MAX_LIMIT =  5;
               const maxAvailable = Math.min(product.stock || MAX_LIMIT , MAX_LIMIT);
               const isMaxReached = quantityInCart >= maxAvailable;
               const isAdding = addingId === product._id;

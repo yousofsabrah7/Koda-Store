@@ -61,7 +61,7 @@ export default function ProductCard({ product }) {
   });
 
   const quantityInCart  = itemInCart?.quantity || 0;
-  const MAX_LIMIT_PER_USER = 4 ;
+  const MAX_LIMIT_PER_USER = 5 ;
   const maxAvailable  = Math.min(product.stock || MAX_LIMIT_PER_USER, MAX_LIMIT_PER_USER);
   const isMaxReached = quantityInCart >= maxAvailable;
 
