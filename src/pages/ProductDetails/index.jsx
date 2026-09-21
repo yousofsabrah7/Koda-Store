@@ -1,46 +1,106 @@
-
 import React, { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 
-import { useProduct } from "../../services/apiHooks/productsHook";
+import {
+  useProduct,
+  useProducts,
+} from "../../services/apiHooks/productsHook";
+
 import { useAddToCart } from "../../services/apiHooks/cartHooks";
+
 import {
   useWishlist,
   useAddToWishlist,
   useRemoveFromWishlist,
 } from "../../services/apiHooks/wishlistHook";
+
 import {
   useProductReviews,
   useAddReview,
 } from "../../services/apiHooks/reviewsHook";
 
 import Loading from "../../components/home/HandelLoading/Loading";
-import { FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
+
+import {
+  FaStar,
+  FaHeart,
+  FaRegHeart,
+} from "react-icons/fa";
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { data, isError, isLoading } = useProduct(id);
+  // =========================
+  // PRODUCT
+  // =========================
 
-  const { mutate: addToCart, isPending: isAddingToCart } =
-    useAddToCart();
+  const {
+    data,
+    isError,
+    isLoading,
+  } = useProduct(id);
+
+  const product = data?.product;
+
+  // =========================
+  // RELATED PRODUCTS
+  // =========================
+
+  const {
+    data: relatedData,
+    isLoading: relatedLoading,
+  } = useProducts(
+    1,
+    4,
+    "",
+    {
+      category: product?.category,
+    },
+    !!product
+  );
+
+  // =========================
+  // CART
+  // =========================
+
+  const {
+    mutate: addToCart,
+    isPending: isAddingToCart,
+  } = useAddToCart();
+
+  // =========================
+  // WISHLIST
+  // =========================
 
   const { data: wishlistData } = useWishlist();
 
-  const { mutate: addToWishlist, isPending: isAdding } =
-    useAddToWishlist();
+  const {
+    mutate: addToWishlist,
+    isPending: isAdding,
+  } = useAddToWishlist();
 
-  const { mutate: removeFromWishlist, isPending: isRemoving } =
-    useRemoveFromWishlist();
+  const {
+    mutate: removeFromWishlist,
+    isPending: isRemoving,
+  } = useRemoveFromWishlist();
 
-  const { data: reviewsData, isLoading: reviewsLoading } =
-    useProductReviews(id);
+  // =========================
+  // REVIEWS
+  // =========================
 
-  const { mutate: addReview, isPending: isAddingReview } =
-    useAddReview(id);
+  const {
+    data: reviewsData,
+    isLoading: reviewsLoading,
+  } = useProductReviews(id);
+
+  const {
+    mutate: addReview,
+    isPending: isAddingReview,
+  } = useAddReview(id);
 
   // =========================
   // IMAGE GALLERY
@@ -56,9 +116,13 @@ const ProductDetails = () => {
   // =========================
 
   const [quantity, setQuantity] = useState(() => {
-    const savedQuantity = localStorage.getItem(`quantity.${id}`);
+    const savedQuantity = localStorage.getItem(
+      `quantity.${id}`
+    );
 
-    return savedQuantity ? Number(savedQuantity) : 1;
+    return savedQuantity
+      ? Number(savedQuantity)
+      : 1;
   });
 
   // =========================
@@ -73,7 +137,10 @@ const ProductDetails = () => {
   // =========================
 
   useEffect(() => {
-    localStorage.setItem(`quantity.${id}`, quantity);
+    localStorage.setItem(
+      `quantity.${id}`,
+      quantity
+    );
   }, [id, quantity]);
 
   // =========================
@@ -91,7 +158,9 @@ const ProductDetails = () => {
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
 
-    setSelectedIndex(emblaApi.selectedScrollSnap());
+    setSelectedIndex(
+      emblaApi.selectedScrollSnap()
+    );
   }, [emblaApi]);
 
   useEffect(() => {
@@ -106,7 +175,9 @@ const ProductDetails = () => {
     };
   }, [emblaApi, onSelect]);
 
-
+  // =========================
+  // PREVIOUS IMAGE
+  // =========================
 
   const scrollPrev = useCallback(() => {
     if (!emblaApi) return;
@@ -114,11 +185,19 @@ const ProductDetails = () => {
     emblaApi.scrollPrev();
   }, [emblaApi]);
 
+  // =========================
+  // NEXT IMAGE
+  // =========================
+
   const scrollNext = useCallback(() => {
     if (!emblaApi) return;
 
     emblaApi.scrollNext();
   }, [emblaApi]);
+
+  // =========================
+  // SELECT IMAGE
+  // =========================
 
   const scrollToImage = useCallback(
     (index) => {
@@ -129,38 +208,70 @@ const ProductDetails = () => {
     [emblaApi]
   );
 
+  // =========================
+  // DATA
+  // =========================
 
-
-  const product = data?.product;
-
-  const reviews = reviewsData?.reviews || [];
+  const reviews =
+    reviewsData?.reviews || [];
 
   const wishlistProducts =
     wishlistData?.wishlist?.products || [];
 
-  const isInWishlist = wishlistProducts.some(
-    (p) => p._id === product?._id
+  // =========================
+  // RELATED PRODUCTS
+  // =========================
+
+  const relatedProducts = (
+    relatedData?.products || []
+  ).filter(
+    (item) => item._id !== product?._id
   );
 
+  // =========================
+  // WISHLIST CHECK
+  // =========================
 
+  const isInWishlist =
+    wishlistProducts.some(
+      (p) => p._id === product?._id
+    );
+
+  // =========================
+  // LOADING
+  // =========================
 
   if (isLoading) {
     return <Loading />;
   }
 
-
+  // =========================
+  // ERROR
+  // =========================
 
   if (isError) {
-    return <h1>There is an error</h1>;
+    return (
+      <h1 className="text-center py-32">
+        There is an error
+      </h1>
+    );
   }
 
-
+  // =========================
+  // NO PRODUCT
+  // =========================
 
   if (!product) {
-    return <h1>There is no product</h1>;
+    return (
+      <h1 className="text-center py-32">
+        There is no product
+      </h1>
+    );
   }
 
-
+  // =========================
+  // PRICE
+  // =========================
 
   const hasDiscount =
     product.discountPrice &&
@@ -172,16 +283,24 @@ const ProductDetails = () => {
 
   const discountPercent = hasDiscount
     ? Math.round(
-        ((product.price - product.discountPrice) /
+        ((product.price -
+          product.discountPrice) /
           product.price) *
           100
       )
     : 0;
 
+  // =========================
+  // RATING
+  // =========================
 
-  const rating = Math.round(product.averageRating || 0);
+  const rating = Math.round(
+    product.averageRating || 0
+  );
 
-
+  // =========================
+  // REVIEW SUBMIT
+  // =========================
 
   const handleSubmitReview = (e) => {
     e.preventDefault();
@@ -202,8 +321,21 @@ const ProductDetails = () => {
     );
   };
 
+  // =========================
+  // RELATED PRODUCT CLICK
+  // =========================
+
+  const handleRelatedProductClick = (productId) => {
+    navigate(`/shop/${productId}`);
+  };
+
   return (
     <div className="min-h-screen bg-surface-base flex flex-col items-center py-32">
+
+      {/* =================================
+          PRODUCT DETAILS
+      ================================= */}
+
       <div className="max-w-5xl w-full mx-auto p-6 flex flex-col md:flex-row gap-8">
 
         {/* =================================
@@ -215,11 +347,13 @@ const ProductDetails = () => {
           {/* MAIN IMAGE */}
 
           <div className="relative group">
+
             <div
               ref={emblaRef}
               className="overflow-hidden rounded-2xl"
             >
               <div className="flex">
+
                 {product.images.map((img) => (
                   <div
                     key={img.public_id}
@@ -232,6 +366,7 @@ const ProductDetails = () => {
                     />
                   </div>
                 ))}
+
               </div>
             </div>
 
@@ -258,40 +393,51 @@ const ProductDetails = () => {
                 ›
               </button>
             )}
+
           </div>
 
           {/* =================================
               THUMBNAILS
           ================================= */}
 
-     <div className="flex justify-center items-center gap-4 mt-5">
-            {product.images.map((img, index) => (
-              <button
-                type="button"
-                key={img.public_id}
-                onClick={() => scrollToImage(index)}
-                className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition cursor-pointer ${
-                  index === selectedIndex
-                    ? "border-orange-500"
-                    : "border-transparent"
-                }`}
-              >
-                <img
-                  src={img.url}
-                  alt={`${product.name} ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            ))}
+          <div className="flex justify-center items-center gap-4 mt-5">
+
+            {product.images.map(
+              (img, index) => (
+                <button
+                  type="button"
+                  key={img.public_id}
+                  onClick={() =>
+                    scrollToImage(index)
+                  }
+                  className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition cursor-pointer ${
+                    index === selectedIndex
+                      ? "border-orange-500"
+                      : "border-transparent"
+                  }`}
+                >
+                  <img
+                    src={img.url}
+                    alt={`${product.name} ${
+                      index + 1
+                    }`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              )
+            )}
+
           </div>
 
           {/* IMAGE COUNTER */}
 
           {product.images.length > 1 && (
             <p className="text-center text-sm text-gray-500 mt-2">
-              {selectedIndex + 1} / {product.images.length}
+              {selectedIndex + 1} /{" "}
+              {product.images.length}
             </p>
           )}
+
         </div>
 
         {/* =================================
@@ -303,6 +449,7 @@ const ProductDetails = () => {
           {/* BRAND + CATEGORY */}
 
           <div className="flex gap-2 mb-3">
+
             {product.brand && (
               <span className="text-xs font-semibold px-3 py-1 rounded-full bg-orange-100 text-orange-700">
                 {product.brand}
@@ -314,6 +461,7 @@ const ProductDetails = () => {
                 {product.category}
               </span>
             )}
+
           </div>
 
           {/* PRODUCT NAME */}
@@ -325,27 +473,34 @@ const ProductDetails = () => {
           {/* RATING */}
 
           <div className="flex items-center gap-2 mt-2">
+
             <div className="flex gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <FaStar
-                  key={star}
-                  className={
-                    star <= rating
-                      ? "text-orange-500"
-                      : "text-gray-300"
-                  }
-                />
-              ))}
+
+              {[1, 2, 3, 4, 5].map(
+                (star) => (
+                  <FaStar
+                    key={star}
+                    className={
+                      star <= rating
+                        ? "text-orange-500"
+                        : "text-gray-300"
+                    }
+                  />
+                )
+              )}
+
             </div>
 
             <span className="text-sm text-gray-500">
               ({product.numReviews || 0})
             </span>
+
           </div>
 
           {/* PRICE */}
 
           <p className="mt-3 flex items-center gap-2">
+
             <span className="text-2xl font-bold text-orange-600">
               EGP {finalPrice}
             </span>
@@ -355,7 +510,8 @@ const ProductDetails = () => {
                 <span
                   className="text-gray-400"
                   style={{
-                    textDecoration: "line-through",
+                    textDecoration:
+                      "line-through",
                   }}
                 >
                   EGP {product.price}
@@ -366,6 +522,7 @@ const ProductDetails = () => {
                 </span>
               </>
             )}
+
           </p>
 
           {/* STOCK */}
@@ -385,12 +542,16 @@ const ProductDetails = () => {
           {/* QUANTITY */}
 
           <span className="flex gap-3 items-center rounded-sm p-3">
+
             <button
               type="button"
               className="cursor-pointer border-2 rounded-sm px-2 py-1 disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={() =>
                 setQuantity((q) =>
-                  Math.min(product.stock, q + 1)
+                  Math.min(
+                    product.stock,
+                    q + 1
+                  )
                 )
               }
               disabled={product.stock === 0}
@@ -399,24 +560,30 @@ const ProductDetails = () => {
             </button>
 
             <span className="text-center w-2">
-              {product.stock === 0 ? 0 : quantity}
+              {product.stock === 0
+                ? 0
+                : quantity}
             </span>
 
             <button
               type="button"
               className="cursor-pointer border-2 rounded-sm px-2 py-1 disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={() =>
-                setQuantity((q) => Math.max(1, q - 1))
+                setQuantity((q) =>
+                  Math.max(1, q - 1)
+                )
               }
               disabled={product.stock === 0}
             >
               -
             </button>
+
           </span>
 
           {/* CART + WISHLIST */}
 
           <div className="flex items-center gap-3 mt-4">
+
             <button
               onClick={() =>
                 addToCart(
@@ -425,12 +592,14 @@ const ProductDetails = () => {
                     quantity,
                   },
                   {
-                    onSuccess: () => setQuantity(1),
+                    onSuccess: () =>
+                      setQuantity(1),
                   }
                 )
               }
               disabled={
-                product.stock === 0 || isAddingToCart
+                product.stock === 0 ||
+                isAddingToCart
               }
               className={`flex-1 text-white font-semibold py-3 rounded-lg disabled:cursor-not-allowed ${
                 product.stock === 0
@@ -448,10 +617,16 @@ const ProductDetails = () => {
             <button
               onClick={() =>
                 isInWishlist
-                  ? removeFromWishlist(product._id)
-                  : addToWishlist(product._id)
+                  ? removeFromWishlist(
+                      product._id
+                    )
+                  : addToWishlist(
+                      product._id
+                    )
               }
-              disabled={isAdding || isRemoving}
+              disabled={
+                isAdding || isRemoving
+              }
               className="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-red-50 cursor-pointer disabled:opacity-50"
             >
               {isInWishlist ? (
@@ -460,6 +635,7 @@ const ProductDetails = () => {
                 <FaRegHeart className="text-gray-500" />
               )}
             </button>
+
           </div>
 
           {/* DESCRIPTION */}
@@ -467,7 +643,9 @@ const ProductDetails = () => {
           <p className="text-sm text-gray-500 mt-4">
             {product.shortDescription}
           </p>
+
         </div>
+
       </div>
 
       {/* =================================
@@ -475,8 +653,10 @@ const ProductDetails = () => {
       ================================= */}
 
       <div className="max-w-5xl w-full mx-auto p-6">
+
         <h2 className="text-xl font-bold mb-4">
-          Reviews ({product.numReviews || 0})
+          Reviews (
+          {product.numReviews || 0})
         </h2>
 
         {/* WRITE REVIEW */}
@@ -485,28 +665,37 @@ const ProductDetails = () => {
           onSubmit={handleSubmitReview}
           className="bg-white border border-gray-200 rounded-2xl p-4 mb-6"
         >
+
           <p className="font-semibold mb-2">
             Leave a review
           </p>
 
           <div className="flex gap-1 mb-3">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <FaStar
-                key={star}
-                onClick={() => setReviewRating(star)}
-                className={`cursor-pointer text-xl ${
-                  star <= reviewRating
-                    ? "text-orange-500"
-                    : "text-gray-300"
-                }`}
-              />
-            ))}
+
+            {[1, 2, 3, 4, 5].map(
+              (star) => (
+                <FaStar
+                  key={star}
+                  onClick={() =>
+                    setReviewRating(star)
+                  }
+                  className={`cursor-pointer text-xl ${
+                    star <= reviewRating
+                      ? "text-orange-500"
+                      : "text-gray-300"
+                  }`}
+                />
+              )
+            )}
+
           </div>
 
           <textarea
             value={reviewComment}
             onChange={(e) =>
-              setReviewComment(e.target.value)
+              setReviewComment(
+                e.target.value
+              )
             }
             placeholder="Share your thoughts about this product..."
             className="w-full border border-gray-200 rounded-lg p-3 text-sm mb-3"
@@ -516,7 +705,8 @@ const ProductDetails = () => {
           <button
             type="submit"
             disabled={
-              reviewRating === 0 || isAddingReview
+              reviewRating === 0 ||
+              isAddingReview
             }
             className="bg-orange-500 text-white font-semibold px-5 py-2 rounded-lg hover:bg-orange-900 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
@@ -524,6 +714,7 @@ const ProductDetails = () => {
               ? "Submitting..."
               : "Submit Review"}
           </button>
+
         </form>
 
         {/* REVIEW LIST */}
@@ -534,47 +725,200 @@ const ProductDetails = () => {
           </p>
         ) : reviews.length === 0 ? (
           <p className="text-gray-500 text-sm">
-            No reviews yet — be the first to review this
-            product.
+            No reviews yet — be the first
+            to review this product.
           </p>
         ) : (
           <div className="space-y-4">
+
             {reviews.map((review) => (
               <div
                 key={review._id}
                 className="border border-gray-200 rounded-xl p-4"
               >
+
                 <div className="flex items-center gap-2 mb-1">
+
                   <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <FaStar
-                        key={star}
-                        className={`text-sm ${
-                          star <= review.rating
-                            ? "text-orange-500"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    ))}
+
+                    {[1, 2, 3, 4, 5].map(
+                      (star) => (
+                        <FaStar
+                          key={star}
+                          className={`text-sm ${
+                            star <= review.rating
+                              ? "text-orange-500"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      )
+                    )}
+
                   </div>
 
                   <span className="text-sm font-semibold">
                     {review.user?.username ||
                       "Anonymous"}
                   </span>
+
                 </div>
 
                 <p className="text-sm text-gray-600">
                   {review.comment}
                 </p>
+
               </div>
             ))}
+
           </div>
         )}
+
       </div>
+
+      {/* =================================
+          RELATED PRODUCTS
+      ================================= */}
+
+      <div className="max-w-5xl w-full mx-auto p-6 mt-8">
+
+        <h2 className="text-2xl font-bold mb-6">
+          Related Products
+        </h2>
+
+        {relatedLoading ? (
+          <p className="text-gray-500">
+            Loading related products...
+          </p>
+        ) : relatedProducts.length === 0 ? (
+          <p className="text-gray-500">
+            No related products found.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+
+            {relatedProducts.map(
+              (item) => {
+
+                const itemHasDiscount =
+                  item.discountPrice &&
+                  item.discountPrice <
+                    item.price;
+
+                const itemFinalPrice =
+                  itemHasDiscount
+                    ? item.discountPrice
+                    : item.price;
+
+                return (
+                  <div
+                    key={item._id}
+                    onClick={() =>
+                      handleRelatedProductClick(
+                        item._id
+                      )
+                    }
+                    className="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition duration-200"
+                  >
+
+                    {/* PRODUCT IMAGE */}
+
+                    <div className="w-full h-48 bg-gray-100 overflow-hidden">
+
+                      <img
+                        src={
+                          item.images?.[0]?.url
+                        }
+                        alt={item.name}
+                        className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                      />
+
+                    </div>
+
+                    {/* PRODUCT INFO */}
+
+                    <div className="p-4">
+
+                      {item.brand && (
+                        <p className="text-xs text-gray-500 mb-1">
+                          {item.brand}
+                        </p>
+                      )}
+
+                      <h3 className="font-semibold text-sm truncate">
+                        {item.name}
+                      </h3>
+
+                      {/* RATING */}
+
+                      <div className="flex items-center gap-1 mt-2">
+
+                        <div className="flex gap-0.5">
+
+                          {[1, 2, 3, 4, 5].map(
+                            (star) => (
+                              <FaStar
+                                key={star}
+                                className={`text-xs ${
+                                  star <=
+                                  Math.round(
+                                    item.averageRating ||
+                                      0
+                                  )
+                                    ? "text-orange-500"
+                                    : "text-gray-300"
+                                }`}
+                              />
+                            )
+                          )}
+
+                        </div>
+
+                        <span className="text-xs text-gray-400">
+                          (
+                          {item.numReviews ||
+                            0}
+                          )
+                        </span>
+
+                      </div>
+
+                      {/* PRICE */}
+
+                      <div className="flex items-center gap-2 mt-3">
+
+                        <span className="font-bold text-orange-600">
+                          EGP{" "}
+                          {itemFinalPrice}
+                        </span>
+
+                        {itemHasDiscount && (
+                          <span
+                            className="text-xs text-gray-400"
+                            style={{
+                              textDecoration:
+                                "line-through",
+                            }}
+                          >
+                            EGP {item.price}
+                          </span>
+                        )}
+
+                      </div>
+
+                    </div>
+
+                  </div>
+                );
+              }
+            )}
+
+          </div>
+        )}
+
+      </div>
+
     </div>
   );
 };
 
 export default ProductDetails;
-
