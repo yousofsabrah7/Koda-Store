@@ -3,11 +3,11 @@ import {CloseIcon} from"./Icons";
 
 function Chip({label,onRemove}){
     return (
-        <span className="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 text-xs font-medium pl-3 pr-3 py-1.5 rounded-full">
+        <span className="inline-flex items-center gap-1.5 bg-accent-light text-accent text-xs border border-accent-20 font-medium pl-3 pr-3 py-1.5 rounded-full shadow-xs">
             {label}
             <button type="button"
             onClick={onRemove}
-            className="p-0.5 rounded-full hover:bg-indigo-100 transition cursor-pointer"
+            className="p-0.5 rounded-full hover:bg-accent/20 text-accent transition cursor-pointer"
             aria-label={`Remove${label} filter`}>
                 <CloseIcon className="w-3 h-3"/>
             </button>

@@ -3,8 +3,8 @@ import ProductCard from "./ProductCard";
 export default function ProductGrid({ products, hasMore, onLoadMore }) {
   if (products.length === 0) {
     return (
-      <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 p-8">
-        <p className="text-gray-500 text-sm">No products found</p>
+      <div className="text-center py-16 bg-surface-card rounded-2xl border border-border-subtle p-8">
+        <p className="text-text-muted text-sm">No products found</p>
       </div>
     );
   }
@@ -26,7 +26,7 @@ export default function ProductGrid({ products, hasMore, onLoadMore }) {
         <button
           type="button"
           onClick={onLoadMore}
-          className="mt-10 px-8 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 active:bg-gray-100 transition shadow-xs cursor-pointer"
+          className="mt-10 px-8 py-2.5 bg-surface-card border border-border-subtle text-text-primary text-sm font-medium rounded-xl hover:bg-surface-elevated active:bg-gray-100 transition shadow-xs cursor-pointer"
         >
           Load More
         </button>
