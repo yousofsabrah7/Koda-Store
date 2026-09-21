@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaExclamationTriangle } from "react-icons/fa";
+import { useLogin } from "../../services/apiHooks/authHook";
 
 function validate({ email, password }) {
   const errors = {};
@@ -21,11 +22,11 @@ function validate({ email, password }) {
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { mutate: login, isPending: isSubmitting } = useLogin();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const redirectTo = location.state?.from?.pathname || "/";
@@ -36,7 +37,7 @@ export default function Login() {
     setFormError("");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     const validationErrors = validate(formData);
@@ -45,28 +46,16 @@ export default function Login() {
       return;
     }
 
-    setIsSubmitting(true);
     setFormError("");
 
-    try {
-      const users = JSON.parse(localStorage.getItem("koda_users")) || [];
-      const user = users.find(
-        (u) => u.email.toLowerCase() === formData.email.toLowerCase()
-      );
-
-      if (!user || user.password !== formData.password) {
-        throw new Error("Incorrect email or password.");
-      }
-
-      const session = { id: user.id, name: user.name, email: user.email };
-      localStorage.setItem("koda_current_user", JSON.stringify(session));
-
-      navigate(redirectTo, { replace: true });
-    } catch (err) {
-      setFormError(err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    login(formData, {
+      onSuccess: () => {
+        navigate(redirectTo, { replace: true });
+      },
+      onError: (err) => {
+        setFormError(err?.message || "Incorrect email or password.");
+      },
+    });
   };
 
   return (
