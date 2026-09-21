@@ -1,7 +1,16 @@
 import React from "react";
 import { Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function Hero() {
+  const navge = useNavigate();
+
+  const scrollToCategories = () => {
+  document
+    .getElementById("categories")
+    ?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div>
       <div className="relative overflow-hidden border border-border-subtle bg-gradient-to-br from-surface-elevated via-surface-card to-accent-light min-h-[580px] sm:min-h-[630px] flex items-center">
@@ -23,11 +32,15 @@ function Hero() {
           </p>
 
           <div className="flex flex-wrap gap-4">
-            <button className="cursor-pointer px-6 py-2 rounded-lg font-bold text-base bg-accent text-white hover:bg-accent-hover transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            <button className="cursor-pointer px-6 py-2 rounded-lg font-bold text-base bg-accent text-white hover:bg-accent-hover transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              onClick={() => navge("/shop")}
+            >
               Shop Now
             </button>
 
-            <button className="cursor-pointer px-6 py-2 rounded-lg font-bold text-base bg-transparent text-text-primary border-2 border-border-strong hover:bg-accent-light transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            <button className="cursor-pointer px-6 py-2 rounded-lg font-bold text-base bg-transparent text-text-primary border-2 border-border-strong hover:bg-accent-light transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              onClick={scrollToCategories}
+            >
               View Categories
             </button>
           </div>

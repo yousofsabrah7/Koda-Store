@@ -44,10 +44,10 @@ function Checkout() {
   const items = cart?.items ?? [];
   const totals = useMemo(() => {
     const subtotal =
-      cart?.subtotal ?? items.reduce((sum, i) => sum + i.price * i.qty, 0);
-    const shipping = cart?.shipping ?? 50;
+      cart?.subtotal ?? items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const shipping = 0;
     const tax = cart?.tax ?? Math.round(subtotal * 0.14);
-    const total = cart?.total ?? subtotal + shipping + tax;
+    const total = subtotal + shipping + tax;
     return { subtotal, shipping, tax, total };
   }, [cart, items]);
 
@@ -240,6 +240,8 @@ function Checkout() {
               Order Summary
             </h2>
 
+            <div className="max-h-[260px] overflow-y-auto pr-2 [scrollbar-width:thin]">
+
             {items.map((item) => (
               <div
                 key={item.id ?? item._id ?? item.productId}
@@ -258,13 +260,15 @@ function Checkout() {
                   <p className="text-[13.5px] font-medium text-indigo-600">
                     {item.name}
                   </p>
-                  <p className="text-xs text-slate-400">x{item.qty}</p>
+                  <p className="text-xs text-slate-400">x{item.quantity}</p>
                 </div>
                 <p className="ml-auto whitespace-nowrap text-[13px] font-semibold text-slate-800">
-                  {egp(item.price * item.qty)}
+                  {egp(item.price * item.quantity)}
                 </p>
               </div>
             ))}
+
+            </div>
 
             <div className="mb-4 border-t border-slate-200" />
 
