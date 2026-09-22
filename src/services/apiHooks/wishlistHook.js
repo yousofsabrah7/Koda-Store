@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useEffect } from "react";
 import toast from "react-hot-toast";
@@ -13,23 +9,17 @@ import {
   removeFromWishlist,
   clearWishlist,
 } from "../api/wishlistApi";
-
-
-
+import { useNavigate } from "react-router-dom";
 
 const useQueryErrorToast = (query) => {
   useEffect(() => {
     if (query.isError) {
-      const message =
-        query.error?.response?.data?.message ||
-        "Something went wrong";
+      const message = query.error.message || "Something went wrong";
 
       toast.error(message);
     }
   }, [query.isError, query.error]);
 };
-
-
 
 export const useWishlist = () => {
   const query = useQuery({
@@ -42,10 +32,8 @@ export const useWishlist = () => {
   return query;
 };
 
-
-
-
 export const useAddToWishlist = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -60,17 +48,15 @@ export const useAddToWishlist = () => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to add product to wishlist.";
+      if (error.statusCode === 401) {
+        navigate("/login", { replace: true });
+      }
+      const message = error.message || "Failed to add product to wishlist.";
 
       toast.error(message);
     },
   });
 };
-
-
-
 
 export const useRemoveFromWishlist = () => {
   const queryClient = useQueryClient();
@@ -88,15 +74,12 @@ export const useRemoveFromWishlist = () => {
 
     onError: (error) => {
       const message =
-        error?.response?.data?.message ||
-        "Failed to remove product from wishlist.";
+        error.message || "Failed to remove product from wishlist.";
 
       toast.error(message);
     },
   });
 };
-
-
 
 export const useClearWishlist = () => {
   const queryClient = useQueryClient();
@@ -113,9 +96,7 @@ export const useClearWishlist = () => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to clear wishlist.";
+      const message = error.message || "Failed to clear wishlist.";
 
       toast.error(message);
     },

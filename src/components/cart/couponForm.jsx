@@ -1,68 +1,262 @@
-import React, { useState } from 'react'
-import { useApplyCoupon, useRemoveCoupon } from '../../services/apiHooks/cartHooks'
-import { Loader2, Tag, X } from 'lucide-react'
+import React, { useState } from "react";
+import {
+  useApplyCoupon,
+  useRemoveCoupon,
+} from "../../services/apiHooks/cartHooks";
 
-const CouponForm = ({coupon}) => {
-  const [code, setCode] = useState("")
+import { Loader2, Tag, X } from "lucide-react";
 
-  const {mutate: applyCoupon, isPending: isApplying} = useApplyCoupon()
-  const { mutate: removeCoupon, isPending: isRemoving } = useRemoveCoupon()
-  
+const CouponForm = ({ coupon }) => {
+  const [code, setCode] = useState("");
+
+  const { mutate: applyCoupon, isPending: isApplying } = useApplyCoupon();
+
+  const { mutate: removeCoupon, isPending: isRemoving } = useRemoveCoupon();
+
   const handleApply = (e) => {
-    e.preventDefault()
+    e.preventDefault();
+
     if (!code.trim()) return;
+
     applyCoupon(
-      { code: code.trim() },
+      {
+        code: code.trim(),
+      },
       {
         onSuccess: () => setCode(""),
-      }
-    )
+      },
+    );
   };
 
-    return (
-      <div className=' bg-white p-6 rounded-2xl border border-gray-100 shadow-sm'>
-        <div className='flex items-center gap-2 text-gray-800 font-medium mb-4'>
-          <Tag className='w-5 h-5 text-gray-700 -rotate-90' />
-          <span className='text-sm font-semibold'>Coupon Code</span>
+  return (
+    <div
+      className="
+        rounded-2xl
+        border border-border-subtle
+        bg-surface-card
+        p-6
+        shadow-sm
+        transition-colors duration-300
+      "
+    >
+      {/* Header */}
+
+      <div
+        className="
+          mb-4
+          flex
+          items-center
+          gap-2
+          text-text-primary
+        "
+      >
+        <div
+          className="
+            flex
+            h-8
+            w-8
+            items-center
+            justify-center
+            rounded-lg
+            bg-accent-light
+          "
+        >
+          <Tag
+            className="
+              h-4
+              w-4
+              -rotate-90
+              text-accent
+            "
+          />
         </div>
 
-        {coupon ? (
-          <div className='bg-emerald-50/80 border border-emerald-100 text-emerald-700 px-4 py-3 rounded-xl flex items-center justify-between text-sm font-semibold'>
-            <span>Coupon "{coupon}" applied</span>
-            <button
-              type='button'
-              onClick={() => removeCoupon()}
-              disabled={isRemoving}
-              className='text-red-500 hover:text-red-600 transition-colors p-1 rounded-md disabled:opacity-50'
-              aria-label='Remove coupon'
-              >
-              {isRemoving ? (
-                <Loader2 className='w-4 h-4 animate-spin text-red-500' />
-              ) : (<X className='w-4 h-4' />)}
-            
-            </button>
-          </div>
-        ) : (
-            <form onSubmit={handleApply} className='flex items-center gap-3'>
-              <input
-                type='text'
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                placeholder='Enter coupon code'
-                className='flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder:text-gray-400 focus:outline-accent focus:border-0 transition-colors'
-              />
-              <button
-                type='submit'
-                disabled={isApplying || !code.trim()}
-                className='px-5 py-2.5 border border-accent text-accent font-medium text-sm rounded-xl hover:bg-accent-light transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent min-w-[85px]'
-              >
-                {isApplying && <Loader2 className='w-4 h-4 animate-spin' />}
-                Apply
-              </button>
-            </form>
-        )}
+        <span
+          className="
+            text-sm
+            font-semibold
+            text-text-primary
+          "
+        >
+          Coupon Code
+        </span>
       </div>
-)
-}
+
+      {/* Applied Coupon */}
+
+      {coupon ? (
+        <div
+          className="
+            flex
+            items-center
+            justify-between
+            gap-3
+            rounded-xl
+            border
+            border-accent/20
+            bg-accent-light
+            px-4
+            py-3
+          "
+        >
+          <div className="min-w-0">
+            <p
+              className="
+                truncate
+                text-sm
+                font-semibold
+                text-accent
+              "
+            >
+              Coupon "{coupon}" applied
+            </p>
+
+            <p
+              className="
+                mt-0.5
+                text-xs
+                text-text-secondary
+              "
+            >
+              Your discount has been applied.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => removeCoupon()}
+            disabled={isRemoving}
+            aria-label="Remove coupon"
+            className="
+              flex
+              h-8
+              w-8
+              shrink-0
+              cursor-pointer
+              items-center
+              justify-center
+              rounded-lg
+              text-text-muted
+              transition-all
+              hover:bg-surface-card
+              hover:text-accent
+              disabled:cursor-wait
+              disabled:opacity-50
+            "
+          >
+            {isRemoving ? (
+              <Loader2
+                className="
+                  h-4
+                  w-4
+                  animate-spin
+                  text-accent
+                "
+              />
+            ) : (
+              <X className="h-4 w-4" />
+            )}
+          </button>
+        </div>
+      ) : (
+        /* Coupon Form */
+
+        <form
+          onSubmit={handleApply}
+          className="
+            flex
+            flex-col
+            gap-3
+            sm:flex-row
+          "
+        >
+          <div className="relative flex-1">
+            <Tag
+              className="
+                pointer-events-none
+                absolute
+                left-3
+                top-1/2
+                h-4
+                w-4
+                -translate-y-1/2
+                text-text-muted
+              "
+            />
+
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Enter coupon code"
+              disabled={isApplying}
+              className="
+                w-full
+                rounded-xl
+                border
+                border-border-subtle
+                bg-surface-elevated
+                py-2.5
+                pl-10
+                pr-4
+                text-sm
+                text-text-primary
+                outline-none
+                transition-all
+                placeholder:text-text-muted
+                focus:border-accent
+                focus:ring-2
+                focus:ring-accent/15
+                disabled:cursor-not-allowed
+                disabled:opacity-60
+              "
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isApplying || !code.trim()}
+            className="
+              flex
+              min-w-[90px]
+              cursor-pointer
+              items-center
+              justify-center
+              gap-2
+              rounded-xl
+              border
+              border-accent
+              px-5
+              py-2.5
+              text-sm
+              font-semibold
+              text-accent
+              transition-all
+              duration-200
+              hover:bg-accent
+              hover:text-white
+              disabled:cursor-not-allowed
+              disabled:opacity-50
+              disabled:hover:bg-transparent
+              disabled:hover:text-accent
+            "
+          >
+            {isApplying && (
+              <Loader2
+                className="
+                  h-4
+                  w-4
+                  animate-spin
+                "
+              />
+            )}
+
+            <span>{isApplying ? "Applying..." : "Apply"}</span>
+          </button>
+        </form>
+      )}
+    </div>
+  );
+};
 
 export default CouponForm;

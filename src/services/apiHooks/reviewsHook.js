@@ -1,13 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-import {
-  addReview,
-  getProductReviews,
-  deleteReview,
-} from "../api/reviewsApi";
-
-
+import { addReview, getProductReviews, deleteReview } from "../api/reviewsApi";
 
 export const useProductReviews = (productId) => {
   return useQuery({
@@ -16,8 +10,6 @@ export const useProductReviews = (productId) => {
     enabled: !!productId,
   });
 };
-
-
 
 export const useAddReview = (productId) => {
   const queryClient = useQueryClient();
@@ -35,15 +27,12 @@ export const useAddReview = (productId) => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message || "Failed to add review";
+      const message = error.message || "Failed to add review";
 
       toast.error(message);
     },
   });
 };
-
-
 
 export const useDeleteReview = (productId) => {
   const queryClient = useQueryClient();
@@ -61,8 +50,7 @@ export const useDeleteReview = (productId) => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message || "Failed to delete review";
+      const message = error.message || "Failed to delete review";
 
       toast.error(message);
     },

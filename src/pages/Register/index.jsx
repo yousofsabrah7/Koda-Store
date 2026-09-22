@@ -1,9 +1,25 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEnvelope, FaLock, FaUser, FaPhone, FaEye, FaEyeSlash, FaExclamationTriangle } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaLock,
+  FaUser,
+  FaPhone,
+  FaEye,
+  FaEyeSlash,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 import { useSendRegisterOTP } from "../../services/apiHooks/authHook";
 
-function validate({ username, email, phone, password, confirmPassword, agreedToTerms }) {
+function validate({
+  username,
+  email,
+  phone,
+  password,
+  confirmPassword,
+  agreedToTerms,
+}) {
   const errors = {};
 
   if (!username.trim()) {
@@ -52,16 +68,32 @@ export default function Register() {
     confirmPassword: "",
     agreedToTerms: false,
   });
+
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState("");
-  const { mutate: sendOtp, isPending: isSubmitting } = useSendRegisterOTP();
+
+  const { mutate: sendOtp, isPending: isSubmitting } =
+    useSendRegisterOTP();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (field) => (e) => {
-    const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: undefined }));
+    const value =
+      e.target.type === "checkbox"
+        ? e.target.checked
+        : e.target.value;
+
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+    }));
+
     setFormError("");
   };
 
@@ -69,6 +101,7 @@ export default function Register() {
     e.preventDefault();
 
     const validationErrors = validate(formData);
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -84,173 +117,420 @@ export default function Register() {
     };
 
     sendOtp(payload, {
-      // The OTP was emailed; the next screen asks for it.
       onSuccess: () =>
-        navigate("/verify-otp", { state: { email: payload.email } }),
+        navigate("/verify-otp", {
+          state: {
+            email: payload.email,
+          },
+        }),
+
       onError: (err) =>
-        setFormError(err?.message || "Could not create your account."),
+        setFormError(
+          err?.message || "Could not create your account."
+        ),
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 flex items-center justify-center px-4 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-surface-base px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="flex justify-center mb-8">
-          <Link to="/" className="text-2xl font-bold text-gray-900 tracking-tight">
-            Koda<span className="text-amber-600">Store</span>
+
+        {/* Logo */}
+        <div className="mb-8 flex justify-center">
+          <Link
+            to="/"
+            className="text-2xl font-bold tracking-tight text-text-primary"
+          >
+            Koda
+            <span className="text-accent">Store</span>
           </Link>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        {/* Register Card */}
+        <div className="rounded-2xl border border-border-subtle bg-surface-card p-8 shadow-sm">
+
+          {/* Header */}
           <div className="mb-6 text-center">
-            <h1 className="text-xl font-bold text-gray-900 mb-1">Create your account</h1>
-            <p className="text-sm text-gray-500">Sign up to start shopping with Koda Store</p>
+            <h1 className="mb-1 text-xl font-bold text-text-primary">
+              Create your account
+            </h1>
+
+            <p className="text-sm text-text-secondary">
+              Sign up to start shopping with Koda Store
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="space-y-4"
+          >
+            {/* Form Error */}
             {formError && (
-              <div className="flex items-start gap-2 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-3.5 py-2.5">
-                <FaExclamationTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+              <div
+                className="
+                  flex items-start gap-2
+                  rounded-xl
+                  border border-red-200
+                  bg-red-50
+                  px-3.5 py-2.5
+                  text-sm text-red-600
+                  dark:border-red-900/40
+                  dark:bg-red-950/20
+                  dark:text-red-400
+                "
+              >
+                <FaExclamationTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>{formError}</span>
               </div>
             )}
 
+            {/* Username */}
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1.5">Username</label>
+              <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                Username
+              </label>
+
               <div className="relative">
-                <FaUser className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <FaUser
+                  className="
+                    absolute left-3.5 top-1/2
+                    h-4 w-4 -translate-y-1/2
+                    text-text-muted
+                  "
+                />
+
                 <input
                   type="text"
                   placeholder="john_doe"
                   value={formData.username}
                   onChange={handleChange("username")}
                   autoComplete="username"
-                  className={`w-full pl-10 pr-3.5 py-2.5 bg-white border rounded-xl text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition ${
-                    errors.username ? "border-red-300 focus:ring-red-100" : "border-gray-200 focus:ring-indigo-100 focus:border-indigo-300"
-                  }`}
+                  className={`
+                    w-full rounded-xl border
+                    bg-surface-card
+                    py-2.5 pl-10 pr-3.5
+                    text-sm text-text-primary
+                    placeholder:text-text-muted
+                    transition
+                    focus:outline-none
+                    focus:ring-2
+                    ${
+                      errors.username
+                        ? "border-red-400 focus:border-red-500 focus:ring-red-500/15"
+                        : "border-border-subtle focus:border-accent focus:ring-accent-light"
+                    }
+                  `}
                 />
               </div>
-              {errors.username && <p className="text-xs text-red-500 mt-1.5">{errors.username}</p>}
+
+              {errors.username && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.username}
+                </p>
+              )}
             </div>
 
+            {/* Email */}
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1.5">Email</label>
+              <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                Email
+              </label>
+
               <div className="relative">
-                <FaEnvelope className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <FaEnvelope
+                  className="
+                    absolute left-3.5 top-1/2
+                    h-4 w-4 -translate-y-1/2
+                    text-text-muted
+                  "
+                />
+
                 <input
                   type="email"
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={handleChange("email")}
                   autoComplete="email"
-                  className={`w-full pl-10 pr-3.5 py-2.5 bg-white border rounded-xl text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition ${
-                    errors.email ? "border-red-300 focus:ring-red-100" : "border-gray-200 focus:ring-indigo-100 focus:border-indigo-300"
-                  }`}
+                  className={`
+                    w-full rounded-xl border
+                    bg-surface-card
+                    py-2.5 pl-10 pr-3.5
+                    text-sm text-text-primary
+                    placeholder:text-text-muted
+                    transition
+                    focus:outline-none
+                    focus:ring-2
+                    ${
+                      errors.email
+                        ? "border-red-400 focus:border-red-500 focus:ring-red-500/15"
+                        : "border-border-subtle focus:border-accent focus:ring-accent-light"
+                    }
+                  `}
                 />
               </div>
-              {errors.email && <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>}
+
+              {errors.email && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.email}
+                </p>
+              )}
             </div>
 
+            {/* Phone */}
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1.5">Phone</label>
+              <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                Phone
+              </label>
+
               <div className="relative">
-                <FaPhone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <FaPhone
+                  className="
+                    absolute left-3.5 top-1/2
+                    h-4 w-4 -translate-y-1/2
+                    text-text-muted
+                  "
+                />
+
                 <input
                   type="tel"
                   placeholder="+201234567890"
                   value={formData.phone}
                   onChange={handleChange("phone")}
                   autoComplete="tel"
-                  className={`w-full pl-10 pr-3.5 py-2.5 bg-white border rounded-xl text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition ${
-                    errors.phone ? "border-red-300 focus:ring-red-100" : "border-gray-200 focus:ring-indigo-100 focus:border-indigo-300"
-                  }`}
+                  className={`
+                    w-full rounded-xl border
+                    bg-surface-card
+                    py-2.5 pl-10 pr-3.5
+                    text-sm text-text-primary
+                    placeholder:text-text-muted
+                    transition
+                    focus:outline-none
+                    focus:ring-2
+                    ${
+                      errors.phone
+                        ? "border-red-400 focus:border-red-500 focus:ring-red-500/15"
+                        : "border-border-subtle focus:border-accent focus:ring-accent-light"
+                    }
+                  `}
                 />
               </div>
-              {errors.phone && <p className="text-xs text-red-500 mt-1.5">{errors.phone}</p>}
+
+              {errors.phone && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.phone}
+                </p>
+              )}
             </div>
 
+            {/* Password */}
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1.5">Password</label>
+              <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                Password
+              </label>
+
               <div className="relative">
-                <FaLock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <FaLock
+                  className="
+                    absolute left-3.5 top-1/2
+                    h-4 w-4 -translate-y-1/2
+                    text-text-muted
+                  "
+                />
+
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="At least 8 characters"
                   value={formData.password}
                   onChange={handleChange("password")}
                   autoComplete="new-password"
-                  className={`w-full pl-10 pr-10 py-2.5 bg-white border rounded-xl text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition ${
-                    errors.password ? "border-red-300 focus:ring-red-100" : "border-gray-200 focus:ring-indigo-100 focus:border-indigo-300"
-                  }`}
+                  className={`
+                    w-full rounded-xl border
+                    bg-surface-card
+                    py-2.5 pl-10 pr-10
+                    text-sm text-text-primary
+                    placeholder:text-text-muted
+                    transition
+                    focus:outline-none
+                    focus:ring-2
+                    ${
+                      errors.password
+                        ? "border-red-400 focus:border-red-500 focus:ring-red-500/15"
+                        : "border-border-subtle focus:border-accent focus:ring-accent-light"
+                    }
+                  `}
                 />
+
                 <button
                   type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                  onClick={() =>
+                    setShowPassword((prev) => !prev)
+                  }
+                  className="
+                    absolute right-3 top-1/2
+                    -translate-y-1/2
+                    cursor-pointer
+                    text-text-muted
+                    transition
+                    hover:text-text-primary
+                  "
                   tabIndex={-1}
                 >
-                  {showPassword ? <FaEyeSlash className="w-4 h-4" /> : <FaEye className="w-4 h-4" />}
+                  {showPassword ? (
+                    <FaEyeSlash className="h-4 w-4" />
+                  ) : (
+                    <FaEye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
-              {errors.password && <p className="text-xs text-red-500 mt-1.5">{errors.password}</p>}
+
+              {errors.password && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.password}
+                </p>
+              )}
             </div>
 
+            {/* Confirm Password */}
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1.5">Confirm password</label>
+              <label className="mb-1.5 block text-sm font-medium text-text-secondary">
+                Confirm password
+              </label>
+
               <div className="relative">
-                <FaLock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <FaLock
+                  className="
+                    absolute left-3.5 top-1/2
+                    h-4 w-4 -translate-y-1/2
+                    text-text-muted
+                  "
+                />
+
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Re-enter your password"
                   value={formData.confirmPassword}
                   onChange={handleChange("confirmPassword")}
                   autoComplete="new-password"
-                  className={`w-full pl-10 pr-10 py-2.5 bg-white border rounded-xl text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition ${
-                    errors.confirmPassword ? "border-red-300 focus:ring-red-100" : "border-gray-200 focus:ring-indigo-100 focus:border-indigo-300"
-                  }`}
+                  className={`
+                    w-full rounded-xl border
+                    bg-surface-card
+                    py-2.5 pl-10 pr-10
+                    text-sm text-text-primary
+                    placeholder:text-text-muted
+                    transition
+                    focus:outline-none
+                    focus:ring-2
+                    ${
+                      errors.confirmPassword
+                        ? "border-red-400 focus:border-red-500 focus:ring-red-500/15"
+                        : "border-border-subtle focus:border-accent focus:ring-accent-light"
+                    }
+                  `}
                 />
+
                 <button
                   type="button"
-                  onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                  onClick={() =>
+                    setShowConfirmPassword((prev) => !prev)
+                  }
+                  className="
+                    absolute right-3 top-1/2
+                    -translate-y-1/2
+                    cursor-pointer
+                    text-text-muted
+                    transition
+                    hover:text-text-primary
+                  "
                   tabIndex={-1}
                 >
-                  {showConfirmPassword ? <FaEyeSlash className="w-4 h-4" /> : <FaEye className="w-4 h-4" />}
+                  {showConfirmPassword ? (
+                    <FaEyeSlash className="h-4 w-4" />
+                  ) : (
+                    <FaEye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
-              {errors.confirmPassword && <p className="text-xs text-red-500 mt-1.5">{errors.confirmPassword}</p>}
+
+              {errors.confirmPassword && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.confirmPassword}
+                </p>
+              )}
             </div>
 
+            {/* Terms */}
             <div>
-              <label className="flex items-start gap-2.5 cursor-pointer">
+              <label className="flex cursor-pointer items-start gap-2.5">
                 <input
                   type="checkbox"
                   checked={formData.agreedToTerms}
                   onChange={handleChange("agreedToTerms")}
-                  className="w-4 h-4 mt-0.5 rounded border-gray-300 text-amber-600 focus:ring-indigo-400 cursor-pointer"
+                  className="
+                    mt-0.5 h-4 w-4
+                    cursor-pointer
+                    rounded
+                    border-border-strong
+                    accent-[var(--color-accent)]
+                    focus:ring-2
+                    focus:ring-accent-light
+                  "
                 />
-                <span className="text-sm text-gray-600">
+
+                <span className="text-sm text-text-secondary">
                   I agree to the{" "}
-                  <span className="text-amber-600 font-medium">Terms of Service</span>{" "}
+                  <span className="font-medium text-accent">
+                    Terms of Service
+                  </span>{" "}
                   and{" "}
-                  <span className="text-amber-600 font-medium">Privacy Policy</span>
+                  <span className="font-medium text-accent">
+                    Privacy Policy
+                  </span>
                 </span>
               </label>
-              {errors.agreedToTerms && <p className="text-xs text-red-500 mt-1.5">{errors.agreedToTerms}</p>}
+
+              {errors.agreedToTerms && (
+                <p className="mt-1.5 text-xs text-red-500">
+                  {errors.agreedToTerms}
+                </p>
+              )}
             </div>
 
+            {/* Submit */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-amber-500 hover:bg-amber-200 disabled:bg-indigo-300 text-white text-sm font-semibold py-2.5 rounded-xl transition cursor-pointer disabled:cursor-not-allowed"
+              className="
+                w-full rounded-xl
+                bg-accent
+                py-2.5
+                text-sm font-semibold text-white
+                transition
+                hover:bg-accent-hover
+                focus:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-accent-light
+                disabled:cursor-not-allowed
+                disabled:opacity-60
+              "
             >
-              {isSubmitting ? "Sending code..." : "Create account"}
+              {isSubmitting
+                ? "Sending code..."
+                : "Create account"}
             </button>
           </form>
 
-          <p className="text-sm text-gray-500 text-center mt-6">
+          {/* Login */}
+          <p className="mt-6 text-center text-sm text-text-secondary">
             Already have an account?{" "}
-            <Link to="/login" className="font-medium text-amber-600 hover:text-amber-200 transition">
+            <Link
+              to="/login"
+              className="
+                font-medium text-accent
+                transition
+                hover:text-accent-hover
+              "
+            >
               Log in
             </Link>
           </p>

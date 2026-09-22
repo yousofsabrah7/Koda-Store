@@ -1,70 +1,152 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const CartSummary = ({
-    subtotal = 0,
-    discountAmount = 0,
-    total = 0,
-    }) => {
-    const tax = total * 0.14;
-    const finalTotal = total + tax;
+const CartSummary = ({ subtotal = 0, discountAmount = 0, total = 0 }) => {
+  const tax = total * 0.14;
+  const finalTotal = total + tax;
 
-    return (
-        <aside className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-full">
-            <h2 className="text-lg font-bold text-gray-800 mb-5">Order Summary</h2>
-            <div className="space-y-3.5 text-sm">
-                {/* subtotal */}
-                <div className="flex justify-between items-center text-gray-600">
-                    <span>Subtotal</span>
-                    <span className="font-semibold text-gray-800">
-                        EGP {subtotal.toLocaleString()}</span>
-                </div>
+  return (
+    <aside
+      className="
+        h-full
+        rounded-2xl
+        border border-border-subtle
+        bg-surface-card
+        p-6
+        shadow-sm
+        transition-colors duration-300
+      "
+    >
+      {/* Header */}
 
-                {/* discount */}
-                {discountAmount > 0 && (
-                    <div className="flex justify-between items-center text-emerald-600">
-                        <span>Discount</span>
-                        <span className="font-semibold">
-                            -EGP {discountAmount.toLocaleString()}</span>
-                    </div>
-                )}
+      <div className="mb-6">
+        <h2 className="text-lg font-bold text-text-primary">Order Summary</h2>
 
-                {/* shipping */}
-                <div className="flex justify-between items-center text-gray-600">
-                    <span>Shipping</span>
-                    <span className="font-semibold text-emerald-600">Free</span>
-                </div>
+        <p className="mt-1 text-xs text-text-muted">
+          Review your order details
+        </p>
+      </div>
 
-                {/* tax */}
-                <div className="flex justify-between items-center text-gray-600">
-                    <span>Tax (14%)</span>
-                    <span className="font-semibold text-gray-800">
-                        EGP {Math.round(tax).toLocaleString()}</span>
-                </div>
+      {/* Summary */}
 
-                {/* hr */}
-                <div className="border-t border-gray-100 my-4"/>
+      <div className="space-y-4 text-sm">
+        {/* Subtotal */}
 
-                {/* total */}
-                <div className="flex justify-between items-center text-base font-bold text-gray-900 pt-1">
-                    <span>Total</span>
-                    <span className="text-accent text-lg">
-                        EGP {Math.round(finalTotal).toLocaleString()}</span>
-                </div>
-            </div>
-            <div className="mt-6 space-y-3">
-                <Link
-                    to="/checkout"
-                    className="block w-full py-3.5 px-4 bg-accent hover:bg-accent-hover text-white font-semibold text-center rounded-xl shadow-sm transition-colors text-sm"
-                >Proceed to Checkout</Link>
+        <div className="flex items-center justify-between">
+          <span className="text-text-secondary">Subtotal</span>
 
-                <Link
-                    to="/shop"
-                    className="block w-full text-center text-sm font-medium text-accent hover:text-accent-hover transition-colors py-1"
-                >Continue Shopping</Link>
-            </div>
-        </aside>
-    )
-}
+          <span className="font-semibold text-text-primary">
+            EGP {subtotal.toLocaleString()}
+          </span>
+        </div>
+
+        {/* Discount */}
+
+        {discountAmount > 0 && (
+          <div className="flex items-center justify-between">
+            <span className="text-text-secondary">Discount</span>
+
+            <span className="font-semibold text-accent">
+              -EGP {discountAmount.toLocaleString()}
+            </span>
+          </div>
+        )}
+
+        {/* Shipping */}
+
+        <div className="flex items-center justify-between">
+          <span className="text-text-secondary">Shipping</span>
+
+          <span className="font-semibold text-accent">Free</span>
+        </div>
+
+        {/* Tax */}
+
+        <div className="flex items-center justify-between">
+          <span className="text-text-secondary">Tax (14%)</span>
+
+          <span className="font-semibold text-text-primary">
+            EGP {Math.round(tax).toLocaleString()}
+          </span>
+        </div>
+
+        {/* Divider */}
+
+        <div className="my-5 border-t border-border-subtle" />
+
+        {/* Total */}
+
+        <div
+          className="
+            flex
+            items-center
+            justify-between
+            rounded-xl
+            bg-accent-light
+            px-4
+            py-3
+          "
+        >
+          <span className="text-sm font-bold text-text-primary">Total</span>
+
+          <span className="text-lg font-bold text-accent">
+            EGP {Math.round(finalTotal).toLocaleString()}
+          </span>
+        </div>
+      </div>
+
+      {/* Actions */}
+
+      <div className="mt-6 space-y-3">
+        {/* Checkout */}
+
+        <Link
+          to="/checkout"
+          className="
+            block
+            w-full
+            rounded-xl
+            bg-accent
+            px-4
+            py-3.5
+            text-center
+            text-sm
+            font-semibold
+            text-white
+            shadow-sm
+            shadow-accent/20
+            transition-all duration-200
+            hover:bg-accent-hover
+            hover:shadow-md
+            hover:shadow-accent/25
+          "
+        >
+          Proceed to Checkout
+        </Link>
+
+        {/* Continue Shopping */}
+
+        <Link
+          to="/shop"
+          className="
+            block
+            w-full
+            rounded-lg
+            py-2
+            text-center
+            text-sm
+            font-semibold
+            text-text-secondary
+            transition-colors
+            hover:bg-accent-light
+            hover:text-accent
+          "
+        >
+          Continue Shopping
+        </Link>
+      </div>
+    </aside>
+  );
+};
 
 export default CartSummary;
