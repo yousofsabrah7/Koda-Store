@@ -69,15 +69,10 @@ export default function ForgetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const {
-    mutate: sendOtp,
-    isPending: isSending,
-  } = useSendForgotPasswordOTP();
+  const { mutate: sendOtp, isPending: isSending } = useSendForgotPasswordOTP();
 
-  const {
-    mutate: resetPassword,
-    isPending: isResetting,
-  } = useVerifyForgotPasswordOTP();
+  const { mutate: resetPassword, isPending: isResetting } =
+    useVerifyForgotPasswordOTP();
 
   const clearError = (field) =>
     setErrors((prev) => ({
@@ -114,11 +109,9 @@ export default function ForgetPassword() {
 
         onError: (err) =>
           setErrors({
-            email:
-              err?.message ||
-              "Could not send the code.",
+            email: err?.message || "Could not send the code.",
           }),
-      }
+      },
     );
   };
 
@@ -134,16 +127,13 @@ export default function ForgetPassword() {
     const next = {};
 
     if (otp.length !== 6) {
-      next.otp =
-        "Enter the 6-digit code we emailed you.";
+      next.otp = "Enter the 6-digit code we emailed you.";
     }
 
     if (!newPassword) {
-      next.newPassword =
-        "New password is required.";
+      next.newPassword = "New password is required.";
     } else if (newPassword.length < 8) {
-      next.newPassword =
-        "Password must be at least 8 characters.";
+      next.newPassword = "Password must be at least 8 characters.";
     }
 
     if (Object.keys(next).length > 0) {
@@ -165,34 +155,28 @@ export default function ForgetPassword() {
 
         onError: (err) =>
           setErrors({
-            otp:
-              err?.message ||
-              "Invalid or expired code.",
+            otp: err?.message || "Invalid or expired code.",
           }),
-      }
+      },
     );
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-surface-base px-4 py-10">
       <div className="w-full max-w-md">
-
         {/* Logo */}
         <div className="mb-8 flex justify-center">
           <Link
             to="/"
             className="text-2xl font-bold tracking-tight text-text-primary"
           >
-            Koda
-            <span className="text-accent">
-              Store
-            </span>
+            E-Hub
+            <span className="text-accent">Store</span>
           </Link>
         </div>
 
         {/* Card */}
         <div className="rounded-2xl border border-border-subtle bg-surface-card p-8 shadow-sm">
-
           {step === "email" ? (
             <>
               {/* Email Step */}
@@ -202,16 +186,11 @@ export default function ForgetPassword() {
                 </h1>
 
                 <p className="text-sm text-text-secondary">
-                  Enter your email and we&apos;ll send
-                  you a 6-digit code
+                  Enter your email and we&apos;ll send you a 6-digit code
                 </p>
               </div>
 
-              <form
-                onSubmit={handleSendCode}
-                noValidate
-                className="space-y-4"
-              >
+              <form onSubmit={handleSendCode} noValidate className="space-y-4">
                 <div>
                   <label
                     htmlFor="email"
@@ -240,9 +219,7 @@ export default function ForgetPassword() {
                         clearError("email");
                       }}
                       autoComplete="email"
-                      className={inputClass(
-                        errors.email
-                      )}
+                      className={inputClass(errors.email)}
                     />
                   </div>
 
@@ -258,9 +235,7 @@ export default function ForgetPassword() {
                   disabled={isSending}
                   className={submitClass}
                 >
-                  {isSending
-                    ? "Sending code..."
-                    : "Send code"}
+                  {isSending ? "Sending code..." : "Send code"}
                 </button>
               </form>
             </>
@@ -281,11 +256,7 @@ export default function ForgetPassword() {
                 </p>
               </div>
 
-              <form
-                onSubmit={handleReset}
-                noValidate
-                className="space-y-4"
-              >
+              <form onSubmit={handleReset} noValidate className="space-y-4">
                 {/* OTP */}
                 <div>
                   <label
@@ -313,24 +284,16 @@ export default function ForgetPassword() {
                       placeholder="123456"
                       value={otp}
                       onChange={(e) => {
-                        setOtp(
-                          e.target.value
-                            .replace(/\D/g, "")
-                            .slice(0, 6)
-                        );
+                        setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
 
                         clearError("otp");
                       }}
-                      className={inputClass(
-                        errors.otp
-                      )}
+                      className={inputClass(errors.otp)}
                     />
                   </div>
 
                   {errors.otp && (
-                    <p className="mt-1.5 text-xs text-red-500">
-                      {errors.otp}
-                    </p>
+                    <p className="mt-1.5 text-xs text-red-500">{errors.otp}</p>
                   )}
                 </div>
 
@@ -355,34 +318,21 @@ export default function ForgetPassword() {
 
                     <input
                       id="new-password"
-                      type={
-                        showPassword
-                          ? "text"
-                          : "password"
-                      }
+                      type={showPassword ? "text" : "password"}
                       placeholder="At least 8 characters"
                       value={newPassword}
                       onChange={(e) => {
-                        setNewPassword(
-                          e.target.value
-                        );
+                        setNewPassword(e.target.value);
 
                         clearError("newPassword");
                       }}
                       autoComplete="new-password"
-                      className={inputClass(
-                        errors.newPassword,
-                        "pr-10"
-                      )}
+                      className={inputClass(errors.newPassword, "pr-10")}
                     />
 
                     <button
                       type="button"
-                      onClick={() =>
-                        setShowPassword(
-                          (prev) => !prev
-                        )
-                      }
+                      onClick={() => setShowPassword((prev) => !prev)}
                       className="
                         absolute right-3 top-1/2
                         -translate-y-1/2
@@ -413,9 +363,7 @@ export default function ForgetPassword() {
                   disabled={isResetting}
                   className={submitClass}
                 >
-                  {isResetting
-                    ? "Updating password..."
-                    : "Update password"}
+                  {isResetting ? "Updating password..." : "Update password"}
                 </button>
 
                 {/* Actions */}
@@ -447,9 +395,7 @@ export default function ForgetPassword() {
                       disabled:opacity-50
                     "
                   >
-                    {isSending
-                      ? "Sending..."
-                      : "Resend code"}
+                    {isSending ? "Sending..." : "Resend code"}
                   </button>
                 </div>
               </form>

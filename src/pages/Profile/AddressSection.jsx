@@ -11,12 +11,12 @@ export default function AddressSection() {
   });
 
   const [addresses, setAddresses] = useState(() => {
-    const savedAddresses = localStorage.getItem("koda_user_addresses");
+    const savedAddresses = localStorage.getItem("E-Hub_user_addresses");
     return savedAddresses ? JSON.parse(savedAddresses) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem("koda_user_addresses", JSON.stringify(addresses));
+    localStorage.setItem("E-Hub_user_addresses", JSON.stringify(addresses));
   }, [addresses]);
 
   const handleChange = (e) => {

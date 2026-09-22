@@ -26,12 +26,11 @@ const inputClass = (invalid) =>
   ].join(" ");
 
 function Checkout() {
-  const navigate = useNavigate
-  const { data: cart, isLoading: cartLoading, isError: cartError } =
-    useCart();
+  const navigate = useNavigate;
+  const { data: cart, isLoading: cartLoading, isError: cartError } = useCart();
+
 
   const placeOrderMutation = usePlaceOrder();
-
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -41,7 +40,6 @@ function Checkout() {
     postal: "",
     notes: "",
   });
-
   const [errors, setErrors] = useState({});
   const [payment, setPayment] = useState("cod");
 
@@ -49,8 +47,7 @@ function Checkout() {
 
   const totals = useMemo(() => {
     const subtotal =
-      cart?.subtotal ??
-      items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      cart?.subtotal ?? items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
     const shipping = 0;
     const tax = cart?.tax ?? Math.round(subtotal * 0.14);
@@ -163,10 +160,7 @@ function Checkout() {
           <div className="space-y-6">
             <Card>
               <div className="p-5 pb-6 sm:px-6">
-                <CardHeader
-                  icon={MapPin}
-                  title="Shipping Address"
-                />
+                <CardHeader icon={MapPin} title="Shipping Address" />
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-3.5 sm:grid-cols-2">
                   <Field
@@ -214,7 +208,7 @@ function Checkout() {
                       onChange={setField("country")}
                       aria-invalid={!!errors.country}
                       className={`${inputClass(
-                        errors.country
+                        errors.country,
                       )} cursor-pointer appearance-none bg-[length:7px] pr-8`}
                     >
                       {COUNTRIES.map((country) => (
@@ -274,15 +268,9 @@ function Checkout() {
 
             <Card>
               <div className="p-5 pb-6 sm:px-6">
-                <CardHeader
-                  icon={CreditCard}
-                  title="Payment Method"
-                />
+                <CardHeader icon={CreditCard} title="Payment Method" />
 
-                <div
-                  role="radiogroup"
-                  aria-label="Payment method"
-                >
+                <div role="radiogroup" aria-label="Payment method">
                   <PaymentOption
                     selected={payment === "cod"}
                     onSelect={() => setPayment("cod")}
@@ -295,10 +283,7 @@ function Checkout() {
 
             <Card>
               <div className="p-5 pb-6 sm:px-6">
-                <CardHeader
-                  icon={FileText}
-                  title="Order Notes (Optional)"
-                />
+                <CardHeader icon={FileText} title="Order Notes (Optional)" />
 
                 <textarea
                   id="notes"
@@ -307,7 +292,7 @@ function Checkout() {
                   onChange={setField("notes")}
                   placeholder="Any special instructions for your order..."
                   className={`${inputClass(
-                    false
+                    false,
                   )} min-h-[78px] resize-y py-2.5`}
                 />
               </div>
@@ -340,9 +325,7 @@ function Checkout() {
                       {item.name}
                     </p>
 
-                    <p className="text-xs text-text-muted">
-                      x{item.quantity}
-                    </p>
+                    <p className="text-xs text-text-muted">x{item.quantity}</p>
                   </div>
 
                   <p className="ml-auto whitespace-nowrap text-[13px] font-semibold text-text-primary">
@@ -354,30 +337,17 @@ function Checkout() {
 
             <div className="mb-4 border-t border-border-subtle" />
 
-            <SummaryRow
-              label="Subtotal"
-              value={egp(totals.subtotal)}
-            />
+            <SummaryRow label="Subtotal" value={egp(totals.subtotal)} />
 
-            <SummaryRow
-              label="Shipping"
-              value={egp(totals.shipping)}
-            />
+            <SummaryRow label="Shipping" value={egp(totals.shipping)} />
 
-            <SummaryRow
-              label="Tax (14%)"
-              value={egp(totals.tax)}
-            />
+            <SummaryRow label="Tax (14%)" value={egp(totals.tax)} />
 
-            <SummaryRow
-              label="Total"
-              value={egp(totals.total)}
-              total
-            />
+            <SummaryRow label="Total" value={egp(totals.total)} total />
 
             <button
               type="submit"
-              onClick={() => navigate(`/order-success/${orderId}`)}
+
               disabled={placeOrderMutation.isPending || !items.length}
               className="
                 mt-4 w-full rounded-lg

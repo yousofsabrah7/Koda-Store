@@ -16,7 +16,7 @@ const useQueryErrorToast = (query) => {
     if (query.isError) {
       const message = query.error.message || "Something went wrong";
 
-      toast.error(message);
+      query.error.statusCode !== 401 ? toast.error(message) : null;
     }
   }, [query.isError, query.error]);
 };
@@ -53,7 +53,7 @@ export const useAddToWishlist = () => {
       }
       const message = error.message || "Failed to add product to wishlist.";
 
-      toast.error(message);
+      error.statusCode !== 401 ? toast.error(message) : null;
     },
   });
 };

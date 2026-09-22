@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -72,17 +71,14 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState("");
 
-  const { mutate: sendOtp, isPending: isSubmitting } =
-    useSendRegisterOTP();
+  const { mutate: sendOtp, isPending: isSubmitting } = useSendRegisterOTP();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (field) => (e) => {
     const value =
-      e.target.type === "checkbox"
-        ? e.target.checked
-        : e.target.value;
+      e.target.type === "checkbox" ? e.target.checked : e.target.value;
 
     setFormData((prev) => ({
       ...prev,
@@ -125,30 +121,26 @@ export default function Register() {
         }),
 
       onError: (err) =>
-        setFormError(
-          err?.message || "Could not create your account."
-        ),
+        setFormError(err?.message || "Could not create your account."),
     });
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-surface-base px-4 py-10">
       <div className="w-full max-w-md">
-
         {/* Logo */}
         <div className="mb-8 flex justify-center">
           <Link
             to="/"
             className="text-2xl font-bold tracking-tight text-text-primary"
           >
-            Koda
+            E-Hub
             <span className="text-accent">Store</span>
           </Link>
         </div>
 
         {/* Register Card */}
         <div className="rounded-2xl border border-border-subtle bg-surface-card p-8 shadow-sm">
-
           {/* Header */}
           <div className="mb-6 text-center">
             <h1 className="mb-1 text-xl font-bold text-text-primary">
@@ -156,15 +148,11 @@ export default function Register() {
             </h1>
 
             <p className="text-sm text-text-secondary">
-              Sign up to start shopping with Koda Store
+              Sign up to start shopping with E-Hub Store
             </p>
           </div>
 
-          <form
-            onSubmit={handleSubmit}
-            noValidate
-            className="space-y-4"
-          >
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {/* Form Error */}
             {formError && (
               <div
@@ -225,9 +213,7 @@ export default function Register() {
               </div>
 
               {errors.username && (
-                <p className="mt-1.5 text-xs text-red-500">
-                  {errors.username}
-                </p>
+                <p className="mt-1.5 text-xs text-red-500">{errors.username}</p>
               )}
             </div>
 
@@ -271,9 +257,7 @@ export default function Register() {
               </div>
 
               {errors.email && (
-                <p className="mt-1.5 text-xs text-red-500">
-                  {errors.email}
-                </p>
+                <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>
               )}
             </div>
 
@@ -317,9 +301,7 @@ export default function Register() {
               </div>
 
               {errors.phone && (
-                <p className="mt-1.5 text-xs text-red-500">
-                  {errors.phone}
-                </p>
+                <p className="mt-1.5 text-xs text-red-500">{errors.phone}</p>
               )}
             </div>
 
@@ -363,9 +345,7 @@ export default function Register() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowPassword((prev) => !prev)
-                  }
+                  onClick={() => setShowPassword((prev) => !prev)}
                   className="
                     absolute right-3 top-1/2
                     -translate-y-1/2
@@ -385,9 +365,7 @@ export default function Register() {
               </div>
 
               {errors.password && (
-                <p className="mt-1.5 text-xs text-red-500">
-                  {errors.password}
-                </p>
+                <p className="mt-1.5 text-xs text-red-500">{errors.password}</p>
               )}
             </div>
 
@@ -431,9 +409,7 @@ export default function Register() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowConfirmPassword((prev) => !prev)
-                  }
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
                   className="
                     absolute right-3 top-1/2
                     -translate-y-1/2
@@ -514,9 +490,7 @@ export default function Register() {
                 disabled:opacity-60
               "
             >
-              {isSubmitting
-                ? "Sending code..."
-                : "Create account"}
+              {isSubmitting ? "Sending code..." : "Create account"}
             </button>
           </form>
 

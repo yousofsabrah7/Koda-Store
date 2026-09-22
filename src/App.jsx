@@ -28,6 +28,7 @@ import Profile from "./pages/Profile/index";
 import { useProfile } from "./services/apiHooks/authHook";
 
 import Navbar from "./components/navbar/navbar";
+import Footer from "./components/footer/footer";
 
 const App = () => {
   // Restores the logged-in user into Redux after refresh
@@ -41,6 +42,7 @@ const App = () => {
         <main>
           <Outlet />
         </main>
+        <Footer />
       </div>
     );
   }

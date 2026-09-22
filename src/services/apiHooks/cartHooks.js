@@ -73,7 +73,9 @@ export const useAddToCart = () => {
       if (error.statusCode === 401) {
         navigate("/login", { replace: true });
       }
-      toast.error(error?.message || "Failed to add product to cart");
+      error.statusCode !== 401
+        ? toast.error(error?.message || "Failed to add product to cart")
+        : null;
     },
   });
 };

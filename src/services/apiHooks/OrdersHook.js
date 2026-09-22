@@ -42,8 +42,10 @@ export const usePlaceOrder = () => {
   return useMutation({
     mutationFn: placeOrder,
 
-    onSuccess: (order) => {
+    onSuccess: (data) => {
       // Cart is done with, empty it everywhere
+      const order = data?.order;
+
       dispatch(clearCartState());
 
       queryClient.invalidateQueries({
@@ -57,7 +59,8 @@ export const usePlaceOrder = () => {
       toast.success("Order placed successfully");
 
       // Take the user to the confirmation page
-      navigate(`/order-success/${order._id}`, {
+      navigate(`/order-success/${order?._id}`, {
+
         replace: true,
         state: {
           reference: order?.reference || order?._id || order?.id,

@@ -19,7 +19,6 @@ export default function Profile() {
       await logout.mutateAsync();
       navigate("/login", { replace: true });
     } catch (error) {
-      console.error("Logout failed:", error);
     }
   };
 
