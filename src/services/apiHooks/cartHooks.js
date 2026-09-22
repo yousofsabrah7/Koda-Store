@@ -1,10 +1,8 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import toast from "react-hot-toast";
+
+import { useDispatch } from "react-redux";
 
 import {
   getCart,
@@ -16,26 +14,54 @@ import {
   clearCart,
 } from "../api/cartApi";
 
+import { getAuthToken } from "./authHook";
 
+import { setCart, clearCartState } from "../../redux/services/cartSlice";
+import { useNavigate } from "react-router-dom";
 
+// =========================
+// Get Cart
+// =========================
 
 export const useCart = () => {
+  const token = getAuthToken();
+  const dispatch = useDispatch();
+
   return useQuery({
-    queryKey: ["cart"],
+    queryKey: ["cart", token],
+
     queryFn: getCart,
+
+    enabled: !!token,
+
+    retry: (failureCount, error) => {
+      if (error?.statusCode === 401) return false;
+
+      return failureCount < 2;
+    },
+
+    onSuccess: (response) => {
+      dispatch(setCart(response));
+    },
   });
 };
 
-
-
+// =========================
+// Add To Cart
+// =========================
 
 export const useAddToCart = () => {
   const queryClient = useQueryClient();
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: addToCart,
 
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Update Redux
+      dispatch(setCart(response));
+
+      // Update React Query
       queryClient.invalidateQueries({
         queryKey: ["cart"],
       });
@@ -44,25 +70,30 @@ export const useAddToCart = () => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to add product to cart";
-
-      toast.error(message);
+      if (error.statusCode === 401) {
+        navigate("/login", { replace: true });
+      }
+      toast.error(error?.message || "Failed to add product to cart");
     },
   });
 };
 
-
-
+// =========================
+// Update Item Quantity
+// =========================
 
 export const useUpdateItemQuantity = () => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: updateItemQuantity,
 
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Update Redux
+      dispatch(setCart(response));
+
+      // Refetch Cart
       queryClient.invalidateQueries({
         queryKey: ["cart"],
       });
@@ -71,53 +102,56 @@ export const useUpdateItemQuantity = () => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to update quantity";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to update quantity");
     },
   });
 };
 
-
-
+// =========================
+// Remove Cart Item
+// =========================
 
 export const useRemoveCartItem = () => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: removeCartItem,
 
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Update Redux
+      dispatch(setCart(response));
+
+      // Refetch Cart
       queryClient.invalidateQueries({
         queryKey: ["cart"],
       });
 
       toast.success("Product removed from cart");
-
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to remove product";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to remove product");
     },
   });
 };
 
-
-
+// =========================
+// Apply Coupon
+// =========================
 
 export const useApplyCoupon = () => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: applyCoupon,
 
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Update Redux
+      dispatch(setCart(response));
+
+      // Refetch Cart
       queryClient.invalidateQueries({
         queryKey: ["cart"],
       });
@@ -126,25 +160,27 @@ export const useApplyCoupon = () => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to apply coupon";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to apply coupon");
     },
   });
 };
 
-
-
+// =========================
+// Remove Coupon
+// =========================
 
 export const useRemoveCoupon = () => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: removeCoupon,
 
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Update Redux
+      dispatch(setCart(response));
+
+      // Refetch Cart
       queryClient.invalidateQueries({
         queryKey: ["cart"],
       });
@@ -153,23 +189,27 @@ export const useRemoveCoupon = () => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to remove coupon";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to remove coupon");
     },
   });
 };
 
+// =========================
+// Clear Cart
+// =========================
 
 export const useClearCart = () => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: clearCart,
 
     onSuccess: () => {
+      // Clear Redux
+      dispatch(clearCartState());
+
+      // Refetch Cart
       queryClient.invalidateQueries({
         queryKey: ["cart"],
       });
@@ -178,11 +218,7 @@ export const useClearCart = () => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to clear cart";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to clear cart");
     },
   });
 };

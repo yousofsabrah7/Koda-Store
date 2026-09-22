@@ -1,181 +1,408 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaShoppingCart, FaStar, FaHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 import {
   useAddToWishlist,
   useRemoveFromWishlist,
+  useWishlist,
 } from "../../services/apiHooks/wishlistHook";
 
 import { useAddToCart } from "../../services/apiHooks/cartHooks";
 
 function Cartproduct({ product }) {
-  const [addedwishlist, setAddedwishlist] = useState(false);
+  const [addedWishlist, setAddedWishlist] = useState(false);
 
-  const { mutateAsync: muteAdd } = useAddToWishlist();
-  const { mutateAsync: muteDelete } = useRemoveFromWishlist();
-  const { mutate, isPending } = useAddToCart();
+  // =========================
+  // Wishlist
+  // =========================
 
-  const AddWWichlist = async (productId) => {
-    const res = await muteAdd(productId);
+  const { data: wishlistData } = useWishlist();
 
-    if (res.success) {
-      setAddedwishlist(true);
+  const { mutateAsync: addToWishlist, isPending: isAddingWishlist } =
+    useAddToWishlist();
+
+  const { mutateAsync: removeFromWishlist, isPending: isRemovingWishlist } =
+    useRemoveFromWishlist();
+
+  const isWishlistPending = isAddingWishlist || isRemovingWishlist;
+
+  // =========================
+  // Cart
+  // =========================
+
+  const { mutateAsync: addToCart, isPending: isAddingToCart } = useAddToCart();
+
+  // =========================
+  // Check Wishlist
+  // =========================
+
+  useEffect(() => {
+    const products = wishlistData?.wishlist?.products ?? [];
+
+    const isInWishlist = products.some((item) => item?.id === product?.id);
+
+    setAddedWishlist(isInWishlist);
+  }, [wishlistData, product?.id]);
+
+  // =========================
+  // Add Wishlist
+  // =========================
+
+  const handleAddWishlist = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!product?.id || isWishlistPending) {
+      return;
+    }
+
+    try {
+      const response = await addToWishlist(product.id);
+
+      if (response?.success) {
+        setAddedWishlist(true);
+      }
+    } catch (error) {
+      console.error("Failed to add product to wishlist:", error);
     }
   };
 
-  const deletWishlist = async (productId) => {
-    const res = await muteDelete(productId);
+  // =========================
+  // Remove Wishlist
+  // =========================
 
-    if (res.success) {
-      setAddedwishlist(false);
+  const handleRemoveWishlist = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!product?.id || isWishlistPending) {
+      return;
+    }
+
+    try {
+      const response = await removeFromWishlist(product.id);
+
+      if (response?.success) {
+        setAddedWishlist(false);
+      }
+    } catch (error) {
+      console.error("Failed to remove product from wishlist:", error);
     }
   };
 
-  const AddtoCart = async (productId) => {
-    await mutate({
-      productId: productId,
-      quantity: 1,
-    });
+  // =========================
+  // Toggle Wishlist
+  // =========================
+
+  const handleWishlistToggle = (e) => {
+    if (addedWishlist) {
+      handleRemoveWishlist(e);
+    } else {
+      handleAddWishlist(e);
+    }
   };
 
-  const RatingArr = [1, 2, 3, 4, 5];
-  let count = product.rating;
+  // =========================
+  // Add To Cart
+  // =========================
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    await AddtoCart(product.id);
+    if (!product?.id || isAddingToCart) {
+      return;
+    }
+
+    try {
+      await addToCart({
+        productId: product.id,
+        quantity: 1,
+      });
+    } catch (error) {
+      console.error("Failed to add product to cart:", error);
+    }
   };
+
+  // =========================
+  // Rating
+  // =========================
+
+  const rating = Math.min(Math.max(Number(product?.rating) || 0, 0), 5);
+
+  const reviewsCount = Number(product?.reviewsCount) || 0;
+
+  // =========================
+  // Render
+  // =========================
 
   return (
     <Link
       to={`/shop/${product.id}`}
-      className="flex w-full flex-col overflow-hidden rounded-3xl border border-border-subtle bg-surface-card shadow-sm transition-shadow hover:shadow-md"
+      className="
+        group
+        flex w-full
+        flex-col
+        overflow-hidden
+        rounded-3xl
+        border border-border-subtle
+        bg-surface-card
+        shadow-sm
+        transition-all duration-300
+        hover:-translate-y-1
+        hover:shadow-lg
+      "
     >
-      <div className="group relative h-[220px] w-full overflow-hidden sm:h-[260px] p-9 bg-surface-elevated">
+      {/* =========================
+          Product Image
+      ========================= */}
 
-        <p className="absolute top-5 left-3 bg-accent text-white py-1 px-3 text-sm rounded-lg z-100">
+      <div
+        className="
+          relative
+          h-[220px]
+          w-full
+          overflow-hidden
+          bg-surface-elevated
+          p-9
+          sm:h-[260px]
+        "
+      >
+        {/* Category */}
+
+        <span
+          className="
+            absolute
+            left-3
+            top-5
+            z-10
+            rounded-lg
+            bg-accent
+            px-3
+            py-1
+            text-xs
+            font-semibold
+            text-white
+            shadow-sm
+          "
+        >
           {product.category}
-        </p>
+        </span>
 
-        <p className="absolute top-[5%] left-[63%] bg-accent-light text-accent-hover px-3 text-sm rounded-lg z-100">
-          -{product.discountPercentage}%
-        </p>
+        {/* Discount */}
+
+        {Number(product.discountPercentage) > 0 && (
+          <span
+            className="
+              absolute
+              right-14
+              top-5
+              z-10
+              rounded-lg
+              bg-accent-light
+              px-3
+              py-1
+              text-xs
+              font-bold
+              text-accent
+            "
+          >
+            -{product.discountPercentage}%
+          </span>
+        )}
+
+        {/* Image */}
 
         <img
-          alt="Updated Name image 1"
-          className="h-full w-full object-cover transition duration-300 ease-linear group-hover:scale-105"
           src={product.image}
+          alt={product.shortDescription || "Product"}
+          className="
+            h-full
+            w-full
+            object-cover
+            transition-transform
+            duration-500
+            ease-out
+            group-hover:scale-105
+          "
         />
 
-        <FaHeart
-          className={`absolute top-[6%] left-[83%] text-3xl bg-surface-card/80 ${
-            addedwishlist
-              ? "text-red-500"
-              : "text-gray-400/60"
-          } z-100 p-1 cursor-pointer hover:bg-accent-light rounded-full`}
-          width={50}
-          height={50}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        {/* Wishlist */}
 
-            if (addedwishlist) {
-              deletWishlist(product.id);
-            } else {
-              AddWWichlist(product.id);
-            }
-          }}
-        />
+        <button
+          type="button"
+          aria-label={
+            addedWishlist ? "Remove from wishlist" : "Add to wishlist"
+          }
+          disabled={isWishlistPending}
+          onClick={handleWishlistToggle}
+          className="
+            absolute
+            right-4
+            top-4
+            z-20
+            flex
+            h-9
+            w-9
+            cursor-pointer
+            items-center
+            justify-center
+            rounded-full
+            border
+            border-border-subtle
+            bg-surface-card/90
+            shadow-sm
+            backdrop-blur-sm
+            transition-all
+            duration-200
+            hover:scale-105
+            hover:bg-accent-light
+            disabled:cursor-wait
+            disabled:opacity-60
+          "
+        >
+          <FaHeart
+            className={addedWishlist ? "text-red-500" : "text-text-muted"}
+            size={16}
+          />
+        </button>
       </div>
 
-      <div className="flex flex-1 flex-col gap-4 px-5 py-5 sm:px-6">
+      {/* =========================
+          Product Info
+      ========================= */}
 
-        <h3 className="text-md font-bold text-text-primary sm:text-sm">
-          {product.shortDescription?.slice(0, 26)}
+      <div
+        className="
+          flex
+          flex-1
+          flex-col
+          gap-4
+          px-5
+          py-5
+          sm:px-6
+        "
+      >
+        {/* Product Name */}
+
+        <h3
+          className="
+            min-h-[40px]
+            text-sm
+            font-bold
+            leading-5
+            text-text-primary
+            transition-colors
+            group-hover:text-accent
+          "
+        >
+          {product.shortDescription?.slice(0, 50)}
+          {product.shortDescription?.length > 50 ? "..." : ""}
         </h3>
 
-        <div className="flex gap-3 items-center">
+        {/* Rating */}
 
-          <div className="flex gap-2">
-            {RatingArr.map((_, i) => {
-              if (count > 0) {
-                count--;
-
-                return (
-                  <FaStar
-                    key={i}
-                    className="text-accent"
-                  />
-                );
-              } else {
-                return (
-                  <FaStar
-                    key={i}
-                    className="text-border-strong"
-                  />
-                );
-              }
-            })}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <FaStar
+                key={star}
+                size={13}
+                className={
+                  star <= rating ? "text-accent" : "text-border-strong"
+                }
+              />
+            ))}
           </div>
 
-          <span className="text-text-muted">
-            ({product.reviewsCount})
-          </span>
-
+          <span className="text-xs text-text-muted">({reviewsCount})</span>
         </div>
 
-        <div className="flex gap-2 items-center">
+        {/* Price */}
 
-          <span className="text-accent-hover font-bold text-lg">
+        <div className="flex items-center gap-2">
+          <span
+            className="
+              text-lg
+              font-bold
+              text-accent
+            "
+          >
             EGP {product.priceAfterDiscount}
           </span>
 
-          <span className="font-bold line-through text-text-muted">
-            {product.priceBeforeDiscount}
-          </span>
-
+          {product.priceBeforeDiscount && (
+            <span
+              className="
+                text-sm
+                font-medium
+                text-text-muted
+                line-through
+              "
+            >
+              EGP {product.priceBeforeDiscount}
+            </span>
+          )}
         </div>
 
-        <div className="flex flex-wrap justify-center items-center gap-2">
+        {/* Add To Cart */}
 
+        <div className="mt-auto flex justify-center pt-1">
           <button
+            type="button"
             onClick={handleAddToCart}
-            disabled={isPending}
-            className={`flex gap-2 items-center cursor-pointer
-              bg-accent-hover py-1 rounded-lg px-17
-              transition-all hover:*:text-text-primary
-              ${
-                isPending
-                  ? "opacity-80 cursor-wait"
-                  : "hover:bg-accent"
-              }`}
+            disabled={isAddingToCart}
+            className="
+              flex
+              w-full
+              cursor-pointer
+              items-center
+              justify-center
+              gap-2
+              rounded-xl
+              bg-accent
+              px-4
+              py-2.5
+              text-sm
+              font-semibold
+              text-white
+              shadow-sm
+              shadow-accent/20
+              transition-all
+              duration-200
+              hover:bg-accent-hover
+              hover:shadow-md
+              hover:shadow-accent/25
+              disabled:cursor-wait
+              disabled:opacity-60
+            "
           >
-
-            {isPending ? (
+            {isAddingToCart ? (
               <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span
+                  className="
+                    h-4
+                    w-4
+                    animate-spin
+                    rounded-full
+                    border-2
+                    border-white/30
+                    border-t-white
+                  "
+                />
 
-                <span className="text-white/90">
-                  Adding...
-                </span>
+                <span>Adding...</span>
               </>
             ) : (
               <>
-                <FaShoppingCart className="text-white/90" />
+                <FaShoppingCart size={14} />
 
-                <span className="text-white/90">
-                  Add to cart
-                </span>
+                <span>Add to cart</span>
               </>
             )}
-
           </button>
-
         </div>
-
       </div>
     </Link>
   );

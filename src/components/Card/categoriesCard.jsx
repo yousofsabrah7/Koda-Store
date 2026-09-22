@@ -1,12 +1,17 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function CategoriesCard({ category }) {
   const Icon = category.icon;
+  const navigate = useNavigate();
 
   return (
-    <a
-      href=""
-      className="group p-6 bg-surface-card rounded-xl border border-border-subtle hover:border-accent hover:shadow-md transition-all text-center"
+    <button
+      type="button"
+      onClick={() =>
+        navigate(`/shop?category=${category.name.toLowerCase()}`)
+      }
+      className="group w-full p-6 bg-surface-card rounded-xl border border-border-subtle hover:border-accent hover:shadow-md transition-all text-center cursor-pointer"
     >
       {Icon && (
         <div className="flex justify-center mb-3">
@@ -26,7 +31,7 @@ function CategoriesCard({ category }) {
           {category.count} {category.count === 1 ? "product" : "products"}
         </span>
       )}
-    </a>
+    </button>
   );
 }
 
