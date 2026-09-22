@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import toast from "react-hot-toast";
 
@@ -13,19 +9,15 @@ import {
   cancelOrder,
 } from "../api/ordersApi";
 
-
-
-
-
-
-export const useMyOrders = ({page= 1, limit= 10, status} = {}) => {
+export const useMyOrders = ({ page = 1, limit = 10, status } = {}) => {
   return useQuery({
     queryKey: ["myOrders", page, limit, status],
-    queryFn: () => getMyOrders({
-      page,
-      limit,
-      status
-    }),
+    queryFn: () =>
+      getMyOrders({
+        page,
+        limit,
+        status,
+      }),
   });
 };
 
@@ -56,9 +48,7 @@ export const usePlaceOrder = () => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to place order";
+      const message = error.message || "Failed to place order";
 
       toast.error(message);
     },
@@ -84,9 +74,7 @@ export const useCancelOrder = () => {
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to cancel order";
+      const message = error.message || "Failed to cancel order";
 
       toast.error(message);
     },

@@ -1,112 +1,477 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { FaEnvelope, FaCheckCircle, FaArrowLeft } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  FaEnvelope,
+  FaKey,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaArrowLeft,
+} from "react-icons/fa";
 
-function validate({ email }) {
-  const errors = {};
+import {
+  useSendForgotPasswordOTP,
+  useVerifyForgotPasswordOTP,
+} from "../../services/apiHooks/authHook";
 
-  if (!email.trim()) {
-    errors.email = "Email is required.";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.email = "Enter a valid email address.";
-  }
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  return errors;
-}
+const inputClass = (hasError, rightPad = "pr-3.5") =>
+  `
+    w-full
+    rounded-xl
+    border
+    bg-surface-card
+    py-2.5
+    pl-10
+    ${rightPad}
+    text-sm
+    text-text-primary
+    placeholder:text-text-muted
+    transition
+    focus:outline-none
+    focus:ring-2
+    ${
+      hasError
+        ? "border-red-400 focus:border-red-500 focus:ring-red-500/15"
+        : "border-border-subtle focus:border-accent focus:ring-accent-light"
+    }
+  `;
+
+const submitClass = `
+  w-full
+  rounded-xl
+  bg-accent
+  py-2.5
+  text-sm
+  font-semibold
+  text-white
+  transition
+  hover:bg-accent-hover
+  focus:outline-none
+  focus-visible:ring-2
+  focus-visible:ring-accent-light
+  disabled:cursor-not-allowed
+  disabled:opacity-60
+`;
 
 export default function ForgetPassword() {
+  const navigate = useNavigate();
+
+  // "email" -> ask for the email
+  // "reset" -> ask for the OTP + new password
+  const [step, setStep] = useState("email");
+
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSent, setIsSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
-  const handleChange = (e) => {
-    setEmail(e.target.value);
-    setError("");
-  };
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = async (e) => {
+  const {
+    mutate: sendOtp,
+    isPending: isSending,
+  } = useSendForgotPasswordOTP();
+
+  const {
+    mutate: resetPassword,
+    isPending: isResetting,
+  } = useVerifyForgotPasswordOTP();
+
+  const clearError = (field) =>
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+    }));
+
+  const handleSendCode = (e) => {
     e.preventDefault();
 
-    const validationErrors = validate({ email });
-    if (validationErrors.email) {
-      setError(validationErrors.email);
+    if (!email.trim()) {
+      setErrors({
+        email: "Email is required.",
+      });
       return;
     }
 
-    setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setIsSubmitting(false);
-    setIsSent(true);
+    if (!EMAIL_RE.test(email)) {
+      setErrors({
+        email: "Enter a valid email address.",
+      });
+      return;
+    }
+
+    sendOtp(
+      {
+        email: email.trim(),
+      },
+      {
+        onSuccess: () => {
+          setErrors({});
+          setStep("reset");
+        },
+
+        onError: (err) =>
+          setErrors({
+            email:
+              err?.message ||
+              "Could not send the code.",
+          }),
+      }
+    );
+  };
+
+  const handleResend = () => {
+    sendOtp({
+      email: email.trim(),
+    });
+  };
+
+  const handleReset = (e) => {
+    e.preventDefault();
+
+    const next = {};
+
+    if (otp.length !== 6) {
+      next.otp =
+        "Enter the 6-digit code we emailed you.";
+    }
+
+    if (!newPassword) {
+      next.newPassword =
+        "New password is required.";
+    } else if (newPassword.length < 8) {
+      next.newPassword =
+        "Password must be at least 8 characters.";
+    }
+
+    if (Object.keys(next).length > 0) {
+      setErrors(next);
+      return;
+    }
+
+    resetPassword(
+      {
+        email: email.trim(),
+        otp,
+        newPassword,
+      },
+      {
+        onSuccess: () =>
+          navigate("/login", {
+            replace: true,
+          }),
+
+        onError: (err) =>
+          setErrors({
+            otp:
+              err?.message ||
+              "Invalid or expired code.",
+          }),
+      }
+    );
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 flex items-center justify-center px-4 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-surface-base px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="flex justify-center mb-8">
-          <Link to="/" className="text-2xl font-bold text-gray-900 tracking-tight">
-            Koda<span className="text-amber-500">Store</span>
+
+        {/* Logo */}
+        <div className="mb-8 flex justify-center">
+          <Link
+            to="/"
+            className="text-2xl font-bold tracking-tight text-text-primary"
+          >
+            Koda
+            <span className="text-accent">
+              Store
+            </span>
           </Link>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-          {isSent ? (
-            <div className="text-center">
-              <h1 className="text-xl font-bold text-gray-900 mb-4">Check your email</h1>
-              <div className="w-12 h-12 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaCheckCircle className="w-6 h-6" />
-              </div>
-              <p className="text-sm text-gray-600 mb-6">
-                If an account exists for <strong>{email}</strong>, we've sent a link to reset your password. Check your inbox (and spam folder).
-              </p>
-              <Link to="/login" className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-600 hover:text-amber-200 transition">
-                <FaArrowLeft className="w-4 h-4" />
-                Back to log in
-              </Link>
-            </div>
-          ) : (
+        {/* Card */}
+        <div className="rounded-2xl border border-border-subtle bg-surface-card p-8 shadow-sm">
+
+          {step === "email" ? (
             <>
+              {/* Email Step */}
               <div className="mb-6 text-center">
-                <h1 className="text-xl font-bold text-gray-900 mb-1">Reset your password</h1>
-                <p className="text-sm text-gray-500">Enter your email and we'll send you a reset link</p>
+                <h1 className="mb-1 text-xl font-bold text-text-primary">
+                  Reset your password
+                </h1>
+
+                <p className="text-sm text-text-secondary">
+                  Enter your email and we&apos;ll send
+                  you a 6-digit code
+                </p>
               </div>
 
-              <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              <form
+                onSubmit={handleSendCode}
+                noValidate
+                className="space-y-4"
+              >
                 <div>
-                  <label className="text-sm font-medium text-gray-700 block mb-1.5">Email</label>
+                  <label
+                    htmlFor="email"
+                    className="mb-1.5 block text-sm font-medium text-text-secondary"
+                  >
+                    Email
+                  </label>
+
                   <div className="relative">
-                    <FaEnvelope className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <FaEnvelope
+                      className="
+                        absolute left-3.5 top-1/2
+                        h-4 w-4
+                        -translate-y-1/2
+                        text-text-muted
+                      "
+                    />
+
                     <input
+                      id="email"
                       type="email"
                       placeholder="you@example.com"
                       value={email}
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        clearError("email");
+                      }}
                       autoComplete="email"
-                      className={`w-full pl-10 pr-3.5 py-2.5 bg-white border rounded-xl text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition ${
-                        error ? "border-red-300 focus:ring-red-100" : "border-gray-200 focus:ring-indigo-100 focus:border-indigo-300"
-                      }`}
+                      className={inputClass(
+                        errors.email
+                      )}
                     />
                   </div>
-                  {error && <p className="text-xs text-red-500 mt-1.5">{error}</p>}
+
+                  {errors.email && (
+                    <p className="mt-1.5 text-xs text-red-500">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
 
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-amber-500 hover:bg-amber-200 disabled:bg-indigo-300 text-white text-sm font-semibold py-2.5 rounded-xl transition cursor-pointer disabled:cursor-not-allowed"
+                  disabled={isSending}
+                  className={submitClass}
                 >
-                  {isSubmitting ? "Sending link..." : "Send reset link"}
+                  {isSending
+                    ? "Sending code..."
+                    : "Send code"}
                 </button>
               </form>
+            </>
+          ) : (
+            <>
+              {/* Reset Step */}
+              <div className="mb-6 text-center">
+                <h1 className="mb-1 text-xl font-bold text-text-primary">
+                  Set a new password
+                </h1>
 
-              <p className="text-sm text-gray-500 text-center mt-6">
-                <Link to="/login" className="inline-flex items-center gap-1.5 font-medium text-amber-600 hover:text-amber-600 transition">
-                  <FaArrowLeft className="w-3.5 h-3.5" />
-                  Back to log in
-                </Link>
-              </p>
+                <p className="text-sm text-text-secondary">
+                  We sent a code to{" "}
+                  <strong className="font-semibold text-text-primary">
+                    {email}
+                  </strong>
+                  . It expires in 10 minutes.
+                </p>
+              </div>
+
+              <form
+                onSubmit={handleReset}
+                noValidate
+                className="space-y-4"
+              >
+                {/* OTP */}
+                <div>
+                  <label
+                    htmlFor="otp"
+                    className="mb-1.5 block text-sm font-medium text-text-secondary"
+                  >
+                    Verification code
+                  </label>
+
+                  <div className="relative">
+                    <FaKey
+                      className="
+                        absolute left-3.5 top-1/2
+                        h-4 w-4
+                        -translate-y-1/2
+                        text-text-muted
+                      "
+                    />
+
+                    <input
+                      id="otp"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      placeholder="123456"
+                      value={otp}
+                      onChange={(e) => {
+                        setOtp(
+                          e.target.value
+                            .replace(/\D/g, "")
+                            .slice(0, 6)
+                        );
+
+                        clearError("otp");
+                      }}
+                      className={inputClass(
+                        errors.otp
+                      )}
+                    />
+                  </div>
+
+                  {errors.otp && (
+                    <p className="mt-1.5 text-xs text-red-500">
+                      {errors.otp}
+                    </p>
+                  )}
+                </div>
+
+                {/* New Password */}
+                <div>
+                  <label
+                    htmlFor="new-password"
+                    className="mb-1.5 block text-sm font-medium text-text-secondary"
+                  >
+                    New password
+                  </label>
+
+                  <div className="relative">
+                    <FaLock
+                      className="
+                        absolute left-3.5 top-1/2
+                        h-4 w-4
+                        -translate-y-1/2
+                        text-text-muted
+                      "
+                    />
+
+                    <input
+                      id="new-password"
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      placeholder="At least 8 characters"
+                      value={newPassword}
+                      onChange={(e) => {
+                        setNewPassword(
+                          e.target.value
+                        );
+
+                        clearError("newPassword");
+                      }}
+                      autoComplete="new-password"
+                      className={inputClass(
+                        errors.newPassword,
+                        "pr-10"
+                      )}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword(
+                          (prev) => !prev
+                        )
+                      }
+                      className="
+                        absolute right-3 top-1/2
+                        -translate-y-1/2
+                        cursor-pointer
+                        text-text-muted
+                        transition
+                        hover:text-text-primary
+                      "
+                      tabIndex={-1}
+                    >
+                      {showPassword ? (
+                        <FaEyeSlash className="h-4 w-4" />
+                      ) : (
+                        <FaEye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+
+                  {errors.newPassword && (
+                    <p className="mt-1.5 text-xs text-red-500">
+                      {errors.newPassword}
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isResetting}
+                  className={submitClass}
+                >
+                  {isResetting
+                    ? "Updating password..."
+                    : "Update password"}
+                </button>
+
+                {/* Actions */}
+                <div className="flex items-center justify-between text-sm">
+                  <button
+                    type="button"
+                    onClick={() => setStep("email")}
+                    className="
+                      cursor-pointer
+                      text-text-secondary
+                      transition
+                      hover:text-text-primary
+                    "
+                  >
+                    Change email
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={isSending}
+                    className="
+                      cursor-pointer
+                      font-medium
+                      text-accent
+                      transition
+                      hover:text-accent-hover
+                      disabled:cursor-not-allowed
+                      disabled:opacity-50
+                    "
+                  >
+                    {isSending
+                      ? "Sending..."
+                      : "Resend code"}
+                  </button>
+                </div>
+              </form>
             </>
           )}
+
+          {/* Back to Login */}
+          <p className="mt-6 text-center text-sm text-text-secondary">
+            <Link
+              to="/login"
+              className="
+                inline-flex items-center gap-1.5
+                font-medium
+                text-accent
+                transition
+                hover:text-accent-hover
+              "
+            >
+              <FaArrowLeft className="h-3.5 w-3.5" />
+              Back to log in
+            </Link>
+          </p>
         </div>
       </div>
     </div>
