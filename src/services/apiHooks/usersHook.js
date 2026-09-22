@@ -1,14 +1,8 @@
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import toast from "react-hot-toast";
 
-import {
-  updataUser,
-} from "../api/usersApi";
-
+import { updataUser } from "../api/usersApi";
 
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
@@ -28,12 +22,15 @@ export const useUpdateUser = () => {
       queryClient.invalidateQueries({
         queryKey: ["user", variables.id],
       });
+
+      // Refresh current logged-in user's profile
+      queryClient.invalidateQueries({
+        queryKey: ["profile"],
+      });
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to update user.";
+      const message = error.message || "Failed to update user.";
 
       toast.error(message);
     },

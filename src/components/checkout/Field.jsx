@@ -3,12 +3,14 @@ function Field({ label, required, error, htmlFor, className = "", children }) {
     <div className={className}>
       <label
         htmlFor={htmlFor}
-        className="mb-1.5 block text-[11.5px] text-slate-500"
+        className="mb-1.5 block text-[11.5px] text-text-secondary"
       >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
+
       {children}
-      {error && <p className="mt-1 text-[11px] text-red-600">{error}</p>}
+
+      {error && <p className="mt-1 text-[11px] text-red-500">{error}</p>}
     </div>
   );
 }

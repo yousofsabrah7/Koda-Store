@@ -193,5 +193,14 @@ input:-webkit-autofill:active {
 }
 
 * {
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif ;
+  font-family:
+    "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
+    Arial, sans-serif;
+}
+.logo-primary {
+  fill: var(--color-text-primary, #181714);
+}
+
+.logo-accent {
+  fill: var(--color-accent, #d16d3b);
 }
