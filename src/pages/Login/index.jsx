@@ -22,12 +22,13 @@ function validate({ email, password }) {
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { mutate: login, isPending: isSubmitting } = useLogin();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const { mutate: login, isPending: isSubmitting } = useLogin();
 
   const redirectTo = location.state?.from?.pathname || "/";
 
@@ -37,7 +38,7 @@ export default function Login() {
     setFormError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const validationErrors = validate(formData);
@@ -48,14 +49,13 @@ export default function Login() {
 
     setFormError("");
 
-    login(formData, {
-      onSuccess: () => {
-        navigate(redirectTo, { replace: true });
+    login(
+      { email: formData.email.trim(), password: formData.password },
+      {
+        onSuccess: () => navigate(redirectTo, { replace: true }),
+        onError: (err) => setFormError(err?.message || "Incorrect email or password."),
       },
-      onError: (err) => {
-        setFormError(err?.message || "Incorrect email or password.");
-      },
-    });
+    );
   };
 
   return (

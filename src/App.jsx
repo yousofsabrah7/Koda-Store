@@ -15,7 +15,11 @@ import Wishlist from "./pages/Wishlist/index";
 import Cart from "./pages/Cart/index";
 import Checkout from "./pages/Checkout/index";
 import Profile from "./pages/Profile/index";
+import { useProfile } from "./services/apiHooks/authHook";
 const App = () => {
+  // Restores the logged-in user into Redux after a page refresh (runs only if a token exists)
+  useProfile();
+
   return (
 
     <BrowserRouter>
