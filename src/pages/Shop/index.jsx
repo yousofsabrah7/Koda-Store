@@ -26,7 +26,7 @@ export default function ShopPage() {
   const { isLoading: isWishlistLoading } = useWishlist();
 
   const categories = useMemo(
-    () => [...new Set(products.map((p) => p.category?.name).filter(Boolean))],
+    () => [...new Set(products.map((p) => p.category).filter(Boolean))],
     [products],
   );
 
