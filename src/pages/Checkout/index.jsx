@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
-import { MapPin, CreditCard, FileText, Check, Loader2 } from "lucide-react";
+import { MapPin, CreditCard, FileText, Loader2 } from "lucide-react";
 
 import Card from "../../components/checkout/Card";
 import CardHeader from "../../components/checkout/CardHeader";
 import Field from "../../components/checkout/Field";
 import PaymentOption from "../../components/checkout/PaymentOption";
 import SummaryRow from "../../components/checkout/SummaryRow";
+import { useNavigate } from "react-router-dom";
 
 import { useCart } from "../../services/apiHooks/cartHooks";
 import { usePlaceOrder } from "../../services/apiHooks/OrdersHook";
@@ -25,6 +26,7 @@ const inputClass = (invalid) =>
   ].join(" ");
 
 function Checkout() {
+  const navigate = useNavigate
   const { data: cart, isLoading: cartLoading, isError: cartError } =
     useCart();
 
@@ -42,7 +44,6 @@ function Checkout() {
 
   const [errors, setErrors] = useState({});
   const [payment, setPayment] = useState("cod");
-  const [confirmation, setConfirmation] = useState(null);
 
   const items = cart?.items ?? [];
 
@@ -105,6 +106,30 @@ function Checkout() {
     return Object.keys(next).length === 0;
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    if (!items.length) {
+      return;
+    }
+
+    const payload = {
+      shippingAddress: {
+        fullName: form.name.trim(),
+        phone: form.phone.trim(),
+        country: form.country,
+        city: form.city.trim(),
+        address: form.address.trim(),
+        postalCode: form.postal.trim(),
+      },
+      paymentMethod: payment === "cod" ? "cash" : payment,
+    };
+
+    placeOrderMutation.mutate(payload);
+  };
+
   if (cartLoading) {
     return (
       <div className="grid min-h-screen place-items-center bg-surface-base">
@@ -132,11 +157,10 @@ function Checkout() {
 
         <form
           noValidate
+          onSubmit={handleSubmit}
           className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.85fr_1fr]"
         >
-          {/* LEFT SIDE */}
           <div className="space-y-6">
-            {/* Shipping Address */}
             <Card>
               <div className="p-5 pb-6 sm:px-6">
                 <CardHeader
@@ -248,7 +272,6 @@ function Checkout() {
               </div>
             </Card>
 
-            {/* Payment */}
             <Card>
               <div className="p-5 pb-6 sm:px-6">
                 <CardHeader
@@ -270,7 +293,6 @@ function Checkout() {
               </div>
             </Card>
 
-            {/* Notes */}
             <Card>
               <div className="p-5 pb-6 sm:px-6">
                 <CardHeader
@@ -292,7 +314,6 @@ function Checkout() {
             </Card>
           </div>
 
-          {/* RIGHT SIDE */}
           <Card className="p-5 sm:px-6 lg:sticky lg:top-6">
             <h2 className="mb-4 text-base font-semibold text-text-primary">
               Order Summary
@@ -356,7 +377,8 @@ function Checkout() {
 
             <button
               type="submit"
-              disabled={placeOrderMutation.isPending}
+              onClick={() => navigate(`/order-success/${orderId}`)}
+              disabled={placeOrderMutation.isPending || !items.length}
               className="
                 mt-4 w-full rounded-lg
                 bg-accent px-4 py-3
@@ -380,32 +402,6 @@ function Checkout() {
               <p className="mt-2 text-[12px] text-red-500">
                 Something went wrong placing your order. Please try again.
               </p>
-            )}
-
-            {confirmation && (
-              <div
-                role="status"
-                className="
-                  mt-3.5 flex items-start gap-2.5
-                  rounded-lg
-                  border border-accent/20
-                  bg-accent-light
-                  px-3.5 py-3
-                  text-[12.5px] text-text-secondary
-                "
-              >
-                <Check className="mt-0.5 h-4 w-4 flex-none text-accent" />
-
-                <p>
-                  <strong className="mb-0.5 block text-[13px] text-text-primary">
-                    Order {confirmation.reference} placed
-                  </strong>
-
-                  Thanks, {confirmation.firstName}. We&apos;ll call you to
-                  confirm delivery to {confirmation.city}. You&apos;ll pay{" "}
-                  {egp(totals.total)} in cash when it arrives.
-                </p>
-              </div>
             )}
           </Card>
         </form>
