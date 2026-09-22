@@ -16,18 +16,23 @@ import {
   clearCart,
 } from "../api/cartApi";
 
-
-
+import { getAuthToken } from "./authHook";
 
 export const useCart = () => {
+  const token = getAuthToken();
+
   return useQuery({
-    queryKey: ["cart"],
+    queryKey: ["cart", token],
     queryFn: getCart,
+
+    enabled: !!token,
+
+    retry: (failureCount, error) => {
+      if (error?.statusCode === 401) return false;
+      return failureCount < 2;
+    },
   });
 };
-
-
-
 
 export const useAddToCart = () => {
   const queryClient = useQueryClient();
@@ -36,25 +41,15 @@ export const useAddToCart = () => {
     mutationFn: addToCart,
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart"],
-      });
-
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("Product added to cart");
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to add product to cart";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to add product to cart");
     },
   });
 };
-
-
-
 
 export const useUpdateItemQuantity = () => {
   const queryClient = useQueryClient();
@@ -63,25 +58,15 @@ export const useUpdateItemQuantity = () => {
     mutationFn: updateItemQuantity,
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart"],
-      });
-
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("Cart updated");
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to update quantity";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to update quantity");
     },
   });
 };
-
-
-
 
 export const useRemoveCartItem = () => {
   const queryClient = useQueryClient();
@@ -90,26 +75,15 @@ export const useRemoveCartItem = () => {
     mutationFn: removeCartItem,
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart"],
-      });
-
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("Product removed from cart");
-
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to remove product";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to remove product");
     },
   });
 };
-
-
-
 
 export const useApplyCoupon = () => {
   const queryClient = useQueryClient();
@@ -118,25 +92,15 @@ export const useApplyCoupon = () => {
     mutationFn: applyCoupon,
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart"],
-      });
-
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("Coupon applied successfully");
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to apply coupon";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to apply coupon");
     },
   });
 };
-
-
-
 
 export const useRemoveCoupon = () => {
   const queryClient = useQueryClient();
@@ -145,23 +109,15 @@ export const useRemoveCoupon = () => {
     mutationFn: removeCoupon,
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart"],
-      });
-
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("Coupon removed");
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to remove coupon";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to remove coupon");
     },
   });
 };
-
 
 export const useClearCart = () => {
   const queryClient = useQueryClient();
@@ -170,19 +126,12 @@ export const useClearCart = () => {
     mutationFn: clearCart,
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["cart"],
-      });
-
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("Cart cleared");
     },
 
     onError: (error) => {
-      const message =
-        error?.response?.data?.message ||
-        "Failed to clear cart";
-
-      toast.error(message);
+      toast.error(error?.message || "Failed to clear cart");
     },
   });
 };

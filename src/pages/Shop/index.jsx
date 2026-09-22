@@ -5,6 +5,7 @@ import ProductGrid from "../../components/shop/ProductGrid";
 import SearchBar from "../../components/shop/SearchBar";
 import FilterSidebar from "../../components/shop/FilterSidebar";
 import ActiveFilterChips from "../../components/shop/ActiveFilterChips";
+import { useSearchParams } from "react-router-dom";
 import { useCart } from "../../services/apiHooks/cartHooks";
 import { useWishlist } from "../../services/apiHooks/wishlistHook";
 
@@ -17,15 +18,25 @@ function getEffectivePrice(product) {
 }
 
 export default function ShopPage() {
+  const [searchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get("category");
   const {data, isLoading} = useProducts(1, 50);
   const products = data?.products || [];
   const {isLoading: isCartLoading } = useCart();
   const {isLoading: isWishlistLoading  } = useWishlist();
 
   const categories = useMemo(
-    () => [...new Set(products.map((p) => p.category).filter(Boolean))],
-    [products]
-  );
+  () =>
+    [
+      ...new Set(
+        products
+          .map((p) => p.category?.name)
+          .filter(Boolean)
+      ),
+    ],
+  [products]
+);
+
 
   const priceBounds = useMemo(() => {
     const prices = products.map(getEffectivePrice);
@@ -46,6 +57,12 @@ export default function ShopPage() {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
+  useEffect(() => {
+  if (categoryFromUrl) {
+    setSelectedCategories([categoryFromUrl]);
+  }
+}, [categoryFromUrl]);
+
   ////
    useEffect(() => {
     setVisibleCount(ITEMS_PER_PAGE);
@@ -63,8 +80,8 @@ export default function ShopPage() {
         query === "" || product.name.toLowerCase().includes(query);
 
       const matchesCategory =
-        selectedCategories.length === 0 ||
-        selectedCategories.includes(product.category);
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(product.category);
 
       const matchesPrice = price >= priceRange.min && price <= priceRange.max;
 
