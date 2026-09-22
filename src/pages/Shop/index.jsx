@@ -24,7 +24,6 @@ export default function ShopPage() {
   const products = data?.products || [];
   const { isLoading: isCartLoading } = useCart();
   const { isLoading: isWishlistLoading } = useWishlist();
-console.log(products)
   const categories = useMemo(
     () => [...new Set(products.map((p) => p.category).filter(Boolean))],
     [products],

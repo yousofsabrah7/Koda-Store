@@ -1,42 +1,42 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
+
+import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 
 import { useProduct, useProducts } from "../../services/apiHooks/productsHook";
 
 import { useAddToCart } from "../../services/apiHooks/cartHooks";
 
 import {
-  useWishlist,
   useAddToWishlist,
   useRemoveFromWishlist,
+  useWishlist,
 } from "../../services/apiHooks/wishlistHook";
 
 import {
-  useProductReviews,
   useAddReview,
+  useProductReviews,
 } from "../../services/apiHooks/reviewsHook";
 
 import Loading from "../../components/home/HandelLoading/Loading";
-
-import { FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  // =========================
+  // Product
+  // =========================
 
-  // =========================
-  // PRODUCT
-  // =========================
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { data, isError, isLoading } = useProduct(id);
 
   const product = data?.product;
 
   // =========================
-  // RELATED PRODUCTS
+  // Related Products
   // =========================
 
   const { data: relatedData, isLoading: relatedLoading } = useProducts(
@@ -50,13 +50,13 @@ const ProductDetails = () => {
   );
 
   // =========================
-  // CART
+  // Cart
   // =========================
 
   const { mutate: addToCart, isPending: isAddingToCart } = useAddToCart();
 
   // =========================
-  // WISHLIST
+  // Wishlist
   // =========================
 
   const { data: wishlistData } = useWishlist();
@@ -67,7 +67,7 @@ const ProductDetails = () => {
     useRemoveFromWishlist();
 
   // =========================
-  // REVIEWS
+  // Reviews
   // =========================
 
   const { data: reviewsData, isLoading: reviewsLoading } =
@@ -76,7 +76,7 @@ const ProductDetails = () => {
   const { mutate: addReview, isPending: isAddingReview } = useAddReview(id);
 
   // =========================
-  // IMAGE GALLERY
+  // Embla
   // =========================
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -85,7 +85,7 @@ const ProductDetails = () => {
   });
 
   // =========================
-  // QUANTITY
+  // Quantity
   // =========================
 
   const [quantity, setQuantity] = useState(() => {
@@ -95,14 +95,14 @@ const ProductDetails = () => {
   });
 
   // =========================
-  // REVIEW
+  // Review Form
   // =========================
 
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
 
   // =========================
-  // SAVE QUANTITY
+  // Save Quantity
   // =========================
 
   useEffect(() => {
@@ -110,7 +110,7 @@ const ProductDetails = () => {
   }, [id, quantity]);
 
   // =========================
-  // SCROLL TO TOP
+  // Scroll Top
   // =========================
 
   useEffect(() => {
@@ -118,7 +118,7 @@ const ProductDetails = () => {
   }, [id]);
 
   // =========================
-  // EMBLA SELECT
+  // Embla Select
   // =========================
 
   const onSelect = useCallback(() => {
@@ -140,7 +140,7 @@ const ProductDetails = () => {
   }, [emblaApi, onSelect]);
 
   // =========================
-  // PREVIOUS IMAGE
+  // Previous Image
   // =========================
 
   const scrollPrev = useCallback(() => {
@@ -150,7 +150,7 @@ const ProductDetails = () => {
   }, [emblaApi]);
 
   // =========================
-  // NEXT IMAGE
+  // Next Image
   // =========================
 
   const scrollNext = useCallback(() => {
@@ -160,7 +160,7 @@ const ProductDetails = () => {
   }, [emblaApi]);
 
   // =========================
-  // SELECT IMAGE
+  // Scroll To Image
   // =========================
 
   const scrollToImage = useCallback(
@@ -173,29 +173,23 @@ const ProductDetails = () => {
   );
 
   // =========================
-  // DATA
+  // Data
   // =========================
 
   const reviews = reviewsData?.reviews || [];
 
   const wishlistProducts = wishlistData?.wishlist?.products || [];
 
-  // =========================
-  // RELATED PRODUCTS
-  // =========================
-
   const relatedProducts = (relatedData?.products || []).filter(
     (item) => item._id !== product?._id,
   );
 
-  // =========================
-  // WISHLIST CHECK
-  // =========================
-
-  const isInWishlist = wishlistProducts.some((p) => p._id === product?._id);
+  const isInWishlist = wishlistProducts.some(
+    (item) => item._id === product?._id,
+  );
 
   // =========================
-  // LOADING
+  // Loading
   // =========================
 
   if (isLoading) {
@@ -203,23 +197,35 @@ const ProductDetails = () => {
   }
 
   // =========================
-  // ERROR
+  // Error
   // =========================
 
   if (isError) {
-    return <h1 className="text-center py-32">There is an error</h1>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface-base px-4">
+        <h1 className="text-center text-lg font-semibold text-text-primary">
+          There is an error
+        </h1>
+      </div>
+    );
   }
 
   // =========================
-  // NO PRODUCT
+  // No Product
   // =========================
 
   if (!product) {
-    return <h1 className="text-center py-32">There is no product</h1>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface-base px-4">
+        <h1 className="text-center text-lg font-semibold text-text-primary">
+          There is no product
+        </h1>
+      </div>
+    );
   }
 
   // =========================
-  // PRICE
+  // Price
   // =========================
 
   const hasDiscount =
@@ -234,19 +240,21 @@ const ProductDetails = () => {
     : 0;
 
   // =========================
-  // RATING
+  // Rating
   // =========================
 
   const rating = Math.round(product.averageRating || 0);
 
   // =========================
-  // REVIEW SUBMIT
+  // Submit Review
   // =========================
 
   const handleSubmitReview = (e) => {
     e.preventDefault();
 
-    if (reviewRating === 0) return;
+    if (reviewRating === 0) {
+      return;
+    }
 
     addReview(
       {
@@ -263,32 +271,38 @@ const ProductDetails = () => {
   };
 
   // =========================
-  // RELATED PRODUCT CLICK
+  // Related Product
   // =========================
 
   const handleRelatedProductClick = (productId) => {
     navigate(`/shop/${productId}`);
   };
 
+  // =========================
+  // Render
+  // =========================
+
   return (
     <div className="min-h-screen bg-surface-base text-text-primary transition-colors duration-300">
       {/* =========================================================
-        PRODUCT DETAILS
-    ========================================================= */}
+          PRODUCT DETAILS
+      ========================================================= */}
 
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-24 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
+        {/* =========================
+            Breadcrumb
+        ========================= */}
 
         <div className="mb-8 flex items-center gap-2 text-sm">
           <button
             type="button"
             onClick={() => navigate("/shop")}
             className="
-            cursor-pointer
-            text-text-muted
-            transition-colors
-            hover:text-accent
-          "
+              cursor-pointer
+              text-text-muted
+              transition-colors
+              hover:text-accent
+            "
           >
             Shop
           </button>
@@ -300,22 +314,24 @@ const ProductDetails = () => {
           </span>
         </div>
 
-        {/* Product Main Card */}
+        {/* =========================================================
+            MAIN PRODUCT CARD
+        ========================================================= */}
 
         <section
           className="
-          overflow-hidden
-          rounded-3xl
-          border
-          border-border-subtle
-          bg-surface-card
-          shadow-sm
-        "
+            overflow-hidden
+            rounded-3xl
+            border
+            border-border-subtle
+            bg-surface-card
+            shadow-sm
+          "
         >
           <div className="grid grid-cols-1 lg:grid-cols-2">
             {/* =====================================================
-              LEFT — IMAGE GALLERY
-          ===================================================== */}
+                LEFT — IMAGE GALLERY
+            ===================================================== */}
 
             <div className="p-4 sm:p-6 lg:p-8">
               {/* Main Image */}
@@ -327,34 +343,34 @@ const ProductDetails = () => {
                       <div
                         key={img.public_id}
                         className="
-                        min-w-0
-                        flex-[0_0_100%]
-                      "
+                          min-w-0
+                          flex-[0_0_100%]
+                        "
                       >
                         <div
                           className="
-                          flex
-                          h-[360px]
-                          items-center
-                          justify-center
-                          overflow-hidden
-                          rounded-2xl
-                          bg-surface-elevated
-                          sm:h-[440px]
-                        "
+                            flex
+                            h-[360px]
+                            items-center
+                            justify-center
+                            overflow-hidden
+                            rounded-2xl
+                            bg-surface-elevated
+                            sm:h-[440px]
+                          "
                         >
                           <img
                             src={img.url}
                             alt={product.name}
                             className="
-                            h-full
-                            w-full
-                            object-contain
-                            p-6
-                            transition-transform
-                            duration-500
-                            group-hover:scale-[1.02]
-                          "
+                              h-full
+                              w-full
+                              object-contain
+                              p-6
+                              transition-transform
+                              duration-500
+                              group-hover:scale-[1.02]
+                            "
                           />
                         </div>
                       </div>
@@ -370,31 +386,31 @@ const ProductDetails = () => {
                     onClick={scrollPrev}
                     aria-label="Previous image"
                     className="
-                    absolute
-                    left-4
-                    top-1/2
-                    flex
-                    h-10
-                    w-10
-                    -translate-y-1/2
-                    cursor-pointer
-                    items-center
-                    justify-center
-                    rounded-full
-                    border
-                    border-border-subtle
-                    bg-surface-card/90
-                    text-lg
-                    text-text-primary
-                    opacity-0
-                    shadow-md
-                    backdrop-blur-sm
-                    transition-all
-                    duration-200
-                    hover:bg-accent
-                    hover:text-white
-                    group-hover:opacity-100
-                  "
+                      absolute
+                      left-4
+                      top-1/2
+                      flex
+                      h-10
+                      w-10
+                      -translate-y-1/2
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      rounded-full
+                      border
+                      border-border-subtle
+                      bg-surface-card/90
+                      text-lg
+                      text-text-primary
+                      opacity-0
+                      shadow-md
+                      backdrop-blur-sm
+                      transition-all
+                      duration-200
+                      hover:bg-accent
+                      hover:text-white
+                      group-hover:opacity-100
+                    "
                   >
                     ‹
                   </button>
@@ -408,31 +424,31 @@ const ProductDetails = () => {
                     onClick={scrollNext}
                     aria-label="Next image"
                     className="
-                    absolute
-                    right-4
-                    top-1/2
-                    flex
-                    h-10
-                    w-10
-                    -translate-y-1/2
-                    cursor-pointer
-                    items-center
-                    justify-center
-                    rounded-full
-                    border
-                    border-border-subtle
-                    bg-surface-card/90
-                    text-lg
-                    text-text-primary
-                    opacity-0
-                    shadow-md
-                    backdrop-blur-sm
-                    transition-all
-                    duration-200
-                    hover:bg-accent
-                    hover:text-white
-                    group-hover:opacity-100
-                  "
+                      absolute
+                      right-4
+                      top-1/2
+                      flex
+                      h-10
+                      w-10
+                      -translate-y-1/2
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      rounded-full
+                      border
+                      border-border-subtle
+                      bg-surface-card/90
+                      text-lg
+                      text-text-primary
+                      opacity-0
+                      shadow-md
+                      backdrop-blur-sm
+                      transition-all
+                      duration-200
+                      hover:bg-accent
+                      hover:text-white
+                      group-hover:opacity-100
+                    "
                   >
                     ›
                   </button>
@@ -449,33 +465,33 @@ const ProductDetails = () => {
                     onClick={() => scrollToImage(index)}
                     aria-label={`View image ${index + 1}`}
                     className={`
-                    h-16
-                    w-16
-                    shrink-0
-                    cursor-pointer
-                    overflow-hidden
-                    rounded-xl
-                    border-2
-                    bg-surface-elevated
-                    transition-all
-                    duration-200
-                    sm:h-20
-                    sm:w-20
-                    ${
-                      index === selectedIndex
-                        ? "border-accent shadow-sm"
-                        : "border-border-subtle hover:border-border-strong"
-                    }
-                  `}
+                      h-16
+                      w-16
+                      shrink-0
+                      cursor-pointer
+                      overflow-hidden
+                      rounded-xl
+                      border-2
+                      bg-surface-elevated
+                      transition-all
+                      duration-200
+                      sm:h-20
+                      sm:w-20
+                      ${
+                        index === selectedIndex
+                          ? "border-accent shadow-sm"
+                          : "border-border-subtle hover:border-border-strong"
+                      }
+                    `}
                   >
                     <img
                       src={img.url}
                       alt={`${product.name} ${index + 1}`}
                       className="
-                      h-full
-                      w-full
-                      object-cover
-                    "
+                        h-full
+                        w-full
+                        object-cover
+                      "
                     />
                   </button>
                 ))}
@@ -484,40 +500,28 @@ const ProductDetails = () => {
               {/* Image Counter */}
 
               {product.images.length > 1 && (
-                <div className="mt-3 text-center">
-                  <span
-                    className="
-                    rounded-full
-                    bg-surface-elevated
-                    px-3
-                    py-1
-                    text-xs
-                    font-medium
-                    text-text-muted
-                  "
-                  >
-                    {selectedIndex + 1} / {product.images.length}
-                  </span>
-                </div>
+                <p className="mt-2 text-center text-sm text-text-muted">
+                  {selectedIndex + 1} / {product.images.length}
+                </p>
               )}
             </div>
 
             {/* =====================================================
-              RIGHT — PRODUCT INFO
-          ===================================================== */}
+                RIGHT — PRODUCT INFO
+            ===================================================== */}
 
             <div
               className="
-              flex
-              flex-col
-              border-t
-              border-border-subtle
-              p-6
-              sm:p-8
-              lg:border-l
-              lg:border-t-0
-              lg:p-10
-            "
+                flex
+                flex-col
+                border-t
+                border-border-subtle
+                p-6
+                sm:p-8
+                lg:border-l
+                lg:border-t-0
+                lg:p-10
+              "
             >
               {/* Brand + Category */}
 
@@ -525,14 +529,14 @@ const ProductDetails = () => {
                 {product.brand && (
                   <span
                     className="
-                    rounded-full
-                    bg-accent-light
-                    px-3
-                    py-1
-                    text-xs
-                    font-semibold
-                    text-accent
-                  "
+                      rounded-full
+                      bg-accent-light
+                      px-3
+                      py-1
+                      text-xs
+                      font-semibold
+                      text-accent
+                    "
                   >
                     {product.brand}
                   </span>
@@ -541,14 +545,14 @@ const ProductDetails = () => {
                 {product.category && (
                   <span
                     className="
-                    rounded-full
-                    bg-surface-elevated
-                    px-3
-                    py-1
-                    text-xs
-                    font-semibold
-                    text-text-secondary
-                  "
+                      rounded-full
+                      bg-surface-elevated
+                      px-3
+                      py-1
+                      text-xs
+                      font-semibold
+                      text-text-secondary
+                    "
                   >
                     {product.category}
                   </span>
@@ -559,13 +563,13 @@ const ProductDetails = () => {
 
               <h1
                 className="
-                text-2xl
-                font-bold
-                leading-tight
-                tracking-tight
-                text-text-primary
-                sm:text-3xl
-              "
+                  text-2xl
+                  font-bold
+                  leading-tight
+                  tracking-tight
+                  text-text-primary
+                  sm:text-3xl
+                "
               >
                 {product.name}
               </h1>
@@ -598,11 +602,11 @@ const ProductDetails = () => {
               <div className="flex flex-wrap items-center gap-3">
                 <span
                   className="
-                  text-3xl
-                  font-bold
-                  tracking-tight
-                  text-accent
-                "
+                    text-3xl
+                    font-bold
+                    tracking-tight
+                    text-accent
+                  "
                 >
                   EGP {finalPrice?.toLocaleString()}
                 </span>
@@ -611,25 +615,25 @@ const ProductDetails = () => {
                   <>
                     <span
                       className="
-                      text-base
-                      font-medium
-                      text-text-muted
-                      line-through
-                    "
+                        text-base
+                        font-medium
+                        text-text-muted
+                        line-through
+                      "
                     >
                       EGP {product.price?.toLocaleString()}
                     </span>
 
                     <span
                       className="
-                      rounded-lg
-                      bg-accent-light
-                      px-2.5
-                      py-1
-                      text-xs
-                      font-bold
-                      text-accent
-                    "
+                        rounded-lg
+                        bg-accent-light
+                        px-2.5
+                        py-1
+                        text-xs
+                        font-bold
+                        text-accent
+                      "
                     >
                       -{discountPercent}%
                     </span>
@@ -643,17 +647,17 @@ const ProductDetails = () => {
                 {product.stock > 0 ? (
                   <span
                     className="
-                    inline-flex
-                    items-center
-                    gap-2
-                    rounded-full
-                    bg-accent-light
-                    px-3
-                    py-1.5
-                    text-xs
-                    font-bold
-                    text-accent
-                  "
+                      inline-flex
+                      items-center
+                      gap-2
+                      rounded-full
+                      bg-accent-light
+                      px-3
+                      py-1.5
+                      text-xs
+                      font-bold
+                      text-accent
+                    "
                   >
                     <span className="h-1.5 w-1.5 rounded-full bg-accent" />
                     IN STOCK
@@ -661,17 +665,17 @@ const ProductDetails = () => {
                 ) : (
                   <span
                     className="
-                    inline-flex
-                    items-center
-                    gap-2
-                    rounded-full
-                    bg-surface-elevated
-                    px-3
-                    py-1.5
-                    text-xs
-                    font-bold
-                    text-text-muted
-                  "
+                      inline-flex
+                      items-center
+                      gap-2
+                      rounded-full
+                      bg-surface-elevated
+                      px-3
+                      py-1.5
+                      text-xs
+                      font-bold
+                      text-text-muted
+                    "
                   >
                     <span className="h-1.5 w-1.5 rounded-full bg-text-muted" />
                     NOT AVAILABLE RIGHT NOW
@@ -683,11 +687,11 @@ const ProductDetails = () => {
 
               <p
                 className="
-                mt-6
-                text-sm
-                leading-7
-                text-text-secondary
-              "
+                  mt-6
+                  text-sm
+                  leading-7
+                  text-text-secondary
+                "
               >
                 {product.shortDescription}
               </p>
@@ -697,69 +701,75 @@ const ProductDetails = () => {
               <div className="mt-7">
                 <p
                   className="
-                  mb-2
-                  text-xs
-                  font-semibold
-                  uppercase
-                  tracking-wider
-                  text-text-muted
-                "
+                    mb-2
+                    text-xs
+                    font-semibold
+                    uppercase
+                    tracking-wider
+                    text-text-muted
+                  "
                 >
                   Quantity
                 </p>
 
                 <div
                   className="
-                  inline-flex
-                  items-center
-                  overflow-hidden
-                  rounded-xl
-                  border
-                  border-border-subtle
-                  bg-surface-elevated
-                "
+                    inline-flex
+                    items-center
+                    overflow-hidden
+                    rounded-xl
+                    border
+                    border-border-subtle
+                    bg-surface-elevated
+                  "
                 >
+                  {/* Decrease */}
+
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                     disabled={product.stock === 0}
                     className="
-                    flex
-                    h-10
-                    w-10
-                    cursor-pointer
-                    items-center
-                    justify-center
-                    text-lg
-                    font-medium
-                    text-text-secondary
-                    transition-colors
-                    hover:bg-accent-light
-                    hover:text-accent
-                    disabled:cursor-not-allowed
-                    disabled:opacity-40
-                  "
+                      flex
+                      h-10
+                      w-10
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      text-lg
+                      font-medium
+                      text-text-secondary
+                      transition-colors
+                      hover:bg-accent-light
+                      hover:text-accent
+                      disabled:cursor-not-allowed
+                      disabled:opacity-40
+                    "
                   >
                     −
                   </button>
 
+                  {/* Quantity Value */}
+
                   <span
                     className="
-                    flex
-                    h-10
-                    min-w-12
-                    items-center
-                    justify-center
-                    border-x
-                    border-border-subtle
-                    bg-surface-card
-                    text-sm
-                    font-bold
-                    text-text-primary
-                  "
+                      flex
+                      h-10
+                      min-w-12
+                      items-center
+                      justify-center
+                      border-x
+                      border-border-subtle
+                      bg-surface-card
+                      text-sm
+                      font-bold
+                      text-text-primary
+                    "
                   >
                     {product.stock === 0 ? 0 : quantity}
                   </span>
+
+                  {/* Increase */}
 
                   <button
                     type="button"
@@ -768,21 +778,21 @@ const ProductDetails = () => {
                     }
                     disabled={product.stock === 0}
                     className="
-                    flex
-                    h-10
-                    w-10
-                    cursor-pointer
-                    items-center
-                    justify-center
-                    text-lg
-                    font-medium
-                    text-text-secondary
-                    transition-colors
-                    hover:bg-accent-light
-                    hover:text-accent
-                    disabled:cursor-not-allowed
-                    disabled:opacity-40
-                  "
+                      flex
+                      h-10
+                      w-10
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      text-lg
+                      font-medium
+                      text-text-secondary
+                      transition-colors
+                      hover:bg-accent-light
+                      hover:text-accent
+                      disabled:cursor-not-allowed
+                      disabled:opacity-40
+                    "
                   >
                     +
                   </button>
@@ -792,6 +802,8 @@ const ProductDetails = () => {
               {/* Actions */}
 
               <div className="mt-7 flex gap-3">
+                {/* Add To Cart */}
+
                 <button
                   type="button"
                   onClick={() =>
@@ -807,26 +819,27 @@ const ProductDetails = () => {
                   }
                   disabled={product.stock === 0 || isAddingToCart}
                   className={`
-                  flex
-                  flex-1
-                  cursor-pointer
-                  items-center
-                  justify-center
-                  rounded-xl
-                  px-5
-                  py-3.5
-                  text-sm
-                  font-bold
-                  text-white
-                  shadow-sm
-                  transition-all
-                  duration-200
-                  ${
-                    product.stock === 0
-                      ? "cursor-not-allowed bg-border-strong"
-                      : "bg-accent hover:bg-accent-hover hover:shadow-md"
-                  }
-                `}
+                    flex
+                    flex-1
+                    cursor-pointer
+                    items-center
+                    justify-center
+                    rounded-xl
+                    px-5
+                    py-3.5
+                    text-sm
+                    font-bold
+                    text-white
+                    shadow-sm
+                    transition-all
+                    duration-200
+
+                    ${
+                      product.stock === 0
+                        ? "cursor-not-allowed bg-border-strong"
+                        : "bg-accent hover:bg-accent-hover hover:shadow-md"
+                    }
+                  `}
                 >
                   {product.stock === 0
                     ? "Not Available"
@@ -834,6 +847,8 @@ const ProductDetails = () => {
                       ? "Adding..."
                       : "Add to Cart"}
                 </button>
+
+                {/* Wishlist */}
 
                 <button
                   type="button"
@@ -847,24 +862,24 @@ const ProductDetails = () => {
                     isInWishlist ? "Remove from wishlist" : "Add to wishlist"
                   }
                   className="
-                  flex
-                  h-12
-                  w-12
-                  shrink-0
-                  cursor-pointer
-                  items-center
-                  justify-center
-                  rounded-xl
-                  border
-                  border-border-subtle
-                  bg-surface-elevated
-                  transition-all
-                  duration-200
-                  hover:border-accent
-                  hover:bg-accent-light
-                  disabled:cursor-not-allowed
-                  disabled:opacity-50
-                "
+                    flex
+                    h-12
+                    w-12
+                    shrink-0
+                    cursor-pointer
+                    items-center
+                    justify-center
+                    rounded-xl
+                    border
+                    border-border-subtle
+                    bg-surface-elevated
+                    transition-all
+                    duration-200
+                    hover:border-accent
+                    hover:bg-accent-light
+                    disabled:cursor-not-allowed
+                    disabled:opacity-50
+                  "
                 >
                   {isInWishlist ? (
                     <FaHeart className="text-accent" />
@@ -878,19 +893,21 @@ const ProductDetails = () => {
         </section>
 
         {/* =========================================================
-          REVIEWS
-      ========================================================= */}
+            REVIEWS
+        ========================================================= */}
 
         <section className="mt-10">
+          {/* Reviews Header */}
+
           <div className="mb-6">
             <p
               className="
-              text-xs
-              font-bold
-              uppercase
-              tracking-[0.15em]
-              text-accent
-            "
+                text-xs
+                font-bold
+                uppercase
+                tracking-[0.15em]
+                text-accent
+              "
             >
               Customer Feedback
             </p>
@@ -898,25 +915,25 @@ const ProductDetails = () => {
             <div className="mt-1 flex items-center justify-between gap-4">
               <h2
                 className="
-                text-2xl
-                font-bold
-                tracking-tight
-                text-text-primary
-              "
+                  text-2xl
+                  font-bold
+                  tracking-tight
+                  text-text-primary
+                "
               >
                 Reviews
               </h2>
 
               <span
                 className="
-                rounded-full
-                bg-accent-light
-                px-3
-                py-1
-                text-xs
-                font-semibold
-                text-accent
-              "
+                  rounded-full
+                  bg-accent-light
+                  px-3
+                  py-1
+                  text-xs
+                  font-semibold
+                  text-accent
+                "
               >
                 {product.numReviews || 0} reviews
               </span>
@@ -928,31 +945,31 @@ const ProductDetails = () => {
           <form
             onSubmit={handleSubmitReview}
             className="
-            rounded-2xl
-            border
-            border-border-subtle
-            bg-surface-card
-            p-5
-            shadow-sm
-            sm:p-6
-          "
+              rounded-2xl
+              border
+              border-border-subtle
+              bg-surface-card
+              p-5
+              shadow-sm
+              sm:p-6
+            "
           >
             <h3
               className="
-              text-sm
-              font-bold
-              text-text-primary
-            "
+                text-sm
+                font-bold
+                text-text-primary
+              "
             >
               Leave a review
             </h3>
 
             <p
               className="
-              mt-1
-              text-xs
-              text-text-muted
-            "
+                mt-1
+                text-xs
+                text-text-muted
+              "
             >
               Share your experience with this product.
             </p>
@@ -962,11 +979,11 @@ const ProductDetails = () => {
             <div className="mt-5">
               <p
                 className="
-                mb-2
-                text-xs
-                font-semibold
-                text-text-secondary
-              "
+                  mb-2
+                  text-xs
+                  font-semibold
+                  text-text-secondary
+                "
               >
                 Your rating
               </p>
@@ -982,14 +999,14 @@ const ProductDetails = () => {
                   >
                     <FaStar
                       className={`
-                      text-xl
-                      transition-colors
-                      ${
-                        star <= reviewRating
-                          ? "text-accent"
-                          : "text-border-strong"
-                      }
-                    `}
+                        text-xl
+                        transition-colors
+                        ${
+                          star <= reviewRating
+                            ? "text-accent"
+                            : "text-border-strong"
+                        }
+                      `}
                     />
                   </button>
                 ))}
@@ -1004,43 +1021,45 @@ const ProductDetails = () => {
               placeholder="Share your thoughts about this product..."
               rows={4}
               className="
-              mt-5
-              w-full
-              resize-none
-              rounded-xl
-              border
-              border-border-subtle
-              bg-surface-elevated
-              p-4
-              text-sm
-              text-text-primary
-              outline-none
-              transition-all
-              placeholder:text-text-muted
-              focus:border-accent
-              focus:ring-2
-              focus:ring-accent/15
-            "
+                mt-5
+                w-full
+                resize-none
+                rounded-xl
+                border
+                border-border-subtle
+                bg-surface-elevated
+                p-4
+                text-sm
+                text-text-primary
+                outline-none
+                transition-all
+                placeholder:text-text-muted
+                focus:border-accent
+                focus:ring-2
+                focus:ring-accent/15
+              "
             />
+
+            {/* Submit */}
 
             <div className="mt-4 flex justify-end">
               <button
                 type="submit"
                 disabled={reviewRating === 0 || isAddingReview}
                 className="
-                cursor-pointer
-                rounded-xl
-                bg-accent
-                px-5
-                py-2.5
-                text-sm
-                font-bold
-                text-white
-                transition-all
-                hover:bg-accent-hover
-                disabled:cursor-not-allowed
-                disabled:opacity-50
-              "
+                  cursor-pointer
+                  rounded-xl
+                  bg-accent
+                  px-5
+                  py-2.5
+                  text-sm
+                  font-bold
+                  text-white
+                  transition-all
+                  hover:bg-accent-hover
+                  disabled:cursor-not-allowed
+                  disabled:opacity-50
+                "
               >
                 {isAddingReview ? "Submitting..." : "Submit Review"}
               </button>
@@ -1053,28 +1072,28 @@ const ProductDetails = () => {
             {reviewsLoading ? (
               <div
                 className="
-                rounded-2xl
-                border
-                border-border-subtle
-                bg-surface-card
-                p-6
-                text-sm
-                text-text-muted
-              "
+                  rounded-2xl
+                  border
+                  border-border-subtle
+                  bg-surface-card
+                  p-6
+                  text-sm
+                  text-text-muted
+                "
               >
                 Loading reviews...
               </div>
             ) : reviews.length === 0 ? (
               <div
                 className="
-                rounded-2xl
-                border
-                border-dashed
-                border-border-strong
-                bg-surface-card
-                p-8
-                text-center
-              "
+                  rounded-2xl
+                  border
+                  border-dashed
+                  border-border-strong
+                  bg-surface-card
+                  p-8
+                  text-center
+                "
               >
                 <p className="text-sm font-semibold text-text-primary">
                   No reviews yet
@@ -1090,41 +1109,45 @@ const ProductDetails = () => {
                   <div
                     key={review._id}
                     className="
-                    rounded-2xl
-                    border
-                    border-border-subtle
-                    bg-surface-card
-                    p-5
-                    transition-colors
-                    hover:border-border-strong
-                  "
+                      rounded-2xl
+                      border
+                      border-border-subtle
+                      bg-surface-card
+                      p-5
+                      transition-colors
+                      hover:border-border-strong
+                    "
                   >
                     <div className="flex items-center gap-3">
+                      {/* Avatar */}
+
                       <div
                         className="
-                        flex
-                        h-9
-                        w-9
-                        shrink-0
-                        items-center
-                        justify-center
-                        rounded-full
-                        bg-accent-light
-                        text-xs
-                        font-bold
-                        text-accent
-                      "
+                          flex
+                          h-9
+                          w-9
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-full
+                          bg-accent-light
+                          text-xs
+                          font-bold
+                          text-accent
+                        "
                       >
                         {(review.user?.username || "A").charAt(0).toUpperCase()}
                       </div>
 
+                      {/* User */}
+
                       <div>
                         <p
                           className="
-                          text-sm
-                          font-bold
-                          text-text-primary
-                        "
+                            text-sm
+                            font-bold
+                            text-text-primary
+                          "
                         >
                           {review.user?.username || "Anonymous"}
                         </p>
@@ -1133,25 +1156,27 @@ const ProductDetails = () => {
                           {[1, 2, 3, 4, 5].map((star) => (
                             <FaStar
                               key={star}
+                              size={12}
                               className={
                                 star <= review.rating
                                   ? "text-accent"
                                   : "text-border-strong"
                               }
-                              size={12}
                             />
                           ))}
                         </div>
                       </div>
                     </div>
 
+                    {/* Comment */}
+
                     <p
                       className="
-                      mt-4
-                      text-sm
-                      leading-6
-                      text-text-secondary
-                    "
+                        mt-4
+                        text-sm
+                        leading-6
+                        text-text-secondary
+                      "
                     >
                       {review.comment}
                     </p>
@@ -1163,67 +1188,75 @@ const ProductDetails = () => {
         </section>
 
         {/* =========================================================
-          RELATED PRODUCTS
-      ========================================================= */}
+            RELATED PRODUCTS
+        ========================================================= */}
 
         <section className="mt-12">
+          {/* Header */}
+
           <div className="mb-6">
             <p
               className="
-              text-xs
-              font-bold
-              uppercase
-              tracking-[0.15em]
-              text-accent
-            "
+                text-xs
+                font-bold
+                uppercase
+                tracking-[0.15em]
+                text-accent
+              "
             >
               You May Also Like
             </p>
 
             <h2
               className="
-              mt-1
-              text-2xl
-              font-bold
-              tracking-tight
-              text-text-primary
-            "
+                mt-1
+                text-2xl
+                font-bold
+                tracking-tight
+                text-text-primary
+              "
             >
               Related Products
             </h2>
           </div>
 
+          {/* Loading */}
+
           {relatedLoading ? (
             <div
               className="
-              rounded-2xl
-              border
-              border-border-subtle
-              bg-surface-card
-              p-6
-              text-sm
-              text-text-muted
-            "
+                rounded-2xl
+                border
+                border-border-subtle
+                bg-surface-card
+                p-6
+                text-sm
+                text-text-muted
+              "
             >
               Loading related products...
             </div>
           ) : relatedProducts.length === 0 ? (
+            /* Empty */
+
             <div
               className="
-              rounded-2xl
-              border
-              border-dashed
-              border-border-strong
-              bg-surface-card
-              p-8
-              text-center
-            "
+                rounded-2xl
+                border
+                border-dashed
+                border-border-strong
+                bg-surface-card
+                p-8
+                text-center
+              "
             >
               <p className="text-sm text-text-muted">
                 No related products found.
               </p>
             </div>
           ) : (
+            /* Products */
+
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {relatedProducts.map((item) => {
                 const itemHasDiscount =
@@ -1240,75 +1273,75 @@ const ProductDetails = () => {
                     key={item._id}
                     onClick={() => handleRelatedProductClick(item._id)}
                     className="
-                    group
-                    cursor-pointer
-                    overflow-hidden
-                    rounded-2xl
-                    border
-                    border-border-subtle
-                    bg-surface-card
-                    shadow-sm
-                    transition-all
-                    duration-300
-                    hover:-translate-y-1
-                    hover:border-border-strong
-                    hover:shadow-lg
-                  "
+                      group
+                      cursor-pointer
+                      overflow-hidden
+                      rounded-2xl
+                      border
+                      border-border-subtle
+                      bg-surface-card
+                      shadow-sm
+                      transition-all
+                      duration-300
+                      hover:-translate-y-1
+                      hover:border-border-strong
+                      hover:shadow-lg
+                    "
                   >
                     {/* Image */}
 
                     <div
                       className="
-                      relative
-                      h-56
-                      overflow-hidden
-                      bg-surface-elevated
-                    "
+                        relative
+                        h-56
+                        overflow-hidden
+                        bg-surface-elevated
+                      "
                     >
                       <img
                         src={item.images?.[0]?.url}
                         alt={item.name}
                         className="
-                        h-full
-                        w-full
-                        object-cover
-                        transition-transform
-                        duration-500
-                        group-hover:scale-105
-                      "
+                          h-full
+                          w-full
+                          object-cover
+                          transition-transform
+                          duration-500
+                          group-hover:scale-105
+                        "
                       />
 
                       {itemHasDiscount && (
                         <span
                           className="
-                          absolute
-                          left-3
-                          top-3
-                          rounded-lg
-                          bg-accent
-                          px-2.5
-                          py-1
-                          text-xs
-                          font-bold
-                          text-white
-                        "
+                            absolute
+                            left-3
+                            top-3
+                            rounded-lg
+                            bg-accent
+                            px-2.5
+                            py-1
+                            text-xs
+                            font-bold
+                            text-white
+                          "
                         >
                           Sale
                         </span>
                       )}
                     </div>
 
-                    {/* Info */}
+                    {/* Product Info */}
 
                     <div className="p-4">
                       {item.brand && (
                         <p
                           className="
-                          mb-1
-                          text-xs
-                          font-medium
-                          text-text-muted
-                        "
+                            mb-1
+                            text-xs
+                            font-medium
+                            text-text-muted
+                          "
                         >
                           {item.brand}
                         </p>
@@ -1316,13 +1349,13 @@ const ProductDetails = () => {
 
                       <h3
                         className="
-                        truncate
-                        text-sm
-                        font-bold
-                        text-text-primary
-                        transition-colors
-                        group-hover:text-accent
-                      "
+                          truncate
+                          text-sm
+                          font-bold
+                          text-text-primary
+                          transition-colors
+                          group-hover:text-accent
+                        "
                       >
                         {item.name}
                       </h3>
@@ -1346,9 +1379,9 @@ const ProductDetails = () => {
 
                         <span
                           className="
-                          text-xs
-                          text-text-muted
-                        "
+                            text-xs
+                            text-text-muted
+                          "
                         >
                           ({item.numReviews || 0})
                         </span>
@@ -1359,9 +1392,9 @@ const ProductDetails = () => {
                       <div className="mt-3 flex items-center gap-2">
                         <span
                           className="
-                          font-bold
-                          text-accent
-                        "
+                            font-bold
+                            text-accent
+                          "
                         >
                           EGP {itemFinalPrice?.toLocaleString()}
                         </span>
@@ -1369,10 +1402,10 @@ const ProductDetails = () => {
                         {itemHasDiscount && (
                           <span
                             className="
-                            text-xs
-                            text-text-muted
-                            line-through
-                          "
+                              text-xs
+                              text-text-muted
+                              line-through
+                            "
                           >
                             EGP {item.price?.toLocaleString()}
                           </span>

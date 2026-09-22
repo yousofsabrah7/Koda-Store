@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
     if (error.response) {
       const status = error.response.status;
       let message = error.response.data?.message || "An error occurred";
-
+      console.log(error.response);
       if (status === 401) {
         message = error.response.data?.message || "An error occurred";
       } else if (status === 403) {

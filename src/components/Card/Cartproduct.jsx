@@ -98,12 +98,7 @@ function Cartproduct({ product }) {
       // Rollback
       setAddedWishlist(!nextState);
 
-      console.error(
-        nextState
-          ? "Failed to add product to wishlist:"
-          : "Failed to remove product from wishlist:",
-        error,
-      );
+      
     }
   };
 
@@ -125,7 +120,6 @@ function Cartproduct({ product }) {
         quantity: 1,
       });
     } catch (error) {
-      console.error("Failed to add product to cart:", error);
     }
   };
 

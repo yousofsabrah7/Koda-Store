@@ -71,7 +71,7 @@ const App = () => {
 
           <Route path="/orders/:id" element={<OrderDetails />} />
 
-          <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="/order-success/:id" element={<OrderSuccess />} />
 
           <Route path="/wishlist" element={<Wishlist />} />
 

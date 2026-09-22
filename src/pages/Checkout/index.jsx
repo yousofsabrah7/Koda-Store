@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
-import { MapPin, CreditCard, FileText, Check, Loader2 } from "lucide-react";
+import { MapPin, CreditCard, FileText, Loader2 } from "lucide-react";
 
 import Card from "../../components/checkout/Card";
 import CardHeader from "../../components/checkout/CardHeader";
 import Field from "../../components/checkout/Field";
 import PaymentOption from "../../components/checkout/PaymentOption";
 import SummaryRow from "../../components/checkout/SummaryRow";
+import { useNavigate } from "react-router-dom";
 
 import { useCart } from "../../services/apiHooks/cartHooks";
 import { usePlaceOrder } from "../../services/apiHooks/OrdersHook";
@@ -25,11 +26,10 @@ const inputClass = (invalid) =>
   ].join(" ");
 
 function Checkout() {
-  const { data: cart, isLoading: cartLoading, isError: cartError } =
-    useCart();
+  const navigate = useNavigate;
+  const { data: cart, isLoading: cartLoading, isError: cartError } = useCart();
 
   const placeOrderMutation = usePlaceOrder();
-
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -39,17 +39,14 @@ function Checkout() {
     postal: "",
     notes: "",
   });
-
   const [errors, setErrors] = useState({});
   const [payment, setPayment] = useState("cod");
-  const [confirmation, setConfirmation] = useState(null);
 
   const items = cart?.items ?? [];
 
   const totals = useMemo(() => {
     const subtotal =
-      cart?.subtotal ??
-      items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      cart?.subtotal ?? items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
     const shipping = 0;
     const tax = cart?.tax ?? Math.round(subtotal * 0.14);
@@ -105,6 +102,30 @@ function Checkout() {
     return Object.keys(next).length === 0;
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    if (!items.length) {
+      return;
+    }
+
+    const payload = {
+      shippingAddress: {
+        fullName: form.name.trim(),
+        phone: form.phone.trim(),
+        country: form.country,
+        city: form.city.trim(),
+        address: form.address.trim(),
+        postalCode: form.postal.trim(),
+      },
+      paymentMethod: payment === "cod" ? "cash" : payment,
+    };
+
+    placeOrderMutation.mutate(payload);
+  };
+
   if (cartLoading) {
     return (
       <div className="grid min-h-screen place-items-center bg-surface-base">
@@ -132,17 +153,13 @@ function Checkout() {
 
         <form
           noValidate
+          onSubmit={handleSubmit}
           className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.85fr_1fr]"
         >
-          {/* LEFT SIDE */}
           <div className="space-y-6">
-            {/* Shipping Address */}
             <Card>
               <div className="p-5 pb-6 sm:px-6">
-                <CardHeader
-                  icon={MapPin}
-                  title="Shipping Address"
-                />
+                <CardHeader icon={MapPin} title="Shipping Address" />
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-3.5 sm:grid-cols-2">
                   <Field
@@ -190,7 +207,7 @@ function Checkout() {
                       onChange={setField("country")}
                       aria-invalid={!!errors.country}
                       className={`${inputClass(
-                        errors.country
+                        errors.country,
                       )} cursor-pointer appearance-none bg-[length:7px] pr-8`}
                     >
                       {COUNTRIES.map((country) => (
@@ -248,18 +265,11 @@ function Checkout() {
               </div>
             </Card>
 
-            {/* Payment */}
             <Card>
               <div className="p-5 pb-6 sm:px-6">
-                <CardHeader
-                  icon={CreditCard}
-                  title="Payment Method"
-                />
+                <CardHeader icon={CreditCard} title="Payment Method" />
 
-                <div
-                  role="radiogroup"
-                  aria-label="Payment method"
-                >
+                <div role="radiogroup" aria-label="Payment method">
                   <PaymentOption
                     selected={payment === "cod"}
                     onSelect={() => setPayment("cod")}
@@ -270,13 +280,9 @@ function Checkout() {
               </div>
             </Card>
 
-            {/* Notes */}
             <Card>
               <div className="p-5 pb-6 sm:px-6">
-                <CardHeader
-                  icon={FileText}
-                  title="Order Notes (Optional)"
-                />
+                <CardHeader icon={FileText} title="Order Notes (Optional)" />
 
                 <textarea
                   id="notes"
@@ -285,14 +291,13 @@ function Checkout() {
                   onChange={setField("notes")}
                   placeholder="Any special instructions for your order..."
                   className={`${inputClass(
-                    false
+                    false,
                   )} min-h-[78px] resize-y py-2.5`}
                 />
               </div>
             </Card>
           </div>
 
-          {/* RIGHT SIDE */}
           <Card className="p-5 sm:px-6 lg:sticky lg:top-6">
             <h2 className="mb-4 text-base font-semibold text-text-primary">
               Order Summary
@@ -319,9 +324,7 @@ function Checkout() {
                       {item.name}
                     </p>
 
-                    <p className="text-xs text-text-muted">
-                      x{item.quantity}
-                    </p>
+                    <p className="text-xs text-text-muted">x{item.quantity}</p>
                   </div>
 
                   <p className="ml-auto whitespace-nowrap text-[13px] font-semibold text-text-primary">
@@ -333,30 +336,17 @@ function Checkout() {
 
             <div className="mb-4 border-t border-border-subtle" />
 
-            <SummaryRow
-              label="Subtotal"
-              value={egp(totals.subtotal)}
-            />
+            <SummaryRow label="Subtotal" value={egp(totals.subtotal)} />
 
-            <SummaryRow
-              label="Shipping"
-              value={egp(totals.shipping)}
-            />
+            <SummaryRow label="Shipping" value={egp(totals.shipping)} />
 
-            <SummaryRow
-              label="Tax (14%)"
-              value={egp(totals.tax)}
-            />
+            <SummaryRow label="Tax (14%)" value={egp(totals.tax)} />
 
-            <SummaryRow
-              label="Total"
-              value={egp(totals.total)}
-              total
-            />
+            <SummaryRow label="Total" value={egp(totals.total)} total />
 
             <button
               type="submit"
-              disabled={placeOrderMutation.isPending}
+              disabled={placeOrderMutation.isPending || !items.length}
               className="
                 mt-4 w-full rounded-lg
                 bg-accent px-4 py-3
@@ -380,32 +370,6 @@ function Checkout() {
               <p className="mt-2 text-[12px] text-red-500">
                 Something went wrong placing your order. Please try again.
               </p>
-            )}
-
-            {confirmation && (
-              <div
-                role="status"
-                className="
-                  mt-3.5 flex items-start gap-2.5
-                  rounded-lg
-                  border border-accent/20
-                  bg-accent-light
-                  px-3.5 py-3
-                  text-[12.5px] text-text-secondary
-                "
-              >
-                <Check className="mt-0.5 h-4 w-4 flex-none text-accent" />
-
-                <p>
-                  <strong className="mb-0.5 block text-[13px] text-text-primary">
-                    Order {confirmation.reference} placed
-                  </strong>
-
-                  Thanks, {confirmation.firstName}. We&apos;ll call you to
-                  confirm delivery to {confirmation.city}. You&apos;ll pay{" "}
-                  {egp(totals.total)} in cash when it arrives.
-                </p>
-              </div>
             )}
           </Card>
         </form>
