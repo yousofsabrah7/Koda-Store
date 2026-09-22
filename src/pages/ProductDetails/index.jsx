@@ -34,9 +34,7 @@ const ProductDetails = () => {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // =========================
-  // PRODUCT
-  // =========================
+
 
   const {
     data,
@@ -46,9 +44,7 @@ const ProductDetails = () => {
 
   const product = data?.product;
 
-  // =========================
-  // RELATED PRODUCTS
-  // =========================
+
 
   const {
     data: relatedData,
@@ -63,18 +59,13 @@ const ProductDetails = () => {
     !!product
   );
 
-  // =========================
-  // CART
-  // =========================
+
 
   const {
     mutate: addToCart,
     isPending: isAddingToCart,
   } = useAddToCart();
 
-  // =========================
-  // WISHLIST
-  // =========================
 
   const { data: wishlistData } = useWishlist();
 
@@ -88,9 +79,7 @@ const ProductDetails = () => {
     isPending: isRemoving,
   } = useRemoveFromWishlist();
 
-  // =========================
-  // REVIEWS
-  // =========================
+  
 
   const {
     data: reviewsData,
@@ -102,18 +91,13 @@ const ProductDetails = () => {
     isPending: isAddingReview,
   } = useAddReview(id);
 
-  // =========================
-  // IMAGE GALLERY
-  // =========================
+
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
     align: "start",
   });
 
-  // =========================
-  // QUANTITY
-  // =========================
 
   const [quantity, setQuantity] = useState(() => {
     const savedQuantity = localStorage.getItem(
@@ -125,16 +109,12 @@ const ProductDetails = () => {
       : 1;
   });
 
-  // =========================
-  // REVIEW
-  // =========================
+
 
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
 
-  // =========================
-  // SAVE QUANTITY
-  // =========================
+
 
   useEffect(() => {
     localStorage.setItem(
@@ -143,17 +123,13 @@ const ProductDetails = () => {
     );
   }, [id, quantity]);
 
-  // =========================
-  // SCROLL TO TOP
-  // =========================
+ 
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  // =========================
-  // EMBLA SELECT
-  // =========================
+
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -175,9 +151,7 @@ const ProductDetails = () => {
     };
   }, [emblaApi, onSelect]);
 
-  // =========================
-  // PREVIOUS IMAGE
-  // =========================
+ 
 
   const scrollPrev = useCallback(() => {
     if (!emblaApi) return;
@@ -185,9 +159,6 @@ const ProductDetails = () => {
     emblaApi.scrollPrev();
   }, [emblaApi]);
 
-  // =========================
-  // NEXT IMAGE
-  // =========================
 
   const scrollNext = useCallback(() => {
     if (!emblaApi) return;
@@ -195,9 +166,7 @@ const ProductDetails = () => {
     emblaApi.scrollNext();
   }, [emblaApi]);
 
-  // =========================
-  // SELECT IMAGE
-  // =========================
+ 
 
   const scrollToImage = useCallback(
     (index) => {
@@ -208,9 +177,7 @@ const ProductDetails = () => {
     [emblaApi]
   );
 
-  // =========================
-  // DATA
-  // =========================
+
 
   const reviews =
     reviewsData?.reviews || [];
@@ -218,9 +185,7 @@ const ProductDetails = () => {
   const wishlistProducts =
     wishlistData?.wishlist?.products || [];
 
-  // =========================
-  // RELATED PRODUCTS
-  // =========================
+
 
   const relatedProducts = (
     relatedData?.products || []
@@ -228,26 +193,20 @@ const ProductDetails = () => {
     (item) => item._id !== product?._id
   );
 
-  // =========================
-  // WISHLIST CHECK
-  // =========================
+
 
   const isInWishlist =
     wishlistProducts.some(
       (p) => p._id === product?._id
     );
 
-  // =========================
-  // LOADING
-  // =========================
+
 
   if (isLoading) {
     return <Loading />;
   }
 
-  // =========================
-  // ERROR
-  // =========================
+  
 
   if (isError) {
     return (
@@ -257,9 +216,7 @@ const ProductDetails = () => {
     );
   }
 
-  // =========================
-  // NO PRODUCT
-  // =========================
+
 
   if (!product) {
     return (
@@ -269,9 +226,7 @@ const ProductDetails = () => {
     );
   }
 
-  // =========================
-  // PRICE
-  // =========================
+
 
   const hasDiscount =
     product.discountPrice &&
@@ -290,17 +245,13 @@ const ProductDetails = () => {
       )
     : 0;
 
-  // =========================
-  // RATING
-  // =========================
+
 
   const rating = Math.round(
     product.averageRating || 0
   );
 
-  // =========================
-  // REVIEW SUBMIT
-  // =========================
+
 
   const handleSubmitReview = (e) => {
     e.preventDefault();
@@ -321,9 +272,7 @@ const ProductDetails = () => {
     );
   };
 
-  // =========================
-  // RELATED PRODUCT CLICK
-  // =========================
+
 
   const handleRelatedProductClick = (productId) => {
     navigate(`/shop/${productId}`);
@@ -332,19 +281,15 @@ const ProductDetails = () => {
   return (
     <div className="min-h-screen bg-surface-base flex flex-col items-center py-32">
 
-      {/* =================================
-          PRODUCT DETAILS
-      ================================= */}
+ 
 
       <div className="max-w-5xl w-full mx-auto p-6 flex flex-col md:flex-row gap-8">
 
-        {/* =================================
-            LEFT COLUMN - IMAGE GALLERY
-        ================================= */}
+    
 
         <div className="flex-[1.5] min-w-0">
 
-          {/* MAIN IMAGE */}
+      
 
           <div className="relative group">
 
@@ -370,7 +315,7 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            {/* PREVIOUS BUTTON */}
+         
 
             {product.images.length > 1 && (
               <button
@@ -382,7 +327,6 @@ const ProductDetails = () => {
               </button>
             )}
 
-            {/* NEXT BUTTON */}
 
             {product.images.length > 1 && (
               <button
@@ -396,9 +340,7 @@ const ProductDetails = () => {
 
           </div>
 
-          {/* =================================
-              THUMBNAILS
-          ================================= */}
+      
 
           <div className="flex justify-center items-center gap-4 mt-5">
 
@@ -429,7 +371,7 @@ const ProductDetails = () => {
 
           </div>
 
-          {/* IMAGE COUNTER */}
+     
 
           {product.images.length > 1 && (
             <p className="text-center text-sm text-gray-500 mt-2">
@@ -440,13 +382,11 @@ const ProductDetails = () => {
 
         </div>
 
-        {/* =================================
-            RIGHT COLUMN - PRODUCT INFO
-        ================================= */}
+       
 
         <div className="flex-1">
 
-          {/* BRAND + CATEGORY */}
+      
 
           <div className="flex gap-2 mb-3">
 
@@ -464,13 +404,13 @@ const ProductDetails = () => {
 
           </div>
 
-          {/* PRODUCT NAME */}
+         
 
           <h1 className="text-2xl font-bold">
             {product.name}
           </h1>
 
-          {/* RATING */}
+        
 
           <div className="flex items-center gap-2 mt-2">
 
@@ -497,8 +437,7 @@ const ProductDetails = () => {
 
           </div>
 
-          {/* PRICE */}
-
+         
           <p className="mt-3 flex items-center gap-2">
 
             <span className="text-2xl font-bold text-orange-600">
@@ -525,7 +464,7 @@ const ProductDetails = () => {
 
           </p>
 
-          {/* STOCK */}
+         
 
           <p
             className={`font-semibold text-sm px-2 py-1 rounded inline-block mt-2 ${
@@ -539,8 +478,7 @@ const ProductDetails = () => {
               : "NOT AVAILABLE RIGHT NOW"}
           </p>
 
-          {/* QUANTITY */}
-
+       
           <span className="flex gap-3 items-center rounded-sm p-3">
 
             <button
@@ -580,7 +518,7 @@ const ProductDetails = () => {
 
           </span>
 
-          {/* CART + WISHLIST */}
+     
 
           <div className="flex items-center gap-3 mt-4">
 
@@ -638,7 +576,7 @@ const ProductDetails = () => {
 
           </div>
 
-          {/* DESCRIPTION */}
+   
 
           <p className="text-sm text-gray-500 mt-4">
             {product.shortDescription}
@@ -648,9 +586,7 @@ const ProductDetails = () => {
 
       </div>
 
-      {/* =================================
-          REVIEWS SECTION
-      ================================= */}
+ 
 
       <div className="max-w-5xl w-full mx-auto p-6">
 
@@ -659,7 +595,7 @@ const ProductDetails = () => {
           {product.numReviews || 0})
         </h2>
 
-        {/* WRITE REVIEW */}
+
 
         <form
           onSubmit={handleSubmitReview}
@@ -717,8 +653,7 @@ const ProductDetails = () => {
 
         </form>
 
-        {/* REVIEW LIST */}
-
+  
         {reviewsLoading ? (
           <p className="text-gray-500 text-sm">
             Loading reviews...
@@ -775,10 +710,7 @@ const ProductDetails = () => {
 
       </div>
 
-      {/* =================================
-          RELATED PRODUCTS
-      ================================= */}
-
+    
       <div className="max-w-5xl w-full mx-auto p-6 mt-8">
 
         <h2 className="text-2xl font-bold mb-6">
@@ -820,7 +752,7 @@ const ProductDetails = () => {
                     className="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition duration-200"
                   >
 
-                    {/* PRODUCT IMAGE */}
+              
 
                     <div className="w-full h-48 bg-gray-100 overflow-hidden">
 
@@ -834,7 +766,7 @@ const ProductDetails = () => {
 
                     </div>
 
-                    {/* PRODUCT INFO */}
+            
 
                     <div className="p-4">
 
@@ -848,7 +780,7 @@ const ProductDetails = () => {
                         {item.name}
                       </h3>
 
-                      {/* RATING */}
+                   
 
                       <div className="flex items-center gap-1 mt-2">
 
@@ -882,7 +814,7 @@ const ProductDetails = () => {
 
                       </div>
 
-                      {/* PRICE */}
+                    
 
                       <div className="flex items-center gap-2 mt-3">
 
