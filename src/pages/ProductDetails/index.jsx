@@ -4,7 +4,10 @@ import useEmblaCarousel from "embla-carousel-react";
 
 import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 
-import { useProduct, useProducts } from "../../services/apiHooks/productsHook";
+import {
+  useProduct,
+  useProducts,
+} from "../../services/apiHooks/productsHook";
 
 import { useAddToCart } from "../../services/apiHooks/cartHooks";
 
@@ -25,9 +28,9 @@ const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // =========================
-  // Product
-  // =========================
+  // =========================================================
+  // PRODUCT
+  // =========================================================
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -35,9 +38,9 @@ const ProductDetails = () => {
 
   const product = data?.product;
 
-  // =========================
-  // Related Products
-  // =========================
+  // =========================================================
+  // RELATED PRODUCTS
+  // =========================================================
 
   const { data: relatedData, isLoading: relatedLoading } = useProducts(
     1,
@@ -49,77 +52,83 @@ const ProductDetails = () => {
     !!product,
   );
 
-  // =========================
-  // Cart
-  // =========================
+  // =========================================================
+  // CART
+  // =========================================================
 
   const { mutate: addToCart, isPending: isAddingToCart } = useAddToCart();
 
-  // =========================
-  // Wishlist
-  // =========================
+  // =========================================================
+  // WISHLIST
+  // =========================================================
 
   const { data: wishlistData } = useWishlist();
 
-  const { mutate: addToWishlist, isPending: isAdding } = useAddToWishlist();
+  const { mutate: addToWishlist, isPending: isAdding } =
+    useAddToWishlist();
 
   const { mutate: removeFromWishlist, isPending: isRemoving } =
     useRemoveFromWishlist();
 
-  // =========================
-  // Reviews
-  // =========================
+  // =========================================================
+  // REVIEWS
+  // =========================================================
 
   const { data: reviewsData, isLoading: reviewsLoading } =
     useProductReviews(id);
 
   const { mutate: addReview, isPending: isAddingReview } = useAddReview(id);
 
-  // =========================
-  // Embla
-  // =========================
+  // =========================================================
+  // EMBLA
+  // =========================================================
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
     align: "start",
   });
 
-  // =========================
-  // Quantity
-  // =========================
+  // =========================================================
+  // QUANTITY
+  // =========================================================
 
   const [quantity, setQuantity] = useState(() => {
     const savedQuantity = localStorage.getItem(`quantity.${id}`);
+    const parsedQuantity = Number(savedQuantity);
 
-    return savedQuantity ? Number(savedQuantity) : 1;
+    if (!Number.isFinite(parsedQuantity) || parsedQuantity < 1) {
+      return 1;
+    }
+
+    return Math.floor(parsedQuantity);
   });
 
-  // =========================
-  // Review Form
-  // =========================
+  // =========================================================
+  // REVIEW FORM
+  // =========================================================
 
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
 
-  // =========================
-  // Save Quantity
-  // =========================
+  // =========================================================
+  // SAVE QUANTITY
+  // =========================================================
 
   useEffect(() => {
     localStorage.setItem(`quantity.${id}`, quantity);
   }, [id, quantity]);
 
-  // =========================
-  // Scroll Top
-  // =========================
+  // =========================================================
+  // SCROLL TOP
+  // =========================================================
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  // =========================
-  // Embla Select
-  // =========================
+  // =========================================================
+  // EMBLA SELECT
+  // =========================================================
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -139,9 +148,9 @@ const ProductDetails = () => {
     };
   }, [emblaApi, onSelect]);
 
-  // =========================
-  // Previous Image
-  // =========================
+  // =========================================================
+  // PREVIOUS IMAGE
+  // =========================================================
 
   const scrollPrev = useCallback(() => {
     if (!emblaApi) return;
@@ -149,9 +158,9 @@ const ProductDetails = () => {
     emblaApi.scrollPrev();
   }, [emblaApi]);
 
-  // =========================
-  // Next Image
-  // =========================
+  // =========================================================
+  // NEXT IMAGE
+  // =========================================================
 
   const scrollNext = useCallback(() => {
     if (!emblaApi) return;
@@ -159,9 +168,9 @@ const ProductDetails = () => {
     emblaApi.scrollNext();
   }, [emblaApi]);
 
-  // =========================
-  // Scroll To Image
-  // =========================
+  // =========================================================
+  // SCROLL TO IMAGE
+  // =========================================================
 
   const scrollToImage = useCallback(
     (index) => {
@@ -172,9 +181,9 @@ const ProductDetails = () => {
     [emblaApi],
   );
 
-  // =========================
-  // Data
-  // =========================
+  // =========================================================
+  // DATA
+  // =========================================================
 
   const reviews = reviewsData?.reviews || [];
 
@@ -188,17 +197,17 @@ const ProductDetails = () => {
     (item) => item._id === product?._id,
   );
 
-  // =========================
-  // Loading
-  // =========================
+  // =========================================================
+  // LOADING
+  // =========================================================
 
   if (isLoading) {
     return <Loading />;
   }
 
-  // =========================
-  // Error
-  // =========================
+  // =========================================================
+  // ERROR
+  // =========================================================
 
   if (isError) {
     return (
@@ -210,9 +219,9 @@ const ProductDetails = () => {
     );
   }
 
-  // =========================
-  // No Product
-  // =========================
+  // =========================================================
+  // NO PRODUCT
+  // =========================================================
 
   if (!product) {
     return (
@@ -224,30 +233,40 @@ const ProductDetails = () => {
     );
   }
 
-  // =========================
-  // Price
-  // =========================
+  // =========================================================
+  // PRODUCT IMAGES
+  // =========================================================
+
+  const images = Array.isArray(product.images) ? product.images : [];
+
+  // =========================================================
+  // PRICE
+  // =========================================================
 
   const hasDiscount =
-    product.discountPrice && product.discountPrice < product.price;
+    Number(product.discountPrice) > 0 &&
+    product.discountPrice < product.price;
 
-  const finalPrice = hasDiscount ? product.discountPrice : product.price;
+  const finalPrice = hasDiscount
+    ? product.discountPrice
+    : product.price;
 
-  const discountPercent = hasDiscount
-    ? Math.round(
-        ((product.price - product.discountPrice) / product.price) * 100,
-      )
-    : 0;
+  const discountPercent =
+    hasDiscount && Number(product.price) > 0
+      ? Math.round(
+          ((product.price - product.discountPrice) / product.price) * 100,
+        )
+      : 0;
 
-  // =========================
-  // Rating
-  // =========================
+  // =========================================================
+  // RATING
+  // =========================================================
 
   const rating = Math.round(product.averageRating || 0);
 
-  // =========================
-  // Submit Review
-  // =========================
+  // =========================================================
+  // SUBMIT REVIEW
+  // =========================================================
 
   const handleSubmitReview = (e) => {
     e.preventDefault();
@@ -259,7 +278,7 @@ const ProductDetails = () => {
     addReview(
       {
         rating: reviewRating,
-        comment: reviewComment,
+        comment: reviewComment.trim(),
       },
       {
         onSuccess: () => {
@@ -270,17 +289,71 @@ const ProductDetails = () => {
     );
   };
 
-  // =========================
-  // Related Product
-  // =========================
+  // =========================================================
+  // RELATED PRODUCT
+  // =========================================================
 
   const handleRelatedProductClick = (productId) => {
     navigate(`/shop/${productId}`);
   };
 
-  // =========================
-  // Render
-  // =========================
+  // =========================================================
+  // QUANTITY HANDLERS
+  // =========================================================
+
+  const handleDecreaseQuantity = () => {
+    setQuantity((currentQuantity) =>
+      Math.max(1, currentQuantity - 1),
+    );
+  };
+
+  const handleIncreaseQuantity = () => {
+    setQuantity((currentQuantity) =>
+      Math.min(product.stock, currentQuantity + 1),
+    );
+  };
+
+  // =========================================================
+  // ADD TO CART
+  // =========================================================
+
+  const handleAddToCart = () => {
+    if (product.stock <= 0 || isAddingToCart) {
+      return;
+    }
+
+    addToCart(
+      {
+        productId: product._id,
+        quantity,
+      },
+      {
+        onSuccess: () => {
+          setQuantity(1);
+        },
+      },
+    );
+  };
+
+  // =========================================================
+  // WISHLIST
+  // =========================================================
+
+  const handleWishlist = () => {
+    if (isAdding || isRemoving) {
+      return;
+    }
+
+    if (isInWishlist) {
+      removeFromWishlist(product._id);
+    } else {
+      addToWishlist(product._id);
+    }
+  };
+
+  // =========================================================
+  // RENDER
+  // =========================================================
 
   return (
     <div className="min-h-screen bg-surface-base text-text-primary transition-colors duration-300">
@@ -289,9 +362,9 @@ const ProductDetails = () => {
       ========================================================= */}
 
       <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-24 sm:px-6 lg:px-8">
-        {/* =========================
-            Breadcrumb
-        ========================= */}
+        {/* =======================================================
+            BREADCRUMB
+        ======================================================= */}
 
         <div className="mb-8 flex items-center gap-2 text-sm">
           <button
@@ -314,9 +387,9 @@ const ProductDetails = () => {
           </span>
         </div>
 
-        {/* =========================================================
+        {/* =======================================================
             MAIN PRODUCT CARD
-        ========================================================= */}
+        ======================================================= */}
 
         <section
           className="
@@ -329,58 +402,82 @@ const ProductDetails = () => {
           "
         >
           <div className="grid grid-cols-1 lg:grid-cols-2">
-            {/* =====================================================
+            {/* ===================================================
                 LEFT — IMAGE GALLERY
-            ===================================================== */}
+            =================================================== */}
 
             <div className="p-4 sm:p-6 lg:p-8">
               {/* Main Image */}
 
               <div className="group relative overflow-hidden rounded-2xl">
-                <div ref={emblaRef} className="overflow-hidden rounded-2xl">
+                <div
+                  ref={emblaRef}
+                  className="overflow-hidden rounded-2xl"
+                >
                   <div className="flex">
-                    {product.images.map((img) => (
+                    {images.length > 0 ? (
+                      images.map((img, index) => (
+                        <div
+                          key={
+                            img.public_id ||
+                            img._id ||
+                            img.url ||
+                            `image-${index}`
+                          }
+                          className="min-w-0 flex-[0_0_100%]"
+                        >
+                          <div
+                            className="
+                              flex
+                              h-[360px]
+                              items-center
+                              justify-center
+                              overflow-hidden
+                              rounded-2xl
+                              bg-surface-elevated
+                              sm:h-[440px]
+                            "
+                          >
+                            <img
+                              src={img.url}
+                              alt={`${product.name} ${index + 1}`}
+                              className="
+                                h-full
+                                w-full
+                                object-contain
+                                p-6
+                                transition-transform
+                                duration-500
+                                group-hover:scale-[1.02]
+                              "
+                            />
+                          </div>
+                        </div>
+                      ))
+                    ) : (
                       <div
-                        key={img.public_id}
                         className="
-                          min-w-0
-                          flex-[0_0_100%]
+                          flex
+                          h-[360px]
+                          w-full
+                          items-center
+                          justify-center
+                          rounded-2xl
+                          bg-surface-elevated
+                          text-sm
+                          text-text-muted
+                          sm:h-[440px]
                         "
                       >
-                        <div
-                          className="
-                            flex
-                            h-[360px]
-                            items-center
-                            justify-center
-                            overflow-hidden
-                            rounded-2xl
-                            bg-surface-elevated
-                            sm:h-[440px]
-                          "
-                        >
-                          <img
-                            src={img.url}
-                            alt={product.name}
-                            className="
-                              h-full
-                              w-full
-                              object-contain
-                              p-6
-                              transition-transform
-                              duration-500
-                              group-hover:scale-[1.02]
-                            "
-                          />
-                        </div>
+                        No image available
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
 
                 {/* Previous */}
 
-                {product.images.length > 1 && (
+                {images.length > 1 && (
                   <button
                     type="button"
                     onClick={scrollPrev}
@@ -418,7 +515,7 @@ const ProductDetails = () => {
 
                 {/* Next */}
 
-                {product.images.length > 1 && (
+                {images.length > 1 && (
                   <button
                     type="button"
                     onClick={scrollNext}
@@ -457,58 +554,61 @@ const ProductDetails = () => {
 
               {/* Thumbnails */}
 
-              <div className="mt-5 flex items-center gap-3 overflow-x-auto pb-1">
-                {product.images.map((img, index) => (
-                  <button
-                    type="button"
-                    key={img.public_id}
-                    onClick={() => scrollToImage(index)}
-                    aria-label={`View image ${index + 1}`}
-                    className={`
-                      h-16
-                      w-16
-                      shrink-0
-                      cursor-pointer
-                      overflow-hidden
-                      rounded-xl
-                      border-2
-                      bg-surface-elevated
-                      transition-all
-                      duration-200
-                      sm:h-20
-                      sm:w-20
-                      ${
-                        index === selectedIndex
-                          ? "border-accent shadow-sm"
-                          : "border-border-subtle hover:border-border-strong"
+              {images.length > 1 && (
+                <div className="mt-5 flex items-center gap-3 overflow-x-auto pb-1">
+                  {images.map((img, index) => (
+                    <button
+                      type="button"
+                      key={
+                        img.public_id ||
+                        img._id ||
+                        img.url ||
+                        `thumbnail-${index}`
                       }
-                    `}
-                  >
-                    <img
-                      src={img.url}
-                      alt={`${product.name} ${index + 1}`}
-                      className="
-                        h-full
-                        w-full
-                        object-cover
-                      "
-                    />
-                  </button>
-                ))}
-              </div>
+                      onClick={() => scrollToImage(index)}
+                      aria-label={`View image ${index + 1}`}
+                      className={`
+                        h-16
+                        w-16
+                        shrink-0
+                        cursor-pointer
+                        overflow-hidden
+                        rounded-xl
+                        border-2
+                        bg-surface-elevated
+                        transition-all
+                        duration-200
+                        sm:h-20
+                        sm:w-20
+                        ${
+                          index === selectedIndex
+                            ? "border-accent shadow-sm"
+                            : "border-border-subtle hover:border-border-strong"
+                        }
+                      `}
+                    >
+                      <img
+                        src={img.url}
+                        alt={`${product.name} ${index + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Image Counter */}
 
-              {product.images.length > 1 && (
-                <p className="mt-2 text-center text-sm text-text-muted">
-                  {selectedIndex + 1} / {product.images.length}
+              {images.length > 1 && (
+                <p className="mt-3 text-center text-sm text-text-muted">
+                  {selectedIndex + 1} / {images.length}
                 </p>
               )}
             </div>
 
-            {/* =====================================================
+            {/* ===================================================
                 RIGHT — PRODUCT INFO
-            ===================================================== */}
+            =================================================== */}
 
             <div
               className="
@@ -582,7 +682,9 @@ const ProductDetails = () => {
                     <FaStar
                       key={star}
                       className={
-                        star <= rating ? "text-accent" : "text-border-strong"
+                        star <= rating
+                          ? "text-accent"
+                          : "text-border-strong"
                       }
                     />
                   ))}
@@ -592,8 +694,6 @@ const ProductDetails = () => {
                   {product.numReviews || 0} reviews
                 </span>
               </div>
-
-              {/* Divider */}
 
               <div className="my-6 h-px bg-border-subtle" />
 
@@ -608,7 +708,7 @@ const ProductDetails = () => {
                     text-accent
                   "
                 >
-                  EGP {finalPrice?.toLocaleString()}
+                  EGP {Number(finalPrice || 0).toLocaleString()}
                 </span>
 
                 {hasDiscount && (
@@ -621,7 +721,7 @@ const ProductDetails = () => {
                         line-through
                       "
                     >
-                      EGP {product.price?.toLocaleString()}
+                      EGP {Number(product.price || 0).toLocaleString()}
                     </span>
 
                     <span
@@ -727,8 +827,9 @@ const ProductDetails = () => {
 
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    onClick={handleDecreaseQuantity}
                     disabled={product.stock === 0}
+                    aria-label="Decrease quantity"
                     className="
                       flex
                       h-10
@@ -773,10 +874,12 @@ const ProductDetails = () => {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setQuantity((q) => Math.min(product.stock, q + 1))
+                    onClick={handleIncreaseQuantity}
+                    disabled={
+                      product.stock === 0 ||
+                      quantity >= product.stock
                     }
-                    disabled={product.stock === 0}
+                    aria-label="Increase quantity"
                     className="
                       flex
                       h-10
@@ -806,17 +909,7 @@ const ProductDetails = () => {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    addToCart(
-                      {
-                        productId: product._id,
-                        quantity,
-                      },
-                      {
-                        onSuccess: () => setQuantity(1),
-                      },
-                    )
-                  }
+                  onClick={handleAddToCart}
                   disabled={product.stock === 0 || isAddingToCart}
                   className={`
                     flex
@@ -833,7 +926,6 @@ const ProductDetails = () => {
                     shadow-sm
                     transition-all
                     duration-200
-
                     ${
                       product.stock === 0
                         ? "cursor-not-allowed bg-border-strong"
@@ -852,14 +944,12 @@ const ProductDetails = () => {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    isInWishlist
-                      ? removeFromWishlist(product._id)
-                      : addToWishlist(product._id)
-                  }
+                  onClick={handleWishlist}
                   disabled={isAdding || isRemoving}
                   aria-label={
-                    isInWishlist ? "Remove from wishlist" : "Add to wishlist"
+                    isInWishlist
+                      ? "Remove from wishlist"
+                      : "Add to wishlist"
                   }
                   className="
                     flex
@@ -1061,7 +1151,9 @@ const ProductDetails = () => {
                   disabled:opacity-50
                 "
               >
-                {isAddingReview ? "Submitting..." : "Submit Review"}
+                {isAddingReview
+                  ? "Submitting..."
+                  : "Submit Review"}
               </button>
             </div>
           </form>
@@ -1136,7 +1228,9 @@ const ProductDetails = () => {
                           text-accent
                         "
                       >
-                        {(review.user?.username || "A").charAt(0).toUpperCase()}
+                        {(review.user?.username || "A")
+                          .charAt(0)
+                          .toUpperCase()}
                       </div>
 
                       {/* User */}
@@ -1260,18 +1354,32 @@ const ProductDetails = () => {
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {relatedProducts.map((item) => {
                 const itemHasDiscount =
-                  item.discountPrice && item.discountPrice < item.price;
+                  Number(item.discountPrice) > 0 &&
+                  item.discountPrice < item.price;
 
                 const itemFinalPrice = itemHasDiscount
                   ? item.discountPrice
                   : item.price;
 
-                const itemRating = Math.round(item.averageRating || 0);
+                const itemRating = Math.round(
+                  item.averageRating || 0,
+                );
+
+                const itemImage = item.images?.[0]?.url;
 
                 return (
                   <div
                     key={item._id}
-                    onClick={() => handleRelatedProductClick(item._id)}
+                    onClick={() =>
+                      handleRelatedProductClick(item._id)
+                    }
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleRelatedProductClick(item._id);
+                      }
+                    }}
                     className="
                       group
                       cursor-pointer
@@ -1298,18 +1406,24 @@ const ProductDetails = () => {
                         bg-surface-elevated
                       "
                     >
-                      <img
-                        src={item.images?.[0]?.url}
-                        alt={item.name}
-                        className="
-                          h-full
-                          w-full
-                          object-cover
-                          transition-transform
-                          duration-500
-                          group-hover:scale-105
-                        "
-                      />
+                      {itemImage ? (
+                        <img
+                          src={itemImage}
+                          alt={item.name}
+                          className="
+                            h-full
+                            w-full
+                            object-cover
+                            transition-transform
+                            duration-500
+                            group-hover:scale-105
+                          "
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-sm text-text-muted">
+                          No image
+                        </div>
+                      )}
 
                       {itemHasDiscount && (
                         <span
@@ -1396,7 +1510,10 @@ const ProductDetails = () => {
                             text-accent
                           "
                         >
-                          EGP {itemFinalPrice?.toLocaleString()}
+                          EGP{" "}
+                          {Number(
+                            itemFinalPrice || 0,
+                          ).toLocaleString()}
                         </span>
 
                         {itemHasDiscount && (
@@ -1407,7 +1524,10 @@ const ProductDetails = () => {
                               line-through
                             "
                           >
-                            EGP {item.price?.toLocaleString()}
+                            EGP{" "}
+                            {Number(
+                              item.price || 0,
+                            ).toLocaleString()}
                           </span>
                         )}
                       </div>

@@ -45,6 +45,7 @@ export const usePlaceOrder = () => {
     onSuccess: (data) => {
       // Cart is done with, empty it everywhere
       const order = data?.order;
+
       dispatch(clearCartState());
 
       queryClient.invalidateQueries({
@@ -59,6 +60,7 @@ export const usePlaceOrder = () => {
 
       // Take the user to the confirmation page
       navigate(`/order-success/${order?._id}`, {
+
         replace: true,
         state: {
           reference: order?.reference || order?._id || order?.id,

@@ -29,6 +29,7 @@ function Checkout() {
   const navigate = useNavigate;
   const { data: cart, isLoading: cartLoading, isError: cartError } = useCart();
 
+
   const placeOrderMutation = usePlaceOrder();
   const [form, setForm] = useState({
     name: "",
@@ -346,6 +347,7 @@ function Checkout() {
 
             <button
               type="submit"
+
               disabled={placeOrderMutation.isPending || !items.length}
               className="
                 mt-4 w-full rounded-lg
