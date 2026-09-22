@@ -90,7 +90,7 @@ export default function Login() {
             to="/"
             className="text-2xl font-bold tracking-tight text-text-primary"
           >
-            Koda
+            E-Hub
             <span className="text-accent">Store</span>
           </Link>
         </div>

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 import { addReview, getProductReviews, deleteReview } from "../api/reviewsApi";
+import { useNavigate } from "react-router-dom";
 
 export const useProductReviews = (productId) => {
   return useQuery({
@@ -12,6 +13,7 @@ export const useProductReviews = (productId) => {
 };
 
 export const useAddReview = (productId) => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -29,7 +31,9 @@ export const useAddReview = (productId) => {
     onError: (error) => {
       const message = error.message || "Failed to add review";
 
-      toast.error(message);
+      error.statusCode !== 401
+        ? toast.error(message)
+        : navigate("/login", { replace: true });
     },
   });
 };

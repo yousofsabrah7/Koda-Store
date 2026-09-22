@@ -24,9 +24,9 @@ export default function ShopPage() {
   const products = data?.products || [];
   const { isLoading: isCartLoading } = useCart();
   const { isLoading: isWishlistLoading } = useWishlist();
-
+console.log(products)
   const categories = useMemo(
-    () => [...new Set(products.map((p) => p.category?.name).filter(Boolean))],
+    () => [...new Set(products.map((p) => p.category).filter(Boolean))],
     [products],
   );
 
@@ -132,7 +132,7 @@ export default function ShopPage() {
     priceRange.min !== priceBounds.min ||
     priceRange.max !== priceBounds.max;
 
-  if (isLoading || isCartLoading || isWishlistLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-4">
         <div className="relative mb-4 flex items-center justify-center">

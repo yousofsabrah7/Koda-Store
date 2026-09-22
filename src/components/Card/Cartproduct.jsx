@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaShoppingCart, FaStar, FaHeart } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   useAddToWishlist,
@@ -11,13 +11,19 @@ import {
 import { useAddToCart } from "../../services/apiHooks/cartHooks";
 
 function Cartproduct({ product }) {
-  const [addedWishlist, setAddedWishlist] = useState(false);
+  const navigate = useNavigate();
+
+  // =========================
+  // Product ID
+  // =========================
+
+  const productId = product?._id || product?.id;
 
   // =========================
   // Wishlist
   // =========================
 
-  const { data: wishlistData } = useWishlist();
+  const { data: wishlistData, isLoading: isWishlistLoading } = useWishlist();
 
   const { mutateAsync: addToWishlist, isPending: isAddingWishlist } =
     useAddToWishlist();
@@ -28,78 +34,76 @@ function Cartproduct({ product }) {
   const isWishlistPending = isAddingWishlist || isRemovingWishlist;
 
   // =========================
+  // Wishlist Products
+  // =========================
+
+  const wishlistProducts = wishlistData?.wishlist?.products ?? [];
+
+  const isInWishlist = wishlistProducts.some((item) => {
+    const itemId =
+      item?._id ||
+      item?.id ||
+      item?.product?._id ||
+      item?.product?.id ||
+      item?.product ||
+      item;
+
+    return String(itemId) === String(productId);
+  });
+
+  // =========================
+  // Wishlist State
+  // =========================
+
+  const [addedWishlist, setAddedWishlist] = useState(null);
+
+  useEffect(() => {
+    if (!isWishlistLoading) {
+      setAddedWishlist(isInWishlist);
+    }
+  }, [isInWishlist, isWishlistLoading]);
+
+  const wishlistActive = addedWishlist === null ? isInWishlist : addedWishlist;
+
+  // =========================
   // Cart
   // =========================
 
   const { mutateAsync: addToCart, isPending: isAddingToCart } = useAddToCart();
 
   // =========================
-  // Check Wishlist
+  // Wishlist Toggle
   // =========================
 
-  useEffect(() => {
-    const products = wishlistData?.wishlist?.products ?? [];
-
-    const isInWishlist = products.some((item) => item?.id === product?.id);
-
-    setAddedWishlist(isInWishlist);
-  }, [wishlistData, product?.id]);
-
-  // =========================
-  // Add Wishlist
-  // =========================
-
-  const handleAddWishlist = async (e) => {
+  const handleWishlistToggle = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!product?.id || isWishlistPending) {
+    if (!productId || isWishlistPending || isWishlistLoading) {
       return;
     }
 
-    try {
-      const response = await addToWishlist(product.id);
+    const nextState = !wishlistActive;
 
-      if (response?.success) {
-        setAddedWishlist(true);
-      }
-    } catch (error) {
-      console.error("Failed to add product to wishlist:", error);
-    }
-  };
-
-  // =========================
-  // Remove Wishlist
-  // =========================
-
-  const handleRemoveWishlist = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!product?.id || isWishlistPending) {
-      return;
-    }
+    // Optimistic UI
+    setAddedWishlist(nextState);
 
     try {
-      const response = await removeFromWishlist(product.id);
-
-      if (response?.success) {
-        setAddedWishlist(false);
+      if (nextState) {
+        await addToWishlist(productId);
+      } else {
+        await removeFromWishlist(productId);
       }
     } catch (error) {
-      console.error("Failed to remove product from wishlist:", error);
-    }
-  };
+      // Rollback
+      setAddedWishlist(!nextState);
 
-  // =========================
-  // Toggle Wishlist
-  // =========================
-
-  const handleWishlistToggle = (e) => {
-    if (addedWishlist) {
-      handleRemoveWishlist(e);
-    } else {
-      handleAddWishlist(e);
+      console.error(
+        nextState
+          ? "Failed to add product to wishlist:"
+          : "Failed to remove product from wishlist:",
+        error,
+      );
     }
   };
 
@@ -111,18 +115,30 @@ function Cartproduct({ product }) {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!product?.id || isAddingToCart) {
+    if (!productId || isAddingToCart) {
       return;
     }
 
     try {
       await addToCart({
-        productId: product.id,
+        productId,
         quantity: 1,
       });
     } catch (error) {
       console.error("Failed to add product to cart:", error);
     }
+  };
+
+  // =========================
+  // Product Details
+  // =========================
+
+  const handleViewDetails = () => {
+    if (!productId) {
+      return;
+    }
+
+    navigate(`/shop/${productId}`);
   };
 
   // =========================
@@ -138,18 +154,20 @@ function Cartproduct({ product }) {
   // =========================
 
   return (
-    <Link
-      to={`/shop/${product.id}`}
+    <div
       className="
         group
-        flex w-full
+        flex
+        w-full
         flex-col
         overflow-hidden
         rounded-3xl
-        border border-border-subtle
+        border
+        border-border-subtle
         bg-surface-card
         shadow-sm
-        transition-all duration-300
+        transition-all
+        duration-300
         hover:-translate-y-1
         hover:shadow-lg
       "
@@ -159,10 +177,12 @@ function Cartproduct({ product }) {
       ========================= */}
 
       <div
+        onClick={handleViewDetails}
         className="
           relative
           h-[220px]
           w-full
+          cursor-pointer
           overflow-hidden
           bg-surface-elevated
           p-9
@@ -171,28 +191,30 @@ function Cartproduct({ product }) {
       >
         {/* Category */}
 
-        <span
-          className="
-            absolute
-            left-3
-            top-5
-            z-10
-            rounded-lg
-            bg-accent
-            px-3
-            py-1
-            text-xs
-            font-semibold
-            text-white
-            shadow-sm
-          "
-        >
-          {product.category}
-        </span>
+        {product?.category && (
+          <span
+            className="
+              absolute
+              left-3
+              top-5
+              z-10
+              rounded-lg
+              bg-accent
+              px-3
+              py-1
+              text-xs
+              font-semibold
+              text-white
+              shadow-sm
+            "
+          >
+            {product.category}
+          </span>
+        )}
 
         {/* Discount */}
 
-        {Number(product.discountPercentage) > 0 && (
+        {Number(product?.discountPercentage) > 0 && (
           <span
             className="
               absolute
@@ -215,8 +237,13 @@ function Cartproduct({ product }) {
         {/* Image */}
 
         <img
-          src={product.image}
-          alt={product.shortDescription || "Product"}
+          src={
+            product?.image ||
+            product?.images?.[0]?.url ||
+            "https://placehold.co/300x300"
+          }
+          alt={product?.shortDescription || product?.name || "Product"}
+          loading="lazy"
           className="
             h-full
             w-full
@@ -233,11 +260,12 @@ function Cartproduct({ product }) {
         <button
           type="button"
           aria-label={
-            addedWishlist ? "Remove from wishlist" : "Add to wishlist"
+            wishlistActive ? "Remove from wishlist" : "Add to wishlist"
           }
-          disabled={isWishlistPending}
+          aria-pressed={wishlistActive}
+          disabled={!productId || isWishlistPending || isWishlistLoading}
           onClick={handleWishlistToggle}
-          className="
+          className={`
             absolute
             right-4
             top-4
@@ -245,7 +273,6 @@ function Cartproduct({ product }) {
             flex
             h-9
             w-9
-            cursor-pointer
             items-center
             justify-center
             rounded-full
@@ -256,15 +283,19 @@ function Cartproduct({ product }) {
             backdrop-blur-sm
             transition-all
             duration-200
-            hover:scale-105
-            hover:bg-accent-light
             disabled:cursor-wait
             disabled:opacity-60
-          "
+
+            ${
+              wishlistActive
+                ? "bg-accent-light"
+                : "hover:scale-105 hover:bg-accent-light"
+            }
+          `}
         >
           <FaHeart
-            className={addedWishlist ? "text-red-500" : "text-text-muted"}
             size={16}
+            className={wishlistActive ? "text-accent" : "text-text-muted"}
           />
         </button>
       </div>
@@ -287,8 +318,10 @@ function Cartproduct({ product }) {
         {/* Product Name */}
 
         <h3
+          onClick={handleViewDetails}
           className="
             min-h-[40px]
+            cursor-pointer
             text-sm
             font-bold
             leading-5
@@ -297,8 +330,9 @@ function Cartproduct({ product }) {
             group-hover:text-accent
           "
         >
-          {product.shortDescription?.slice(0, 50)}
-          {product.shortDescription?.length > 50 ? "..." : ""}
+          {product?.shortDescription?.slice(0, 50)}
+
+          {product?.shortDescription?.length > 50 ? "..." : ""}
         </h3>
 
         {/* Rating */}
@@ -329,10 +363,10 @@ function Cartproduct({ product }) {
               text-accent
             "
           >
-            EGP {product.priceAfterDiscount}
+            EGP {Number(product?.priceAfterDiscount).toLocaleString()}
           </span>
 
-          {product.priceBeforeDiscount && (
+          {product?.priceBeforeDiscount && (
             <span
               className="
                 text-sm
@@ -341,7 +375,7 @@ function Cartproduct({ product }) {
                 line-through
               "
             >
-              EGP {product.priceBeforeDiscount}
+              EGP {Number(product.priceBeforeDiscount).toLocaleString()}
             </span>
           )}
         </div>
@@ -352,31 +386,42 @@ function Cartproduct({ product }) {
           <button
             type="button"
             onClick={handleAddToCart}
-            disabled={isAddingToCart}
-            className="
+            disabled={!productId || isAddingToCart}
+            className={`
               flex
               w-full
-              cursor-pointer
               items-center
               justify-center
               gap-2
               rounded-xl
-              bg-accent
               px-4
               py-2.5
               text-sm
               font-semibold
-              text-white
-              shadow-sm
-              shadow-accent/20
               transition-all
               duration-200
-              hover:bg-accent-hover
-              hover:shadow-md
-              hover:shadow-accent/25
-              disabled:cursor-wait
-              disabled:opacity-60
-            "
+
+              ${
+                isAddingToCart
+                  ? `
+                      cursor-wait
+                      bg-accent-hover
+                      text-white
+                      opacity-80
+                    `
+                  : `
+                      cursor-pointer
+                      bg-accent
+                      text-white
+                      shadow-sm
+                      shadow-accent/20
+                      hover:bg-accent-hover
+                      hover:shadow-md
+                      hover:shadow-accent/25
+                      active:scale-[0.98]
+                    `
+              }
+            `}
           >
             {isAddingToCart ? (
               <>
@@ -398,13 +443,13 @@ function Cartproduct({ product }) {
               <>
                 <FaShoppingCart size={14} />
 
-                <span>Add to cart</span>
+                <span>Add to Cart</span>
               </>
             )}
           </button>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
