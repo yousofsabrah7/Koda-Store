@@ -7,6 +7,8 @@ import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persi
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -21,9 +23,11 @@ const persister = createAsyncStoragePersister({
 });
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient} persistOptions={{ persister }}>
-      <Toaster/>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient} persistOptions={{ persister }}>
+        <Toaster/>
         <App />
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </Provider>
   </StrictMode>,
 );

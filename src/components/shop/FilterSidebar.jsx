@@ -32,7 +32,7 @@ export default function FilterSidebar({
           <button
             type="button"
             onClick={onClearAll}
-            className="text-xs font-medium text-indigo-600 hover:text-indigo-700 cursor-pointer"
+            className="text-xs font-medium text-accent hover:text-accent-hover cursor-pointer"
           >
             Clear all
           </button>
@@ -54,7 +54,7 @@ export default function FilterSidebar({
                 type="checkbox"
                 checked={selectedCategories.includes(category)}
                 onChange={() => onToggleCategory(category)}
-                className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-400 cursor-pointer"
+                className="w-4 h-4 rounded border-gray-300 accent-accent focus:ring-accent cursor-pointer"
               />
               <span className="text-sm text-gray-700 capitalize group-hover:text-gray-900 transition">
                 {category}
@@ -78,7 +78,7 @@ export default function FilterSidebar({
               max={priceRange.max}
               value={priceRange.min}
               onChange={handleMinPrice}
-              className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/20"
             />
           </div>
           <span className="text-gray-300 mt-4">—</span>
@@ -90,7 +90,7 @@ export default function FilterSidebar({
               max={priceBounds.max}
               value={priceRange.max}
               onChange={handleMaxPrice}
-              className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/20"
             />
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function FilterSidebar({
           max={priceBounds.max}
           value={priceRange.max}
           onChange={handleMaxPrice}
-          className="w-full accent-indigo-600 cursor-pointer"
+          className="w-full accent-accent cursor-pointer"
         />
       </div>
 
@@ -116,7 +116,7 @@ export default function FilterSidebar({
               name="rating"
               checked={minRating === 0}
               onChange={() => onRatingChange(0)}
-              className="w-4 h-4 border-gray-300 text-indigo-600 focus:ring-indigo-400 cursor-pointer"
+              className="w-4 h-4 border-gray-300 accent-accent focus:ring-accent cursor-pointer"
             />
             <span className="text-sm text-gray-700 group-hover:text-gray-900 transition">
               Any rating
@@ -132,7 +132,7 @@ export default function FilterSidebar({
                 name="rating"
                 checked={minRating === rating}
                 onChange={() => onRatingChange(rating)}
-                className="w-4 h-4 border-gray-300 text-indigo-600 focus:ring-indigo-400 cursor-pointer"
+                className="w-4 h-4 border-gray-300 accent-accent focus:ring-accent cursor-pointer"
               />
               <span className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (

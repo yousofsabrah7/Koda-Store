@@ -6,6 +6,8 @@ import SearchBar from "../../components/shop/SearchBar";
 import FilterSidebar from "../../components/shop/FilterSidebar";
 import ActiveFilterChips from "../../components/shop/ActiveFilterChips";
 import { useSearchParams } from "react-router-dom";
+import { useCart } from "../../services/apiHooks/cartHooks";
+import { useWishlist } from "../../services/apiHooks/wishlistHook";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -20,6 +22,8 @@ export default function ShopPage() {
   const categoryFromUrl = searchParams.get("category");
   const {data, isLoading} = useProducts(1, 50);
   const products = data?.products || [];
+  const {isLoading: isCartLoading } = useCart();
+  const {isLoading: isWishlistLoading  } = useWishlist();
 
   const categories = useMemo(
   () =>
@@ -135,24 +139,28 @@ export default function ShopPage() {
     priceRange.max !== priceBounds.max;
 
 
-  if (isLoading){
-    return(
-      <div className="min-h-screen bg-gray-50/50 py-10 px-4 sm:px-6 lg:px-8 flext items-center justify-center">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-sm font-medium text-gray-500">Loading products from server...</p>
+   if (isLoading || isCartLoading || isWishlistLoading) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-4">
+        <div className="relative mb-4 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-accent-light flex items-center justify-center animate-pulse">
+            <span className="text-2xl">🛒</span>
+          </div>
+          <div className="absolute -inset-2 border-2 border-accent/20 border-t-accent rounded-2xl animate-spin"></div>
         </div>
+        <h2 className="text-base font-bold text-text-primary mb-1">Loading Products...</h2>
+        <p className="text-xs text-text-muted">Fetching our latest products for you</p>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-surface-base py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
       {/* //////////////////// */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Shop</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-text-primary mb-1">Shop</h1>
+          <p className="text-sm text-text-muted">
             {filteredProducts.length} product
             {filteredProducts.length !== 1 ? "s" : ""} found
           </p>
@@ -168,7 +176,7 @@ export default function ShopPage() {
             <button
               type="button"
               onClick={() => setIsFilterOpen(true)}
-              className="lg:hidden px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition cursor-pointer"
+              className="lg:hidden px-4 py-2.5 bg-surface-card border border-border-subtle rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-elevated transition cursor-pointer"
             >
               Filters
             </button>
@@ -176,7 +184,7 @@ export default function ShopPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              className="px-4 py-2.5 bg-surface-card border border-border-strong rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-elevated transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-100"
             >
               <option value="featured">Featured</option>
               <option value="price-asc">Price: Low to High</option>
@@ -225,9 +233,9 @@ export default function ShopPage() {
                 className="absolute inset-0 bg-black/30"
                 onClick={() => setIsFilterOpen(false)}
               />
-              <div className="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white p-5 overflow-y-auto shadow-xl">
+              <div className="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-surface-card p-5 overflow-y-auto shadow-xl">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-base font-semibold text-gray-900">
+                  <h2 className="text-base font-semibold text-text-primary">
                     Filters
                   </h2>
                   <button

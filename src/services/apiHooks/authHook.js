@@ -1,37 +1,25 @@
-// import {
-//   useMutation,
-//   useQuery,
-//   useQueryClient,
-// } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
-// import toast from "react-hot-toast";
+import {
+  selectToken,
+  setAuthorize,
+  setLogin,
+  setLogout,
+  setProfile,
+} from "../../redux/services/authSlice";
 
-// import {
-//   useDispatch,
-//   useSelector,
-// } from "react-redux";
-
-// import {
-//   selectToken,
-//   setAuthorize,
-//   setLogin,
-//   setLogout,
-//   setProfile,
-// } from "../../redux/services/authSlice";
-
-// import {
-//   sendRegisterOTP,
-//   verifyRegisterOTP,
-//   getProfile,
-//   loginUser,
-//   logoutUser,
-//   sendForgotPasswordOTP,
-//   verifyForgotPasswordOTP,
-// } from "../api/authApi";
-
-// import { useEffect } from "react";
-
-
+import {
+  sendRegisterOTP,
+  verifyRegisterOTP,
+  getProfile,
+  loginUser,
+  logoutUser,
+  sendForgotPasswordOTP,
+  verifyForgotPasswordOTP,
+} from "../api/authApi";
 
 const setAuthToken = (token) => {
   if (token) {
@@ -45,199 +33,159 @@ export const getAuthToken = () => {
   return localStorage.getItem("token");
 };
 
+// apiClient's interceptor rejects with { statusCode, message },
+// so the message lives on error.message (not error.response.data).
+const getErrorMessage = (error, fallback) => error?.message || fallback;
 
+export const useSendRegisterOTP = () => {
+  return useMutation({
+    mutationFn: sendRegisterOTP,
+    onSuccess: () => {
+      toast.success("OTP sent successfully.");
+    },
 
-// export const useSendRegisterOTP = () => {
-//   return useMutation({
-//     mutationFn: sendRegisterOTP,
+    onError: (error) => {
+      toast.error(getErrorMessage(error, "Failed to send OTP."));
+    },
+  });
+};
 
-//     onSuccess: () => {
-//       toast.success("OTP sent successfully.");
-//     },
+export const useVerifyRegisterOTP = () => {
+  return useMutation({
+    mutationFn: verifyRegisterOTP,
 
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to send OTP.";
+    onSuccess: () => {
+      toast.success("OTP verified successfully.");
+    },
 
-//       toast.error(message);
-//     },
-//   });
-// };
+    onError: (error) => {
+      toast.error(
+        getErrorMessage(error, "Failed to verify registration OTP."),
+      );
+    },
+  });
+};
 
+export const useSendForgotPasswordOTP = () => {
+  return useMutation({
+    mutationFn: sendForgotPasswordOTP,
 
+    onSuccess: () => {
+      toast.success("Password reset OTP sent successfully.");
+    },
 
-// export const useVerifyRegisterOTP = () => {
-//   return useMutation({
-//     mutationFn: verifyRegisterOTP,
+    onError: (error) => {
+      toast.error(
+        getErrorMessage(error, "Failed to send password reset OTP."),
+      );
+    },
+  });
+};
 
-//     onSuccess: () => {
-//       toast.success("OTP verified successfully.");
-//     },
+export const useVerifyForgotPasswordOTP = () => {
+  return useMutation({
+    mutationFn: verifyForgotPasswordOTP,
 
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to verify registration OTP.";
+    onSuccess: () => {
+      toast.success("Password reset OTP verified successfully.");
+    },
 
-//       toast.error(message);
-//     },
-//   });
-// };
+    onError: (error) => {
+      toast.error(
+        getErrorMessage(error, "Failed to verify password reset OTP."),
+      );
+    },
+  });
+};
 
+export const useLogin = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
-// export const useSendForgotPasswordOTP = () => {
-//   return useMutation({
-//     mutationFn: sendForgotPasswordOTP,
+  return useMutation({
+    mutationFn: loginUser,
 
-//     onSuccess: () => {
-//       toast.success("Password reset OTP sent successfully.");
-//     },
+    onSuccess: (response) => {
+      // Response: { success, message, token, user }
+      if (response?.token) {
+        setAuthToken(response.token);
+      }
 
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to send password reset OTP.";
+      dispatch(setLogin(response));
 
-//       toast.error(message);
-//     },
-//   });
-// };
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
 
+      toast.success("Welcome back! Logged in successfully.");
+    },
 
+    onError: (error) => {
+      toast.error(
+        getErrorMessage(
+          error,
+          "Login failed. Please check your email and password.",
+        ),
+      );
+    },
+  });
+};
 
-// export const useVerifyForgotPasswordOTP = () => {
-//   return useMutation({
-//     mutationFn: verifyForgotPasswordOTP,
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
-//     onSuccess: () => {
-//       toast.success("Password reset OTP verified successfully.");
-//     },
+  const clearSession = () => {
+    queryClient.clear();
+    setAuthToken(null);
+    dispatch(setLogout());
+  };
 
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Failed to verify password reset OTP.";
+  return useMutation({
+    mutationFn: logoutUser,
 
-//       toast.error(message);
-//     },
-//   });
-// };
+    onSuccess: () => {
+      clearSession();
+      toast.success("Logged out successfully.");
+    },
 
+    onError: (error) => {
+      clearSession();
+      toast.error(getErrorMessage(error, "An error occurred during logout."));
+    },
+  });
+};
 
+export const useProfile = () => {
+  const dispatch = useDispatch();
+  const token = useSelector(selectToken);
 
-// export const useLogin = () => {
-//   const queryClient = useQueryClient();
-//   const dispatch = useDispatch();
+  const query = useQuery({
+    queryKey: ["profile"],
+    queryFn: getProfile,
+    enabled: !!token,
+    retry: false,
+  });
 
-//   return useMutation({
-//     mutationFn: loginUser,
+  useEffect(() => {
+    if (query.isSuccess) {
+      dispatch(setProfile(query.data));
+    }
+  }, [query.isSuccess, query.data, dispatch]);
 
-//     onSuccess: (response) => {
-//       const token = response?.token;
+  useEffect(() => {
+    if (!query.isError) return;
 
-//       if (token) {
-//         setAuthToken(token);
-//       }
+    const status = query.error?.statusCode;
 
-//       queryClient.invalidateQueries({
-//         queryKey: ["profile"],
-//       });
+    dispatch(setAuthorize(status));
 
-//       dispatch(setLogin(response));
+    if (status === 401) {
+      // Expired / invalid token: clear it silently.
+      setAuthToken(null);
+      return;
+    }
 
-//       toast.success("Welcome back! Logged in successfully.");
-//     },
+    toast.error(getErrorMessage(query.error, "Something went wrong."));
+  }, [query.isError, query.error, dispatch]);
 
-//     onError: (error) => {
-//       const message =
-//         error?.response?.data?.message ||
-//         "Login failed. Please check your email and password.";
-
-//       toast.error(message);
-//     },
-//   });
-// };
-
-
-
-// export const useLogout = () => {
-//   const queryClient = useQueryClient();
-//   const dispatch = useDispatch();
-
-//   return useMutation({
-//     mutationFn: logoutUser,
-
-//     onSuccess: () => {
-//       queryClient.clear();
-
-//       setAuthToken(null);
-
-//       dispatch(setLogout());
-
-//       toast.success("Logged out successfully.");
-//     },
-
-//     onError: (error) => {
-//       queryClient.clear();
-
-//       setAuthToken(null);
-
-//       dispatch(setLogout());
-
-//       const message =
-//         error?.response?.data?.message ||
-//         "An error occurred during logout.";
-
-//       toast.error(message);
-//     },
-//   });
-// };
-
-
-
-// export const useProfile = () => {
-//   const dispatch = useDispatch();
-
-//   const token = useSelector(selectToken);
-
-//   const query = useQuery({
-//     queryKey: ["profile"],
-//     queryFn: getProfile,
-//     enabled: !!token,
-//   });
-
-
-//   useEffect(() => {
-//     if (query.isSuccess) {
-//       dispatch(setProfile(query.data));
-//     }
-//   }, [
-//     query.isSuccess,
-//     query.data,
-//     dispatch,
-//   ]);
-
-
-
-//   useEffect(() => {
-//     if (query.isError) {
-//       const message =
-//         query.error?.response?.data?.message ||
-//         "Something went wrong.";
-
-//       dispatch(
-//         setAuthorize(query.error?.response?.status)
-//       );
-
-//       toast.error(message);
-//     }
-//   }, [
-//     query.isError,
-//     query.error,
-//     dispatch,
-//     token,
-//   ]);
-
-//   return query;
-// };
+  return query;
+}

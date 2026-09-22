@@ -1,11 +1,22 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaExclamationTriangle } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaUser, FaPhone, FaEye, FaEyeSlash, FaExclamationTriangle } from "react-icons/fa";
+import { useSendRegisterOTP } from "../../services/apiHooks/authHook";
 
-function validate({ name, email, password, confirmPassword, agreedToTerms }) {
+function validate({ username, email, phone, password, confirmPassword, agreedToTerms }) {
   const errors = {};
 
-  if (!name.trim()) errors.name = "Full name is required.";
+  if (!username.trim()) {
+    errors.username = "Username is required.";
+  } else if (username.trim().length < 3) {
+    errors.username = "Username must be at least 3 characters.";
+  }
+
+  if (!phone.trim()) {
+    errors.phone = "Phone number is required.";
+  } else if (!/^\+?[0-9]{8,15}$/.test(phone.replace(/[\s-]/g, ""))) {
+    errors.phone = "Enter a valid phone number, e.g. +201234567890.";
+  }
 
   if (!email.trim()) {
     errors.email = "Email is required.";
@@ -34,15 +45,16 @@ export default function Register() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
     agreedToTerms: false,
   });
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutate: sendOtp, isPending: isSubmitting } = useSendRegisterOTP();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -62,38 +74,22 @@ export default function Register() {
       return;
     }
 
-    setIsSubmitting(true);
     setFormError("");
 
-    try {
-      const users = JSON.parse(localStorage.getItem("koda_users")) || [];
-      const emailExists = users.some(
-        (u) => u.email.toLowerCase() === formData.email.toLowerCase()
-      );
+    const payload = {
+      username: formData.username.trim(),
+      email: formData.email.trim(),
+      password: formData.password,
+      phone: formData.phone.replace(/[\s-]/g, ""),
+    };
 
-      if (emailExists) {
-        throw new Error("An account with this email already exists.");
-      }
-
-      const newUser = {
-        id: crypto.randomUUID(),
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      };
-
-      users.push(newUser);
-      localStorage.setItem("koda_users", JSON.stringify(users));
-
-      const session = { id: newUser.id, name: newUser.name, email: newUser.email };
-      localStorage.setItem("koda_current_user", JSON.stringify(session));
-
-      navigate("/", { replace: true });
-    } catch (err) {
-      setFormError(err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    sendOtp(payload, {
+      // The OTP was emailed; the next screen asks for it.
+      onSuccess: () =>
+        navigate("/verify-otp", { state: { email: payload.email } }),
+      onError: (err) =>
+        setFormError(err?.message || "Could not create your account."),
+    });
   };
 
   return (
@@ -120,21 +116,21 @@ export default function Register() {
             )}
 
             <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1.5">Full name</label>
+              <label className="text-sm font-medium text-gray-700 block mb-1.5">Username</label>
               <div className="relative">
                 <FaUser className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Jane Doe"
-                  value={formData.name}
-                  onChange={handleChange("name")}
-                  autoComplete="name"
+                  placeholder="john_doe"
+                  value={formData.username}
+                  onChange={handleChange("username")}
+                  autoComplete="username"
                   className={`w-full pl-10 pr-3.5 py-2.5 bg-white border rounded-xl text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition ${
-                    errors.name ? "border-red-300 focus:ring-red-100" : "border-gray-200 focus:ring-indigo-100 focus:border-indigo-300"
+                    errors.username ? "border-red-300 focus:ring-red-100" : "border-gray-200 focus:ring-indigo-100 focus:border-indigo-300"
                   }`}
                 />
               </div>
-              {errors.name && <p className="text-xs text-red-500 mt-1.5">{errors.name}</p>}
+              {errors.username && <p className="text-xs text-red-500 mt-1.5">{errors.username}</p>}
             </div>
 
             <div>
@@ -153,6 +149,24 @@ export default function Register() {
                 />
               </div>
               {errors.email && <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>}
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1.5">Phone</label>
+              <div className="relative">
+                <FaPhone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="tel"
+                  placeholder="+201234567890"
+                  value={formData.phone}
+                  onChange={handleChange("phone")}
+                  autoComplete="tel"
+                  className={`w-full pl-10 pr-3.5 py-2.5 bg-white border rounded-xl text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 transition ${
+                    errors.phone ? "border-red-300 focus:ring-red-100" : "border-gray-200 focus:ring-indigo-100 focus:border-indigo-300"
+                  }`}
+                />
+              </div>
+              {errors.phone && <p className="text-xs text-red-500 mt-1.5">{errors.phone}</p>}
             </div>
 
             <div>
@@ -230,7 +244,7 @@ export default function Register() {
               disabled={isSubmitting}
               className="w-full bg-amber-500 hover:bg-amber-200 disabled:bg-indigo-300 text-white text-sm font-semibold py-2.5 rounded-xl transition cursor-pointer disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Creating account..." : "Create account"}
+              {isSubmitting ? "Sending code..." : "Create account"}
             </button>
           </form>
 
